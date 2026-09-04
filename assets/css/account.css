@@ -1,0 +1,549 @@
+.account-page-bg {
+    background-color: #f5f5fa;
+    padding: 40px 0 60px 0;
+    font-family: Arial, sans-serif;
+}
+
+.account-container {
+    max-width: 1250px;
+    margin: 0 auto;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+/* Menu bên trái */
+.account-sidebar {
+    width: 260px;
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.account-sidebar-user {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 0 20px 20px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 15px;
+}
+
+.account-sidebar-user .avt {
+    width: 50px;
+    height: 50px;
+    background-color: #1435c3;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.account-sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.account-sidebar-menu li a {
+    display: block;
+    padding: 12px 20px;
+    color: #333;
+    text-decoration: none;
+    font-size: 15px;
+    transition: 0.2s;
+}
+
+.account-sidebar-menu li a:hover {
+    background-color: #f8f9fa;
+    color: #1435c3;
+}
+
+.account-sidebar-menu li.active a {
+    background-color: #ebf0ff;
+    color: #1435c3;
+    font-weight: bold;
+    border-left: 4px solid #1435c3;
+}
+
+/* Nội dung bên phải */
+.account-content {
+    flex: 1;
+    background-color: white;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    min-height: 500px;
+}
+
+.account-content h2 {
+    font-size: 22px;
+    margin-bottom: 25px;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+    text-transform: uppercase;
+}
+
+.profile-info-box p {
+    font-size: 15px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    color: #333;
+}
+
+.profile-info-box strong {
+    display: inline-block;
+    width: 160px;
+    color: #666;
+    font-weight: normal;
+}
+
+.profile-info-box span {
+    font-weight: bold;
+}
+
+/* Các ô nhập liệu thông tin cá nhân */
+.form-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    width: 160px;
+    color: #666;
+    font-weight: normal;
+}
+
+.profile-input {
+    flex: 1;
+    max-width: 300px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    outline: none;
+    transition: 0.3s;
+}
+
+.profile-input:focus {
+    border-color: #1435c3;
+    box-shadow: 0 0 5px rgba(20, 53, 195, 0.2);
+}
+
+/* Nút Lưu thông tin */
+.btn-save-profile {
+    background-color: #1435c3;
+    color: white;
+    padding: 10px 25px;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: 0.3s;
+}
+
+.btn-save-profile:hover {
+    background-color: #0b228c;
+    transform: translateY(-2px);
+}
+
+
+
+
+
+.account-page-bg {
+    background-color: #f5f5fa;
+    padding: 40px 0 60px 0;
+    font-family: Arial, sans-serif;
+}
+
+.account-container {
+    max-width: 1250px;
+    margin: 0 auto;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+/* Menu bên trái */
+.account-sidebar {
+    width: 260px;
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.account-sidebar-user {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 0 20px 20px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 15px;
+}
+
+.account-sidebar-user .avt {
+    width: 50px;
+    height: 50px;
+    background-color: #1435c3;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.account-sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.account-sidebar-menu li a {
+    display: block;
+    padding: 12px 20px;
+    color: #333;
+    text-decoration: none;
+    font-size: 15px;
+    transition: 0.2s;
+}
+
+.account-sidebar-menu li a:hover {
+    background-color: #f8f9fa;
+    color: #1435c3;
+}
+
+.account-sidebar-menu li.active a {
+    background-color: #ebf0ff;
+    color: #1435c3;
+    font-weight: bold;
+    border-left: 4px solid #1435c3;
+}
+
+/* =========================================================
+   Nội dung bên phải (Giao diện chuẩn MongoDB Atlas)
+   ========================================================= */
+.account-content {
+    flex: 1;
+    min-height: 500px;
+}
+
+.account-content h2 {
+    font-size: 24px;
+    margin-bottom: 25px;
+    color: #1e293b;
+    font-weight: 800;
+}
+
+/* Khối Thẻ Giao Diện */
+.atlas-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+}
+
+.atlas-card h3 {
+    font-size: 18px;
+    color: #1e293b;
+    margin-bottom: 24px;
+    font-weight: bold;
+    border-bottom: 2px solid #f8fafc;
+    padding-bottom: 12px;
+}
+
+.atlas-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.atlas-group {
+    margin-bottom: 20px;
+}
+
+.atlas-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: #475569;
+    margin-bottom: 8px;
+}
+
+.atlas-input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #1e293b;
+    transition: 0.2s;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.atlas-input:focus {
+    border-color: #1435c3;
+    box-shadow: 0 0 0 3px rgba(20, 53, 195, 0.15);
+}
+
+.atlas-input:disabled {
+    background-color: #f1f5f9;
+    color: #64748b;
+    cursor: not-allowed;
+    border-color: #e2e8f0;
+}
+
+/* Các Nút Bấm Điều Khiển */
+.atlas-btn-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.atlas-btn-cancel {
+    background: #fff;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+    font-size: 14px;
+}
+
+.atlas-btn-cancel:hover {
+    background: #f8fafc;
+}
+
+.atlas-btn-save {
+    background: #e2e8f0;
+    border: none;
+    color: #94a3b8;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: not-allowed;
+    transition: 0.3s;
+    font-size: 14px;
+}
+
+.atlas-btn-save.active {
+    background: #1435c3;
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(20, 53, 195, 0.2);
+}
+
+.atlas-btn-save.active:hover {
+    background: #0f2a9c;
+}
+
+/* =========================================================
+   NÚT ĐỔI MẬT KHẨU THÔNG MINH (CHUYỂN ĐỎ)
+   ========================================================= */
+.atlas-btn-save.active-red {
+    background: #d70018 !important;
+    color: #fff !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 10px rgba(215, 0, 24, 0.2) !important;
+}
+
+.atlas-btn-save.active-red:hover {
+    background: #b90014 !important;
+}
+
+/* Nút Vùng Nguy Hiểm */
+.atlas-btn-danger {
+    background: transparent;
+    color: #dc2626;
+    border: 2px solid #fca5a5;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 14px;
+}
+
+.atlas-btn-danger:hover {
+    background: #fef2f2;
+    border-color: #ef4444;
+}
+
+/* Biểu ngữ cảnh báo xanh */
+.atlas-banner {
+    background: #f0f9ff;
+    border-left: 4px solid #0ea5e9;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    color: #0369a1;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+
+
+
+/* Giao diện giỏ hàng trống */
+.order-display-area {
+    text-align: center;
+    padding: 60px 0;
+}
+
+.empty-icon {
+    font-size: 80px;
+    margin-bottom: 15px;
+    filter: grayscale(100%);
+    opacity: 0.3;
+}
+
+.order-display-area p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 25px;
+}
+
+.btn-shopping {
+    display: inline-block;
+    padding: 12px 30px;
+    background-color: #1435c3;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 15px;
+    transition: 0.3s;
+}
+
+.btn-shopping:hover {
+    background-color: #0b228c;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(20, 53, 195, 0.3);
+}
+
+/* ==========================================
+   CSS CHO TRANG ĐĂNG NHẬP / ĐĂNG KÝ RIÊNG BIỆT
+========================================== */
+.auth-page-wrapper {
+    background-color: #f1f5f9;
+    min-height: 70vh; /* Trải dài màn hình */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 50px 15px;
+}
+
+.auth-container {
+    background: #ffffff;
+    width: 100%;
+    max-width: 450px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    padding: 40px;
+}
+
+.auth-header-title {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.auth-header-title img {
+    height: 40px;
+    margin-bottom: 15px;
+}
+
+.auth-header-title h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #0f172a;
+}
+
+.auth-header-title p {
+    font-size: 14px;
+    color: #64748b;
+    margin-top: 5px;
+}
+
+.auth-form-dedicated {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.auth-form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 8px;
+}
+
+.auth-form-group input {
+    width: 100%;
+    padding: 14px 15px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.auth-form-group input:focus {
+    border-color: #1435c3;
+    box-shadow: 0 0 0 3px rgba(20,53,195,0.1);
+}
+
+.btn-auth-primary {
+    background-color: #1435c3;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.btn-auth-primary:hover {
+    background-color: #0b228c;
+    transform: translateY(-2px);
+}
+
+.auth-switch-link {
+    text-align: center;
+    margin-top: 25px;
+    font-size: 14px;
+    color: #64748b;
+}
+
+.auth-switch-link a {
+    color: #1435c3;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.auth-switch-link a:hover {
+    text-decoration: underline;
+}

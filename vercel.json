@@ -1,0 +1,22 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/assets/(.*)",
+      "destination": "/assets/$1"
+    },
+    { 
+      "source": "/(profile|orders|login|register|forgot-password)", 
+      "destination": "/pages/account/$1" 
+    },
+    { 
+      "source": "/(about|contact|recruitment|news|showroom|purchase|payment|warranty|complaint|condition|guarantee|transport|return|service|security)", 
+      "destination": "/pages/info/$1" 
+    },
+    { 
+      "source": "/(cpu|vga|main|ram|psu|case|monitor|storage|cooling|accessories|licensed-software|cart|product-detail)(.*)", 
+      "destination": "/pages/shop/$1$2" 
+    }
+  ]
+}

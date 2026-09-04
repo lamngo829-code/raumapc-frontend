@@ -1,0 +1,119 @@
+/* ==========================================
+   CSS TRANG BÁO LỖI (404 / ERROR PAGE)
+========================================== */
+
+.error-container {
+    padding: 60px 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 50vh;
+}
+
+.error-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e2e8f0;
+    padding: 50px 30px;
+    text-align: center;
+    max-width: 650px;
+    width: 100%;
+}
+
+.error-badge {
+    font-size: 96px;
+    font-weight: 900;
+    line-height: 1;
+    background: linear-gradient(135deg, #0380e6 0%, #1435c3 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+    letter-spacing: -2px;
+}
+
+.error-title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #1e293b;
+    margin-bottom: 15px;
+}
+
+.error-desc {
+    font-size: 14px;
+    color: #64748b;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.error-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.btn-error {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 14px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.btn-home {
+    background-color: #1435c3;
+    color: #ffffff !important;
+}
+
+.btn-home:hover {
+    background-color: #0b228c;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(20, 53, 195, 0.3);
+}
+
+.btn-builder {
+    background-color: #f1f5f9;
+    color: #334155 !important;
+    border: 1px solid #cbd5e1;
+}
+
+.btn-builder:hover {
+    background-color: #e2e8f0;
+    color: #0f172a !important;
+    transform: translateY(-2px);
+}
+
+/* RESPONSIVE DÀNH CHO THIẾT BỊ DI ĐỘNG */
+@media (max-width: 768px) {
+    .error-container {
+        padding: 30px 10px;
+    }
+
+    .error-card {
+        padding: 30px 20px;
+    }
+
+    .error-badge {
+        font-size: 72px;
+    }
+
+    .error-title {
+        font-size: 18px;
+    }
+
+    .error-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .btn-error {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}

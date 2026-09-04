@@ -1,0 +1,318 @@
+/* --- TRANG XÂY DỰNG CẤU HÌNH --- */
+.builder-container {
+    padding: 20px 0 50px 0;
+}
+
+.builder-header {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 5px solid #1435c3;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.builder-title {
+    font-size: 22px;
+    color: #1435c3;
+    margin: 0 0 5px 0;
+    text-transform: uppercase;
+}
+
+.builder-subtitle {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+}
+
+/* DANH SÁCH HÀNG LINH KIỆN */
+.component-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.component-row {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    transition: box-shadow 0.2s;
+}
+
+.component-row:hover {
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+.component-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 200px;
+    flex-shrink: 0;
+}
+
+.component-icon {
+    width: 35px;
+    height: 35px;
+    object-fit: contain;
+}
+
+.component-name {
+    font-weight: bold;
+    font-size: 14px;
+    color: #333;
+}
+
+/* PHẦN SẢN PHẨM ĐÃ CHỌN */
+.component-middle {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.selected-item-img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    border: 1px solid #eee;
+    border-radius: 4px;
+}
+
+.selected-item-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.selected-item-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #1e293b;
+    line-height: 1.3;
+}
+
+.selected-item-price {
+    font-size: 14px;
+    color: #d70018;
+    font-weight: bold;
+    margin-top: 4px;
+}
+
+.empty-selection {
+    color: #94a3b8;
+    font-style: italic;
+    font-size: 13px;
+}
+
+/* THAO TÁC NÚT CHỌN/XÓA */
+.component-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.btn-select {
+    background-color: #0380e6;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-select:hover {
+    background-color: #1435c3;
+}
+
+.btn-remove-row {
+    background-color: #fee2e2;
+    color: #dc2626;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-remove-row:hover {
+    background-color: #fca5a5;
+}
+
+/* BẢNG TỔNG TIỀN BÊN DƯỚI */
+.builder-summary-box {
+    margin-top: 25px;
+    background: #fff;
+    border: 2px solid #1435c3;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.summary-label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+}
+
+.summary-total-price {
+    font-size: 24px;
+    font-weight: bold;
+    color: #d70018;
+    margin-left: 10px;
+}
+
+.summary-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-builder {
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    font-size: 14px;
+}
+
+.btn-reset {
+    background-color: #f1f5f9;
+    color: #475569;
+}
+
+.btn-reset:hover {
+    background-color: #e2e8f0;
+}
+
+.btn-add-cart {
+    background-color: #d70018;
+    color: white;
+}
+
+.btn-add-cart:hover {
+    background-color: #b91c1c;
+}
+
+/* MODAL CHỌN SẢN PHẨM */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99999;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-box {
+    background: white;
+    width: 700px;
+    max-width: 90%;
+    max-height: 80vh;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.modal-header {
+    padding: 15px 20px;
+    background: #1435c3;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 { margin: 0; font-size: 16px; }
+
+.modal-close {
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.modal-search {
+    padding: 12px 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.modal-search input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+}
+
+.modal-product-list {
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.picker-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border: 1px solid #f0f0f0;
+    border-radius: 6px;
+}
+
+.picker-item:hover {
+    background: #f8fafc;
+}
+
+.picker-item img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+}
+
+.picker-item-info {
+    flex: 1;
+    margin: 0 15px;
+}
+
+.picker-item-name {
+    font-size: 13px;
+    font-weight: bold;
+    color: #333;
+}
+
+.picker-item-price {
+    color: #d70018;
+    font-weight: bold;
+    font-size: 13px;
+    margin-top: 3px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .component-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .component-left { width: 100%; }
+    .component-right { width: 100%; justify-content: space-between; }
+    .builder-summary-box { flex-direction: column; gap: 15px; text-align: center; }
+    .summary-actions { width: 100%; flex-direction: column; }
+}

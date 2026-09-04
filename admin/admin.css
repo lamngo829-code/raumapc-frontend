@@ -1,0 +1,196 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    display: flex;
+    background-color: #f4f7fe;
+    min-height: 100vh;
+    color: #333;
+}
+
+/* Cột Menu Trái (Flexbox để đẩy nút Đăng xuất xuống đáy) */
+.sidebar {
+    width: 260px;
+    background: #1435c3;
+    color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* Đẩy nội dung ra 2 đầu */
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+}
+
+.sidebar h2 {
+    font-size: 22px;
+    text-transform: uppercase;
+    margin-bottom: 40px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 15px;
+}
+
+/* Nâng cấp hiệu ứng Hover cho Menu */
+.menu-item {
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+    display: block; /* Dùng cho cả thẻ <a> */
+    text-decoration: none;
+    color: white;
+}
+
+.menu-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateX(5px); /* Hiệu ứng trượt nhẹ */
+}
+
+.menu-item.active {
+    background: white;
+    color: #1435c3;
+    border-left: 5px solid #d70018;
+    pointer-events: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+/* Vùng Nội Dung */
+.main-content {
+    flex: 1;
+    padding: 30px 40px;
+    overflow-y: auto;
+}
+
+.header-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #2b3674;
+    margin-bottom: 25px;
+}
+
+.admin-card {
+    background: white;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+    margin-bottom: 30px;
+}
+
+.card-title {
+    font-size: 18px;
+    color: #2b3674;
+    margin-bottom: 20px;
+    font-weight: bold;
+    border-bottom: 2px solid #f4f7fe;
+    padding-bottom: 10px;
+}
+
+/* Form Nhập Liệu Sản Phẩm */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: bold;
+    color: #8f9bba;
+    margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group textarea {
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    outline: none;
+    font-size: 14px;
+    background: #fdfdfd;
+}
+
+.form-group textarea {
+    height: 400px;
+}
+
+/* Các nút dưới đáy Sidebar */
+.btn-home {
+    background: rgba(40, 167, 69, 0.2);
+    border: 1px solid rgba(40, 167, 69, 0.5);
+    color: #a8f3b9;
+}
+
+
+.btn-add {
+    background: #1435c3;
+    color: white;
+    border: none;
+    padding: 14px 30px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 15px;
+}
+
+/* Bảng Dữ Liệu Chung */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th {
+    background: #f4f7fe;
+    color: #8f9bba;
+    font-size: 13px;
+    text-transform: uppercase;
+    padding: 15px;
+    text-align: left;
+}
+
+td {
+    padding: 15px;
+    border-bottom: 1px solid #e2e8f0;
+    vertical-align: middle;
+    font-size: 14px;
+}
+
+/* Chỉnh sửa bảng Đơn hàng */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    background: #e3f2fd;
+    color: #1976d2;
+    display: inline-block;
+}
+
+.status-select {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    outline: none;
+    font-weight: bold;
+    cursor: pointer;
+}

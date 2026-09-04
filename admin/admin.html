@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Hệ Thống Quản Trị - Rau Má PC</title>
+    
+    <link rel="icon" type="image/jpg" href="../../assets/images/icons/favicon.jpg?v=2">
+
+    <link rel="stylesheet" href="../../admin/admin.css">
+
+    <script src="../../admin/admin.js" defer></script>
+
+</head>
+
+<body>
+
+
+    <!-- MENU BÊN TRÁI -->
+    <div class="sidebar">
+        <div class="sidebar-top">
+            <h2>🌱 RAU MÁ ADMIN</h2>
+            <div class="menu-item active" onclick="switchTab('products')">📦 Quản lý Sản phẩm</div>
+            <div class="menu-item" onclick="switchTab('orders')">🛒 Quản lý Đơn hàng</div>
+        </div>
+        
+        <div class="sidebar-bottom">
+            <a href="../../index.html" class="menu-item btn-home">🏠 Về Trang Chủ</a>
+            <div class="menu-item btn-logout" onclick="adminLogout()">🚪 Đăng Xuất</div>
+        </div>
+    </div>
+
+    <!-- KHU VỰC NỘI DUNG CHÍNH -->
+    <div class="main-content">
+
+        <!-- ============================================== -->
+        <!-- TAB 1: QUẢN LÝ SẢN PHẨM (Mặc định hiển thị) -->
+        <!-- ============================================== -->
+        <div id="tab-products">
+            <div class="header-title">Quản Lý Sản Phẩm</div>
+            <!-- BẢNG THỐNG KÊ DOANH THU -->
+            <div class="admin-card" style="background: linear-gradient(135deg, #1435c3, #0a1b66); color: white; border-left: 5px solid #d70018;">
+                <h3 style="font-size: 16px; font-weight: 500; margin-bottom: 5px;">💰 TỔNG DOANH THU (CÁC ĐƠN ĐÃ GIAO)</h3>
+                <h1 id="revenue-total" style="font-size: 38px; font-weight: bold; margin: 10px 0;">0 đ</h1>
+                <p style="font-size: 14px; color: #cbd5e1;">Từ <strong id="revenue-orders" style="color: #ffeb3b; font-size: 16px;">0</strong> đơn hàng hoàn tất</p>
+            </div>
+            
+            <div class="admin-card">
+                <!-- Đã gắn ID cho Tiêu đề để Javascipt có thể đổi chữ -->
+                <div class="card-title" id="form-title">➕ Thêm Sản Phẩm Mới</div>
+                
+                <form id="productForm">
+                    <!-- Trạm trung chuyển vô hình để giấu Mã (ID) của sản phẩm đang sửa -->
+                    <input type="hidden" id="edit-id" value="">
+                    
+                    <div class="form-grid">
+                        <div class="form-group"><label>Hãng sản xuất (Brand)</label><input type="text" id="brand" placeholder="Ví dụ: intel, amd, asus..." style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; width: 100%;"></div>
+                        <div class="form-group"><label>Tên Sản Phẩm *</label><input type="text" id="name" placeholder="Ví dụ: CPU Intel Core i5 12400KF" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; width: 100%;"></div>
+                        <div class="form-group"><label>Giá Bán *</label><input type="text" id="price" placeholder="Ví dụ: 36.000.000đ" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; width: 100%;"></div>
+                        <div class="form-group"><label>Bảo Hành</label><input type="text" id="warranty" value="36 Tháng"></div>
+                        <div class="form-group">
+                            <label>Danh mục sản phẩm 1 *</label>
+                            <select id="category1" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; background: #fdfdfd; font-weight: bold;">
+                                <option value="" disabled selected>-- Chọn danh mục 1 --</option>
+                                <option value="cpu">CPU</option>
+                                <option value="intel">CPU Intel</option>
+                                <option value="amd">CPU AMD</option>
+                                <option value="vga">VGA</option>
+                                <option value="vga-nvidia">VGA NVIDIA</option>
+                                <option value="vga-amd">VGA AMD</option>
+                                <option value="main">Mainboard</option>
+                                <option value="ram">RAM</option>
+                                <option value="storage">Ổ Cứng</option>
+                                <option value="psu">Nguồn</option>
+                                <option value="cooling">Tản Nhiệt</option>
+                                <option value="case">Vỏ Case</option>
+                                <option value="monitor">Màn Hình</option>
+                                <option value="thermal-paste">Keo Tản Nhiệt</option>
+                                <option value="wireless-keyboard">Bàn Phím Không Dây</option>
+                                <option value="wireless-mouse">Chuột Không Dây</option>
+                                <option value="win-copyright">Windows</option>
+                                <option value="win-enterprise">Windows cho doanh nghiệp</option>
+                                <option value="win-server">Windows 10 Server</option>
+                                <option value="office-365">Microsoft Office 365</option>
+                                <option value="office-2019">Microsoft Office 2019</option>
+                                <option value="office-enterprise">Microsoft Office Doanh Nghiệp</option>
+                            </select>
+                        </div>
+
+                        <!-- Danh mục 2 (Tùy chọn) - Đã sửa thành category2 -->
+                        <div class="form-group">
+                            <label>Danh mục sản phẩm 2 (Phụ)</label>
+                            <select id="category2" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; background: #fdfdfd; font-weight: bold;">
+                                <option value="" selected>-- Không chọn --</option>
+                                <option value="cpu">CPU</option>
+                                <option value="intel">CPU Intel</option>
+                                <option value="amd">CPU AMD</option>
+                                <option value="vga">VGA</option>
+                                <option value="vga-nvidia">VGA NVIDIA</option>
+                                <option value="vga-amd">VGA AMD</option>
+                                <option value="main">Mainboard</option>
+                                <option value="ram">RAM</option>
+                                <option value="storage">Ổ Cứng</option>
+                                <option value="psu">Nguồn</option>
+                                <option value="cooling">Tản Nhiệt</option>
+                                <option value="case">Vỏ Case</option>
+                                <option value="monitor">Màn Hình</option>
+                                <option value="thermal-paste">Keo Tản Nhiệt</option>
+                                <option value="wireless-keyboard">Bàn Phím Không Dây</option>
+                                <option value="wireless-mouse">Chuột Không Dây</option>
+                                <option value="win-copyright">Windows</option>
+                                <option value="win-enterprise">Windows cho doanh nghiệp</option>
+                                <option value="win-server">Windows 10 Server</option>
+                                <option value="office-365">Microsoft Office 365</option>
+                                <option value="office-2019">Microsoft Office 2019</option>
+                                <option value="office-enterprise">Microsoft Office Doanh Nghiệp</option>
+                            </select>
+                        </div>
+
+                        <!-- Danh mục 3 (Tùy chọn) - Đã sửa thành category3 -->
+                        <div class="form-group">
+                            <label>Danh mục sản phẩm 3 (Phụ)</label>
+                            <select id="category3" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; background: #fdfdfd; font-weight: bold;">
+                                <option value="" selected>-- Không chọn --</option>
+                                <option value="cpu">CPU</option>
+                                <option value="intel">CPU Intel</option>
+                                <option value="amd">CPU AMD</option>
+                                <option value="vga">VGA</option>
+                                <option value="vga-nvidia">VGA NVIDIA</option>
+                                <option value="vga-amd">VGA AMD</option>
+                                <option value="main">Mainboard</option>
+                                <option value="ram">RAM</option>
+                                <option value="storage">Ổ Cứng</option>
+                                <option value="psu">Nguồn</option>
+                                <option value="cooling">Tản Nhiệt</option>
+                                <option value="case">Vỏ Case</option>
+                                <option value="monitor">Màn Hình</option>
+                                <option value="thermal-paste">Keo Tản Nhiệt</option>
+                                <option value="wireless-keyboard">Bàn Phím Không Dây</option>
+                                <option value="wireless-mouse">Chuột Không Dây</option>
+                                <option value="win-copyright">Windows</option>
+                                <option value="win-enterprise">Windows cho doanh nghiệp</option>
+                                <option value="win-server">Windows 10 Server</option>
+                                <option value="office-365">Microsoft Office 365</option>
+                                <option value="office-2019">Microsoft Office 2019</option>
+                                <option value="office-enterprise">Microsoft Office Doanh Nghiệp</option>
+                            </select>
+                        </div>
+                        
+                        <!-- KHU VỰC KÉO THẢ ẢNH -->
+                        <div class="form-group full-width">
+                            <label>Hình Ảnh Sản Phẩm *</label>
+                            <input type="hidden" id="img" required> <!-- Giữ ID ẩn để không phá vỡ logic cũ -->
+                            
+                            <div id="drop-zone" style="border: 2px dashed #cbd5e1; border-radius: 8px; padding: 40px 20px; text-align: center; cursor: pointer; background: #f8fafc; transition: 0.3s; position: relative; overflow: hidden;">
+                                <input type="file" id="file-input" accept="image/*" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10;">
+                                
+                                <div id="drop-zone-text">
+                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#1435c3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 10px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                    <p style="margin: 0; font-size: 15px; color: #475569; font-weight: bold;">Kéo & Thả ảnh vào đây</p>
+                                    <p style="margin: 5px 0 0 0; font-size: 13px; color: #94a3b8;">hoặc click để chọn file (Hỗ trợ JPG, PNG)</p>
+                                </div>
+                                
+                                <img id="image-preview" src="" style="display: none; max-height: 250px; max-width: 100%; margin: 0 auto; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: relative; z-index: 5;">
+                                <button type="button" id="btn-remove-img" style="display: none; position: absolute; top: 15px; right: 15px; background: #d70018; color: white; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 14px; font-weight: bold; cursor: pointer; z-index: 20; box-shadow: 0 2px 5px rgba(215,0,24,0.3);">X</button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label>Thông số kỹ thuật (Mỗi thông số 1 dòng. Cú pháp: Tên thông số : Giá trị)</label>
+                            <textarea id="specs" rows="4" placeholder="Ví dụ:&#10;CPU : Intel Core i5-14400F&#10;Socket : LGA1700&#10;Số nhân : 10"></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Mô tả chi tiết sản phẩm</label>
+                            <textarea id="description" rows="4" placeholder="Nhập bài viết mô tả sản phẩm vào đây..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Nhóm 2 nút: Lưu và Hủy Sửa -->
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="btn-add" id="btn-submit">LƯU SẢN PHẨM</button>
+                        <button type="button" id="btn-cancel" onclick="cancelEdit()" style="display: none; background: #8f9bba; color: white; border: none; padding: 14px 30px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 15px;">HỦY SỬA</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="admin-card">
+                <div class="card-title">📋 Danh Sách Sản Phẩm</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="70px">Hình</th>
+                            <th>Tên SP</th>
+                            <th>Giá Bán</th>
+                            <th>Thao Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="product-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- TAB 2: QUẢN LÝ ĐƠN HÀNG (Mặc định ẩn đi) -->
+        <!-- ============================================== -->
+        <div id="tab-orders" style="display: none;">
+            <div class="header-title">Quản Lý Đơn Hàng Khách Hàng</div>
+
+            <div class="admin-card">
+                <div class="card-title">📋 Lịch Sử Đặt Hàng Mới Nhất</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mã Đơn</th>
+                            <th>Khách Hàng</th>
+                            <th>Chi Tiết Món Hàng</th>
+                            <th>Tổng Tiền</th>
+                            <th>Trạng Thái</th>
+                            <th width="150px">Cập Nhật</th>
+                        </tr>
+                    </thead>
+                    <tbody id="order-table-body">
+                        <!-- JS đổ dữ liệu đơn hàng vào đây -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

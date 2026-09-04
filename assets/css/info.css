@@ -1,0 +1,404 @@
+/* =========================================
+   GIAO DIỆN CÁC TRANG THÔNG TIN (HIỆN ĐẠI & SANG TRỌNG)
+========================================= */
+/* --- Nền trang (Đã sửa lỗi Font chữ) --- */
+.pv-info-bg {
+    background-color: #f8f9fa; 
+    padding: 50px 15px; 
+    /* Đổi sang bộ font hệ thống hiện đại, hỗ trợ Tiếng Việt cực tốt */
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    min-height: 60vh;
+}
+
+.pv-info-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+
+
+/* --- Tiêu đề trang chính (Đã sửa lỗi gãy dấu) --- */
+.pv-info-title {
+    font-size: 28px; 
+    font-weight: 700; /* Hạ từ 800 xuống 700 (Đậm chuẩn) để không bị lỗi dấu Tiếng Việt */
+    color: #1a1a1a;
+    margin-bottom: 35px;
+    text-transform: uppercase;
+    border-left: 6px solid #1435c3; 
+    padding-left: 15px;
+    line-height: 1.2;
+    letter-spacing: 0.5px;
+}
+
+/* --- Khối trắng bo góc (Box Showroom, Liên hệ...) --- */
+.pv-box {
+    background: #fff;
+    border-radius: 12px;
+    /* Bo góc mềm mại */
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    /* Bóng đổ siêu mịn */
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.02);
+}
+
+/* Hiệu ứng nhấc khối lên khi trỏ chuột */
+.pv-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* --- Lưới Grid cơ bản --- */
+.pv-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+}
+
+.pv-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+}
+
+.pv-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+}
+
+/* --- Form nhập liệu (Liên hệ, Báo giá) --- */
+.pv-form-group {
+    margin-bottom: 18px;
+}
+
+.pv-input {
+    width: 100%;
+    padding: 14px 18px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    /* Bo góc cho form */
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s;
+    background: #fdfdfd;
+    box-sizing: border-box;
+}
+
+/* Hiệu ứng viền sáng khi click vào form */
+.pv-input:focus {
+    border-color: #1435c3;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(20, 53, 195, 0.1);
+}
+
+/* --- Nút bấm (Buttons) --- */
+.pv-btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #1435c3 0%, #0d2587 100%);
+    /* Màu chuyển sắc (Gradient) */
+    color: #fff !important;
+    border: none;
+    padding: 14px 30px;
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    width: 100%;
+    letter-spacing: 1px;
+    text-decoration: none;
+}
+
+.pv-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(20, 53, 195, 0.3);
+}
+
+.pv-btn-red {
+    background: linear-gradient(135deg, #d70018 0%, #a80012 100%);
+}
+
+.pv-btn-red:hover {
+    box-shadow: 0 5px 15px rgba(215, 0, 24, 0.3);
+}
+
+/* --- Thẻ Bài viết / Khuyến mãi (Cards) --- */
+.pv-card {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.pv-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.pv-card-img {
+    width: 100%;
+    height: 200px;
+    /* Thống nhất chiều cao ảnh */
+    object-fit: cover;
+    background: #eee;
+    transition: transform 0.5s ease;
+    /* Thời gian zoom */
+}
+
+/* Trỏ chuột vào thẻ -> Zoom nhẹ hình ảnh bên trong */
+.pv-card:hover .pv-card-img {
+    transform: scale(1.05);
+}
+
+.pv-card-body {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    position: relative;
+    z-index: 2;
+}
+
+.pv-card-date {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.pv-card-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 12px;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color 0.2s;
+}
+
+.pv-card:hover .pv-card-title {
+    color: #1435c3;
+}
+
+.pv-card-desc {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Link "Xem chi tiết" có hiệu ứng mũi tên đẩy nhẹ */
+.pv-card-link {
+    color: #1435c3;
+    font-weight: 700;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: gap 0.3s;
+}
+
+.pv-card:hover .pv-card-link {
+    gap: 10px;
+}
+
+/* --- Bản đồ Showroom --- */
+.pv-map-wrapper iframe {
+    width: 100%;
+    height: 280px;
+    border-radius: 8px;
+    border: none;
+    margin-top: 15px;
+    filter: contrast(0.95);
+}
+
+/* Tiện ích nhanh */
+.text-red {
+    color: #d70018;
+    font-weight: bold;
+}
+
+.text-blue {
+    color: #1435c3;
+}
+
+.mb-10 {
+    margin-bottom: 10px;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+
+
+/* =========================================================
+   NÂNG CẤP GIAO DIỆN PREMIUM CHO TRANG CHÍNH SÁCH / HƯỚNG DẪN
+========================================================= */
+
+/* 1. Dải Banner Tiêu đề (Hero Banner) */
+.pv-hero-banner {
+    background: linear-gradient(135deg, #0380e6 0%, #1435c3 100%);
+    padding: 50px 20px;
+    text-align: center;
+    border-radius: 16px;
+    margin-bottom: 40px;
+    color: white;
+    box-shadow: 0 15px 30px rgba(20, 53, 195, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+/* Họa tiết chấm bi in chìm làm nền */
+.pv-hero-banner::after {
+    content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 10%, transparent 10.01%);
+    background-size: 20px 20px; opacity: 0.5; pointer-events: none;
+}
+.pv-hero-banner h1 { 
+    font-size: 32px; font-weight: 800; margin: 0 0 10px 0; 
+    text-transform: uppercase; position: relative; z-index: 2; letter-spacing: 1px;
+}
+.pv-hero-banner p { 
+    font-size: 15px; opacity: 0.9; margin: 0; position: relative; z-index: 2; font-weight: 400;
+}
+
+/* 2. Thẻ Hướng dẫn từng bước (Step Card) */
+.pv-step-card {
+    position: relative;
+    padding: 30px 25px 25px 25px;
+    border-top: 4px solid #1435c3; /* Vạch màu trên đầu */
+    overflow: hidden;
+    z-index: 1;
+}
+/* Số in chìm khổng lồ */
+.pv-step-number {
+    position: absolute;
+    top: -10px; right: 10px;
+    font-size: 100px; font-weight: 900; 
+    color: rgba(20, 53, 195, 0.05); /* Màu xanh siêu mờ */
+    line-height: 1;
+    z-index: -1;
+}
+.pv-step-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 50px; height: 50px; 
+    background: rgba(20, 53, 195, 0.1); color: #1435c3;
+    border-radius: 12px; font-size: 24px; margin-bottom: 20px;
+}
+
+/* 3. Khung ghi chú nổi bật */
+.pv-note-box {
+    background: linear-gradient(to right, rgba(215, 0, 24, 0.05), transparent);
+    border-left: 4px solid #d70018;
+    padding: 20px;
+    border-radius: 0 8px 8px 0;
+    margin-top: 25px;
+}
+.pv-note-box.blue {
+    background: linear-gradient(to right, rgba(20, 53, 195, 0.05), transparent);
+    border-left-color: #1435c3;
+}
+
+/* --- Nút bấm (Buttons) --- */
+.pv-btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #1435c3 0%, #0d2587 100%);
+    color: #fff !important;
+    border: none;
+    padding: 12px 28px; /* Tinh chỉnh padding cho cân đối */
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    /* XÓA DÒNG width: 100%; ở đây */
+    letter-spacing: 1px;
+    text-decoration: none;
+}
+
+/* Thêm class hỗ trợ nếu muốn nút full-width (dùng cho form) */
+.pv-btn-full {
+    width: 100%;
+}
+
+/* --- Nút bấm viền (Outline Button) --- */
+.pv-btn-outline {
+    background: transparent !important;
+    color: #1435c3 !important; /* Đổi màu chữ thành xanh dương */
+    border: 2px solid #1435c3 !important;
+    border-radius: 30px;
+    width: auto;
+}
+
+/* Hiệu ứng khi di chuột vào nút */
+.pv-btn-outline:hover {
+    background: #1435c3 !important;
+    color: #fff !important; /* Đổi lại chữ trắng trên nền xanh */
+    box-shadow: 0 4px 12px rgba(20, 53, 195, 0.3);
+}
+
+/* Đáp ứng Mobile cho Banner */
+@media (max-width: 768px) {
+    .pv-hero-banner { padding: 40px 15px; border-radius: 12px; }
+    .pv-hero-banner h1 { font-size: 24px; }
+    .pv-step-number { font-size: 70px; top: 0; }
+}
+
+/* =========================================
+   THÍCH ỨNG THIẾT BỊ DI ĐỘNG (BẮT BUỘC)
+========================================= */
+/* Tablet */
+@media (max-width: 1024px) {
+    .pv-grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .pv-info-title {
+        font-size: 22px;
+        margin-bottom: 20px;
+    }
+
+    /* Ép tất cả các cột thành 1 cột dọc trên điện thoại */
+    .pv-grid-2,
+    .pv-grid-3,
+    .pv-grid-4 {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .pv-box {
+        padding: 20px;
+    }
+
+    .pv-map-wrapper iframe {
+        height: 220px;
+    }
+
+    .pv-card-img {
+        height: 180px;
+    }
+}

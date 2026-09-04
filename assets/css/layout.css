@@ -1,0 +1,1753 @@
+/* --- CONTAINER CHUNG --- */
+.container {
+    max-width: 1300px;
+    margin: 0 auto 50px auto;
+}
+
+/* --- LOGO --- */
+.logo {
+    display: flex;
+    width: 258px;
+    height: 50px;
+    cursor: pointer;
+}
+
+/* --- THANH TÌM KIẾM --- */
+.search-box {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    max-width: 530px;
+    margin: 0 20px;
+    position: relative;
+    /* Rất quan trọng để bảng kết quả bám sát thanh search */
+}
+
+.search-input {
+    height: 36px;
+    width: 100%;
+    padding: 10px 20px;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.search-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+
+
+/* ==========================================
+   CSS CHO BẢNG KẾT QUẢ TÌM KIẾM THẢ XUỐNG (ĐÃ TỐI ƯU)
+========================================== */
+.search-results {
+    display: none; /* Ẩn mặc định, chỉ hiện khi JS gọi */
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-top: none; /* Xóa viền trên để nối liền mạch với ô tìm kiếm */
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 9999;
+    margin-top: 2px;
+}
+
+/* ĐÂY LÀ CHÌA KHÓA: Ép hiển thị bảng bằng lệnh !important */
+.search-results.active {
+    display: block !important;
+}
+
+/* Hiệu ứng hover đổi màu nền cho từng sản phẩm (thẻ a) bên trong bảng */
+.search-results a:hover {
+    background-color: #f8fafc !important;
+}
+
+
+
+
+/* --- MENU HEADER --- */
+.header-menu {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    color: var(--white);
+    font-weight: 500;
+}
+
+.menu-item {
+    transition: color 0.3s;
+    /* Đã xóa 1 dòng font-weight bị lặp */
+}
+
+.menu-item:hover {
+    /* Đã sửa từ color sang opacity vì nền đang là màu xanh primary */
+    opacity: 0.8;
+}
+
+.menu-item a {
+    display: flex;
+    align-items: center;
+}
+
+.menu-item a img {
+    margin-right: 10px;
+}
+
+.cart-btn {
+    /* margin-left: 20px; [cite: 1] */
+    position: relative;
+    cursor: pointer;
+}
+
+/* 2. Căn chỉnh riêng thẻ bao bọc Giỏ Hàng */
+.cart-wrapper {
+    position: relative;
+    display: flex;
+    /* Dùng flex để đồng bộ chiều dọc */
+    align-items: center;
+    padding: 10px 0;
+}
+
+/* 3. Đặt relative cho thẻ a (chữ "Giỏ hàng") để chấm đỏ bám theo sát chữ */
+.cart-wrapper>a {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    padding-right: 12px;
+    /* Dành 1 chút không gian bên phải để nhét chấm đỏ */
+}
+
+.cart-wrapper a img {
+    margin-right: 10px;
+}
+
+/* 4. Thu nhỏ chấm đỏ số 4 */
+.cart-badge {
+    background-color: #d70018;
+    /* Màu đỏ */
+    color: white;
+    border-radius: 50%;
+    font-size: 10px;
+    /* Chữ nhỏ lại */
+    width: 16px;
+    /* Kích thước vòng tròn nhỏ lại */
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: -8px;
+    /* Kéo lên trên một chút */
+    right: -5px;
+    /* Đẩy sang phải */
+    font-weight: bold;
+}
+
+/* Bảng mini-cart ẩn đi mặc định */
+.mini-cart {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 320px;
+    background-color: #ffffff;
+    /* Nền trắng */
+    color: #000000;
+    /* Chữ đen */
+    border: 1px solid #ddd;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    transition: all 0.3s ease;
+    border-radius: 5px;
+    cursor: default;
+}
+
+/* Hiển thị bảng mini-cart khi trỏ chuột vào giỏ hàng */
+.cart-wrapper:hover .mini-cart {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Danh sách sản phẩm trong giỏ */
+.cart-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.cart-item img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    margin-right: 10px;
+    border: 1px solid #eee;
+}
+
+.cart-item-info {
+    flex-grow: 1;
+}
+
+.cart-item-name {
+    font-size: 13px;
+    font-weight: bold;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.cart-item-price {
+    color: red;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.cart-item-remove {
+    color: #999;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 5px;
+}
+
+.cart-item-remove:hover {
+    color: red;
+}
+
+.empty-cart {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}
+
+.cart-footer {
+    padding: 15px 10px;
+    background-color: #f9f9f9;
+    border-top: 1px solid #ddd;
+}
+
+.cart-total {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.cart-total .total-price {
+    color: red;
+}
+
+.checkout-btn {
+    display: block;
+    text-align: center;
+    background-color: #d70018;
+    /* Màu đỏ */
+    color: white !important;
+    padding: 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.checkout-btn:hover {
+    background-color: #bf0015;
+}
+
+/* ------ HEADER ------ */
+
+.header {
+    color: var(--white);
+    width: 100%;
+    font-weight: bold;
+    position: relative;
+    z-index: 9999 !important;
+}
+
+/* --- HEADER TOP --- */
+.header-top {
+    width: 100%;
+    background-color: #0380e6;
+    z-index: 101;
+    overflow: hidden;
+    position: relative;
+}
+
+.marquee-track {
+    display: flex;
+    /* BÍ QUYẾT 1: Vì mình dùng 3 ảnh, nên chiều dài track sẽ gấp 3 lần màn hình (300%) */
+    width: 300%;
+    animation: marquee-pause-scroll 4s ease-in-out infinite;
+}
+
+/* Tạm dừng khi chỉ chuột vào */
+.marquee-track:hover {
+    animation-play-state: paused;
+}
+
+.marquee-track a {
+    /* BÍ QUYẾT 2: Ép mỗi khung chứa ảnh chiếm đúng 1/3 của track (tương đương 100% màn hình) */
+    width: 33.333333%;
+    display: flex;
+    justify-content: center;
+    /* Căn tấm ảnh vào chính giữa màn hình */
+    flex-shrink: 0;
+}
+
+.marquee-track img {
+    width: 1300px;
+    height: 110px;
+    margin: 0;
+    object-fit: cover;
+}
+
+/* Kịch bản trượt thay vì dùng Pixel, ta dùng Phần trăm để không bao giờ bị lệch */
+@keyframes marquee-pause-scroll {
+
+    /* Đứng im ở ảnh 1 (chiếm 80% thời gian) */
+    0%,
+    80% {
+        transform: translateX(0);
+    }
+
+    /* Trượt sang ảnh 2 (dịch chuyển đúng 33.3333% chiều dài track = 1 màn hình) */
+    90%,
+    100% {
+        transform: translateX(-33.333333%);
+    }
+}
+
+/* --- HEADER MIDDLE --- */
+
+.header-middle {
+    background: linear-gradient(to bottom, #0380e6 0%, #1435c3 100%);
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+    width: 1300px;
+    padding: 10px;
+}
+
+.header-bg-middle {
+    background: linear-gradient(to bottom, #0380e6 0%, #1435c3 100%);
+    width: 100%;
+}
+
+.header-middle .menu-item a {
+    margin-right: 20px;
+}
+
+/* --- HEADER BOTTOM --- */
+
+.header-bottom {
+    background-color: var(--primary-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 1300px;
+    height: 70px;
+    margin: 0 auto;
+    top: 0;
+    /*[cite: 1] */
+    z-index: 100;
+    /*[cite: 1] */
+    /* Đã chuyển box-shadow từ .header lên đây để bao quát toàn dải */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    /*[cite: 1] */
+}
+
+.header-bg-bottom {
+    background: var(--primary-color);
+    width: 100%;
+}
+
+/* --- CẤU HÌNH STICKY HEADER (Header trượt) --- */
+.header-sticky {
+    position: fixed;
+    /* Cố định trên màn hình */
+    top: -100px;
+    /* Ẩn đi mặc định */
+    left: 0;
+    width: 100%;
+    background: linear-gradient(to bottom, #0380e6 0%, #1435c3 100%);
+    z-index: 9999;
+    transition: top 0.4s ease-in-out;
+    /* Hiệu ứng trượt xuống mượt mà */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    height: 70px;
+    /* Chiều cao mỏng hơn của sticky header */
+}
+
+/* Khi cuộn trang, JS sẽ thêm class này */
+.header-sticky.show {
+    top: 0;
+}
+
+/* Căn chỉnh nội dung sticky */
+.sticky-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* justify-content: space-between; */
+    width: 1300px;
+    margin: 0 auto;
+    padding: 0 0px;
+    /* Bỏ padding trên dưới để mỏng hơn */
+    height: 100%;
+}
+
+/* --- 1. ANIMATION THU NHỎ LOGO --- */
+.logo-sticky {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+#stickyLogo {
+    /* Đặt kích thước NHỎ ngay từ đầu cho logo trong sticky container */
+    height: 50px;
+    /* Chiều cao thu nhỏ */
+    width: auto;
+    margin: 0 20px 0 0;
+    object-fit: contain;
+
+    /* Trạng thái BAN ĐẦU để tạo animation 'hiện ra và thu nhỏ' */
+    opacity: 0;
+    transform: scale(1.5);
+    /* Bắt đầu bằng kích thước lớn hơn */
+
+    /* Animation mượt mà khi class 'show' được thêm */
+    transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+}
+
+/* Khi Header sticky hiện ra (có class .show), logo con sẽ thu nhỏ về kích thước thực */
+.header-sticky.show #stickyLogo {
+    opacity: 1;
+    transform: scale(1);
+    /* Thu nhỏ về 100% kích thước đặt trước (35px) */
+}
+
+/* --- 2. CẤU HÌNH DANH MỤC SẢN PHẨM (ẤN VÀO MỚI HIỆN) --- */
+.sticky-category {
+    position: relative;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.category-title {
+    padding: 6px 10px 6px 0;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 7px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0px;
+}
+
+.category-title:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+#categoryArrow::before {
+    content: "☰";
+    font-size: 16px;
+    margin: 0 10px;
+    display: inline-block;
+    /* Bắt buộc có dòng này thì hiệu ứng xoay mới hoạt động */
+    transition: transform 0.3s ease;
+}
+
+/* =========================================================
+       1. KHUNG TỔNG: SỔ XUỐNG MƯỢT MÀ KHI RÊ CHUỘT (HOVER)
+       ========================================================= */
+
+.sticky-category .mega-dropdown {
+    /* Dùng Flex mặc định nhưng giấu đi để có thể chạy hiệu ứng */
+    display: flex !important;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(20px);
+    /* Bắt đầu ở vị trí tụt xuống 20px */
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease !important;
+    /* Chuyển động mượt */
+    pointer-events: none;
+    /* Khóa tương tác chuột khi đang ẩn */
+
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    z-index: 10000 !important;
+    width: 1100px !important;
+    min-height: 420px !important;
+    padding-top: 5px;
+}
+
+/* KHI RÊ CHUỘT: Hiện lên và trượt khớp vào vị trí cũ */
+.sticky-category:hover .mega-dropdown {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+    /* Mở khóa tương tác */
+}
+
+/* ĐÃ FIX: Ép bảng menu phải tàng hình ngay lập tức khi thanh Header trượt bị giấu đi (cuộn lên trên) */
+.header-sticky:not(.show) .sticky-category .mega-dropdown {
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Hiệu ứng xoay Icon cực mượt khi hover */
+#categoryArrow::before {
+    transition: transform 0.3s ease, margin 0.3s ease;
+}
+
+.sticky-category:hover #categoryArrow::before {
+    content: "✕" !important;
+    margin: 0 10.65px 0 10.65px;
+    transform: rotate(90deg) !important;
+}
+
+
+/* 2. CỘT SIDEBAR BÊN TRÁI (Ảnh 1) */
+.mega-sidebar {
+    list-style: none;
+    width: 260px !important;
+    background: #ffffff !important;
+    border: 1px solid #eee !important;
+    border-radius: 7px !important;
+    padding: 10px 0 !important;
+    margin: 0 !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+    height: max-content !important;
+}
+
+.mega-item {
+    position: static !important;
+    /* Bắt buộc: Giúp bảng con bung ra theo khung tổng */
+}
+
+.mega-item>a {
+    padding: 10px 20px !important;
+    color: #333 !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    transition: all 0.2s ease !important;
+}
+
+/* HIỆU ỨNG RÊ CHUỘT CỘT TRÁI: Đổi nền xanh, chữ trắng giống ảnh 2 */
+.mega-item:hover>a {
+    background-color: #1435c3 !important;
+    /* Màu xanh đồng bộ header */
+    color: #ffffff !important;
+    /* Chữ trắng */
+    font-weight: bold !important;
+}
+
+.mega-item:hover .mega-arrow {
+    color: #ffffff !important;
+    /* Mũi tên cũng đổi màu trắng */
+}
+
+
+/* 3. BẢNG CHI TIẾT BÊN PHẢI (Ảnh 2) */
+.mega-content {
+    display: none !important; /* Mặc định ẩn, chỉ hiện khi rê chuột */
+    position: absolute !important;
+    top: 5px !important; /* ĐÃ FIX: Chỉnh tọa độ về 0 để mép trên nằm thẳng tắp với cột trái */
+    left: 260px !important; /* Nằm ngay sát vách cột trái */
+    width: 840px !important; /* Chiều rộng vừa mí phải thanh tìm kiếm */
+    height: 100% !important; /* Cao bằng tổng khung */
+    background: #ffffff !important;
+    padding: 20px 25px !important;
+    border: 1px solid #eee !important;
+    border-left: none !important;
+    border-radius: 7px !important;
+    box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.1) !important;
+    box-sizing: border-box !important;
+    overflow-y: auto !important; /* Hiện thanh cuộn nếu nội dung dài như ảnh 2 */
+}
+
+/* 4. CHÌA KHÓA: Rê chuột vào mục bên trái -> Bung bảng chi tiết bên phải */
+.mega-item:hover .mega-content {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    /* Chia 4 cột */
+    gap: 20px 15px !important;
+    align-content: start !important;
+}
+
+/* Làm đẹp chữ bên trong bảng con */
+.mega-col h4 {
+    font-size: 13px !important;
+    color: #1435c3 !important;
+    margin: 0 0 12px 0 !important;
+    text-transform: uppercase !important;
+}
+
+.mega-col a {
+    font-size: 13px !important;
+    padding: 5px 0 !important;
+    color: #333 !important;
+    display: block !important;
+}
+
+.mega-col a:hover {
+    color: #d70018 !important;
+    /* Chữ đỏ mũi tên nhích nhẹ khi rê chuột */
+    transform: translateX(5px) !important;
+}
+
+
+/* --- 1. ĐƯỜNG DẪN BREADCRUMB --- */
+.breadcrumb {
+    width: 1300px;
+    margin: 0 auto;
+    padding: 40px 0 0 0;
+    font-size: 14px;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+/* Trang chủ: Màu xanh, di chuột đổi màu xanh đậm */
+.breadcrumb a.bc-link {
+    color: #1435c3;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+.breadcrumb a.bc-link:hover {
+    color: #081d70; /* Xanh đậm hơn */
+}
+
+/* Thiết bị lưu trữ: Chữ đen, không in đậm */
+.breadcrumb a.bc-current {
+    color: #333333;
+    text-decoration: none;
+    font-weight: 400; /* 400 là font chữ bình thường, không in đậm */
+}
+
+
+/* --- FOOTER MỚI --- */
+.footer-wrapper {
+    background-color: var(--white);
+    /* Dùng nền trắng */
+    border-top: 5px solid var(--primary-color);
+    margin-top: auto;
+    /* Đẩy footer xuống đáy trang */
+}
+
+.container {
+    margin-bottom: 0;
+}
+
+/* Lưới 5 cột */
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    /* Chia đều 5 cột, mỗi cột chiếm 1 phần (1fr) */
+    margin-bottom: 20px;
+    /* Tạo khoảng trống với phần trải dài bên dưới */
+}
+
+.footer-col {
+    margin: 0 auto;
+}
+
+/* Tiêu đề của từng cột */
+.footer-col h4 {
+    color: var(--black);
+    font-size: 15px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.footer-col ul li span {
+    color: #198cf0;
+    transition: color 0.3s ease;
+}
+
+.footer-col ul li span:hover {
+    color: var(--primary-color);
+}
+
+/* Danh sách link trong cột */
+.footer-col ul {
+    list-style: none;
+    /* Bỏ dấu chấm tròn */
+}
+
+.footer-col ul li {
+    margin-bottom: 5px;
+    font-size: 13px;
+    color: var(--text-main);
+}
+
+.footer-col ul li a {
+    color: var(--text-main);
+    transition: color 0.3s ease;
+}
+
+.footer-col ul li a:hover {
+    color: var(--primary-color);
+    /* Đổi sang màu xanh khi di chuột */
+}
+
+.icon-text-group {
+    display: flex;
+    /* Bật chế độ Flexbox */
+    align-items: center;
+    /* ĐÂY LÀ CHÌA KHÓA: Căn giữa theo trục dọc */
+    gap: 8px;
+    /* Tạo khoảng cách giữa icon và chữ (không cần dùng margin) */
+}
+
+.icon-text-group img {
+    border-radius: 3px;
+}
+
+.footer-col ul li a span {
+    color: #198cf0;
+    transition: color 0.3s ease;
+}
+
+.footer-col ul li a span:hover {
+    color: var(--primary-color);
+}
+
+.divider {
+    border-top: 1px solid #e5e7eb;
+
+    /* Ép chiều rộng bằng đúng 100% màn hình */
+    width: 100vw;
+
+    /* Thủ thuật dịch chuyển để căn giữa màn hình tuyệt đối */
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.footer-payment {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 40px;
+    margin-top: 20px;
+}
+
+.payment-col {
+    margin-left: 64px;
+}
+
+.payment-col h4 {
+    color: var(--black);
+    font-weight: bold;
+}
+
+.payment-icons {
+    display: flex;
+    grid-template-columns: repeat(4, 1fr);
+    /* Nếu nhiều icon quá kích thước cột, tự động rớt xuống dòng */
+    gap: 15px;
+    /* Khoảng cách giữa các icon */
+    margin: 20px 0;
+}
+
+.payment-item {
+    display: flex;
+    flex-direction: column;
+    /* ĐÂY LÀ CHÌA KHÓA: Ép các phần tử bên trong xếp dọc */
+    align-items: center;
+    /* Căn giữa hình và chữ theo trục ngang */
+    text-align: center;
+    /* Đảm bảo chữ dài có rớt dòng thì vẫn nằm giữa */
+}
+
+.payment-icons img {
+    height: 35px;
+    /* Chỉ cần set chiều cao, chiều ngang tự động thu phóng theo */
+    width: auto;
+    object-fit: contain;
+    background-color: var(--white);
+    /* Nên có nền trắng nếu logo bị chìm */
+    padding: 5px;
+    transition: transform 0.3s ease;
+}
+
+.payment-icons img:hover {
+    transform: translateY(-3px);
+    /* Hiệu ứng nảy lên nhẹ khi chỉ chuột vào */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Áp dụng Flexbox để các icon tự động xếp nối tiếp nhau */
+.bank-icons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    /* Khoảng cách giữa các icon */
+    align-items: center;
+    /* Căn giữa icon theo chiều dọc */
+    margin: 10px 0;
+}
+
+/* Kích thước mặc định cho các icon ngân hàng/thanh toán */
+.bank-icons img {
+    height: 35px;
+    /* Chỉ cần set chiều cao, chiều ngang tự động thu phóng theo */
+    width: auto;
+    object-fit: contain;
+    background-color: var(--white);
+    /* Nên có nền trắng nếu logo bị chìm */
+    padding: 5px;
+    transition: transform 0.3s ease;
+}
+
+.bank-icons img:hover {
+    transform: translateY(-3px);
+    /* Hiệu ứng nảy lên nhẹ khi chỉ chuột vào */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* --- PHẦN NỘI DUNG TRẢI DÀI BÊN DƯỚI --- */
+.footer-bottom {
+    background: #e9edf2;
+    padding: 20px 0 20px 0;
+    text-align: center;
+    /* Căn giữa nội dung chữ */
+    font-size: 14px;
+    color: var(--text-main);
+    line-height: 1.6;
+    box-shadow: 0 0 0 100vmax #e9edf2;
+    clip-path: inset(0 -100vmax);
+}
+
+
+/* ==========================================
+   CSS CHO POPUP ĐĂNG NHẬP / ĐĂNG KÝ
+========================================== */
+/* ==========================================
+   CSS CHO NÚT TÀI KHOẢN (KIỂU PHONG VŨ)
+========================================== */
+/* ==========================================
+   1. CSS NÚT TÀI KHOẢN (PHONG VŨ) & MENU THẢ XUỐNG
+========================================== */
+.account-wrapper {
+    position: relative;
+    cursor: pointer;
+    padding: 10px 0;
+}
+
+.account-trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: white;
+}
+
+.account-text-wrap {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+    text-align: left;
+}
+
+.acc-small {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.acc-large {
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.account-dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    width: 220px;
+    padding: 15px;
+    border-radius: 4px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    z-index: 9999;
+    border: 1px solid #eee;
+}
+
+/* ==========================================
+   BỔ SUNG CSS BỊ THIẾU CỦA MENU TÀI KHOẢN
+========================================== */
+
+/* 1. HIỆN BẢNG THẢ XUỐNG KHI TRỎ CHUỘT (Đây là dòng quan trọng nhất) */
+.account-wrapper:hover .account-dropdown-menu {
+    display: block;
+}
+
+/* 2. Làm đẹp các link bên trong (Thông tin, Đơn hàng, Đăng xuất) */
+.user-menu-link {
+    display: block;
+    padding: 10px 10px;
+    color: #333 !important;
+    text-decoration: none;
+    border-bottom: 1px solid #eee;
+    font-weight: normal;
+}
+
+.user-menu-link:hover {
+    color: #1435c3 !important;
+    background-color: #f9f9f9;
+}
+
+.logout-text {
+    color: #d70018 !important;
+    font-weight: bold;
+}
+
+/* ==============================================================
+   TỐI ƯU HÓA RESPONSIVE (GIỮ NGUYÊN CODE MÀN HÌNH RỘNG)
+============================================================== */
+
+/* 1. MÀN HÌNH LAPTOP NHỎ (Dưới 1350px)
+   Do header-bottom và middle đang fix cứng 1300px, 
+   đoạn này giúp web không bị tràn thanh cuộn ngang khi dùng laptop nhỏ */
+@media (max-width: 1350px) {
+
+    .header-middle,
+    .header-bottom,
+    .sticky-content {
+        width: 100%;
+        padding: 0 20px;
+        box-sizing: border-box;
+    }
+}
+
+/* 2. MÀN HÌNH TABLET (Từ 769px đến 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+
+    /* Cho phép thanh menu chữ (Showroom, Liên hệ...) vuốt ngang như Shopee */
+    .header-middle {
+        justify-content: flex-start;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .header-middle::-webkit-scrollbar {
+        display: none;
+    }
+
+    .header-middle .header-menu {
+        min-width: max-content;
+        gap: 20px;
+    }
+
+    /* Bóp Mega Menu vừa với màn hình Tablet */
+    .sticky-category .mega-dropdown {
+        width: 100vw;
+        left: 0;
+    }
+
+    .mega-content {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* =========================================================
+   1. NÂNG CẤP MENU PC: TRỎ CHUỘT LÀ TRƯỢT XUỐNG MƯỢT MÀ
+   ========================================================= */
+@media (min-width: 769px) {
+    /* Ẩn bảng menu đi, chuẩn bị cho hiệu ứng trượt */
+    .sticky-category .mega-dropdown {
+        display: flex !important; 
+        visibility: hidden;
+        opacity: 0;
+        transform: translateY(15px); /* Tụt xuống một chút */
+        transition: all 0.3s ease !important; /* Hiệu ứng mượt */
+        pointer-events: none; /* Khóa khi bị ẩn */
+    }
+
+    /* Khi trỏ chuột vào Danh Mục -> Bảng trượt lên và rõ nét dần */
+    .sticky-category:hover .mega-dropdown {
+        visibility: visible;
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+
+    /* Xoay icon danh mục thành dấu X khi trỏ chuột */
+    .sticky-category:hover #categoryArrow::before {
+        content: "✕" !important;
+        margin: 0 10px;
+        transform: rotate(90deg) !important;
+    }
+
+    /* Trỏ chuột vào mục con bên trái (Linh kiện, Màn hình...) đổi nền xanh chữ trắng */
+    .mega-sidebar .mega-item:hover > a {
+        background-color: #1435c3 !important; 
+        color: #ffffff !important; 
+    }
+    .mega-sidebar .mega-item:hover .mega-arrow {
+        color: #ffffff !important;
+    }
+}
+
+/* =========================================================
+   2. SỬA LỖI DẢI MÀU XANH BỊ "CHẾT" TRÊN ĐIỆN THOẠI
+   ========================================================= */
+@media (max-width: 768px) {
+    /* Gỡ bỏ hoàn toàn hiệu ứng làm xanh nền bị lỗi trên Mobile */
+    .mega-sidebar .mega-item > a,
+    .mega-sidebar .mega-item:hover > a,
+    .mega-sidebar .mega-item:active > a {
+        background-color: #ffffff !important; /* Ép nền trắng 100% */
+        color: #1435c3 !important; /* Giữ chữ màu xanh */
+        font-size: 14px !important;
+        padding: 15px 20px !important;
+        border-bottom: 1px solid #f0f0f0 !important;
+    }
+
+    /* Khi chạm tay mở mục (Accordion) -> Chữ đổi màu Đỏ */
+    .mega-sidebar .mega-item.open > a {
+        color: #d70018 !important;
+        background-color: #fdfdfd !important;
+    }
+
+    /* Mũi tên đỏ và xoay xuống */
+    .mega-sidebar .mega-item.open .mega-arrow {
+        color: #d70018 !important;
+        transform: rotate(90deg) !important;
+    }
+
+    /* Thiết kế Hộp danh mục con bên trong */
+    .mega-content {
+        background-color: #f8f9fa !important;
+        padding: 15px 20px 20px 20px !important;
+        box-shadow: inset 0 3px 6px rgba(0,0,0,0.02) !important;
+    }
+
+    /* Tiêu đề cấp 2 (Chọn theo hãng, SSD...) */
+    .mega-col h4 {
+        font-size: 14px !important;
+        color: #333 !important;
+        margin: 15px 0 10px 0 !important;
+        border-bottom: 1px dashed #ddd !important;
+        padding-bottom: 8px !important;
+    }
+    .mega-col h4:first-child {
+        margin-top: 0 !important;
+    }
+
+    /* Link sản phẩm cấp 3 (Asus, MSI...) */
+    .mega-col a {
+        padding: 10px 10px 10px 15px !important;
+        font-size: 14px !important;
+        color: #555 !important;
+        border-left: 2px solid #ddd !important; /* Gạch thụt lề */
+        margin-bottom: 5px !important;
+    }
+    
+    /* Chạm vào link con sẽ nháy đỏ */
+    .mega-col a:active {
+        border-left-color: #d70018 !important;
+        color: #d70018 !important;
+        background: rgba(215,0,24,0.05) !important;
+    }
+}
+
+/* ==============================================================
+   ĐỒNG BỘ HIỂU ỨNG CHO HEADER-MIDDLE TRÊN MOBILE (Dưới 768px)
+============================================================== */
+@media (max-width: 480px) {
+
+    /* Ép khối middle vừa khít màn hình, không cho cuộn ngang nữa */
+    .header-middle {
+        padding: 10px 20px;
+        overflow-x: visible;
+    }
+
+    /* Trải đều 5 menu item ra toàn bộ chiều rộng */
+    .header-middle .header-menu {
+        width: 100%;
+        justify-content: space-between;
+        min-width: unset;
+        /* Xóa giới hạn độ rộng để tự co giãn */
+        gap: 0;
+    }
+
+    /* Ẩn chữ đi để tiết kiệm diện tích */
+    .header-middle .menu-item a {
+        font-size: 0;
+        margin-right: 0;
+        display: flex;
+        justify-content: center;
+    }
+
+    /* Tối ưu kích thước Icon */
+    .header-middle .menu-item a img {
+        margin-right: 0;
+        width: 26px;
+        /* Cùng kích thước với icon Giỏ hàng/Tài khoản ở dưới */
+        height: 26px;
+    }
+}
+
+/* ==============================================================
+   ĐÁP ỨNG THIẾT BỊ DI ĐỘNG (Dưới 768px) - FIX LỖI TÌM KIẾM & STICKY
+============================================================== */
+@media (max-width: 480px) {
+
+    /* 1. ÉP TẤT CẢ NẰM TRÊN 1 DÒNG (Không rớt dòng) */
+    .header-bottom,
+    .header-sticky .sticky-content {
+        flex-wrap: nowrap !important;
+        /* Ép cứng 1 dòng */
+        height: 60px !important;
+        /* Chiều cao cố định */
+        padding: 0 10px !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+    }
+
+    /* 2. THU NHỎ LOGO */
+    .header-bottom .logo {
+        width: 100px !important;
+        /* Giới hạn độ rộng logo */
+        margin: 0 !important;
+        flex-shrink: 0;
+        /* Không cho logo bị méo */
+    }
+
+    .header-bottom .logo img {
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+    }
+
+    /* Ẩn chữ "Danh mục" trên Sticky Header Mobile để nhường chỗ cho tìm kiếm */
+    .header-sticky .sticky-category {
+        display: none !important;
+    }
+
+    .header-sticky #stickyLogo {
+        height: 25px !important;
+        margin: 0 !important;
+        flex-shrink: 0;
+    }
+
+    /* 3. THANH TÌM KIẾM Ở VỊ TRÍ BAN ĐẦU (NẰM GIỮA) */
+    .header-bottom .search-box,
+    .header-sticky .search-box {
+        order: unset !important;
+        /* Hủy bỏ lệnh đẩy xuống dòng */
+        width: auto !important;
+        max-width: none !important;
+        flex: 1 !important;
+        /* Tự động co giãn chiếm khoảng trống ở giữa */
+        margin: 0 10px !important;
+        /* Khoảng cách 2 bên */
+    }
+
+    .search-input {
+        padding: 8px 10px !important;
+        font-size: 13px !important;
+        /* Chữ nhỏ lại */
+        height: 34px !important;
+    }
+
+    /* 4. CỤM ICON BÊN PHẢI */
+    .header-bottom .header-menu,
+    .header-sticky .header-menu {
+        order: unset !important;
+        gap: 12px !important;
+        /* Khoảng cách các icon sát lại */
+        margin: 0 !important;
+        flex-shrink: 0;
+    }
+
+    /* Ẩn chữ thừa, chỉ giữ Icon */
+    .header-bottom .menu-item a,
+    .header-bottom .cart-wrapper>a,
+    .header-sticky .menu-item a,
+    .header-sticky .cart-wrapper>a {
+        font-size: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        display: flex;
+        align-items: center;
+    }
+
+    .account-text-wrap {
+        display: none !important;
+    }
+
+    /* Tối ưu kích thước Icon cho Mobile */
+    .header-bottom .menu-item a img,
+    .header-bottom .cart-wrapper>a img,
+    .header-bottom .account-trigger svg,
+    .header-sticky .menu-item a img,
+    .header-sticky .cart-wrapper>a img,
+    .header-sticky .account-trigger svg {
+        width: 24px !important;
+        height: 24px !important;
+        margin: 0 !important;
+    }
+
+    /* Căn lại Chấm đỏ giỏ hàng */
+    .cart-badge {
+        top: -5px;
+        right: -5px;
+        width: 16px;
+        height: 16px;
+        font-size: 10px;
+    }
+
+    /* 5. FIX LỖI MENU 5 NÚT TRÊN CÙNG (HEADER-MIDDLE) */
+    .header-middle {
+        padding: 10px 10px;
+        overflow-x: visible;
+    }
+
+    .header-middle .header-menu {
+        width: 100%;
+        justify-content: space-between;
+        min-width: unset;
+        gap: 0;
+    }
+
+    .header-middle .menu-item a {
+        font-size: 0;
+        margin-right: 0;
+        display: flex;
+        justify-content: center;
+    }
+
+    .header-middle .menu-item a img {
+        margin-right: 0;
+        width: 24px;
+        height: 24px;
+    }
+
+    /* Sửa Banner cuộn */
+    .marquee-track img {
+        width: 100vw;
+        height: auto;
+        min-height: 40px;
+    }
+
+    /* FIX MEGA MENU CHO MOBILE */
+    .sticky-category.active .mega-dropdown {
+        flex-direction: column;
+        height: 70vh;
+        overflow-y: auto;
+    }
+
+    .mega-sidebar {
+        width: 100%;
+        border-right: none;
+    }
+
+    .mega-content {
+        position: static;
+        width: 100%;
+        padding: 15px;
+    }
+
+    .mega-item:hover .mega-content {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+
+    /* 1. Cho phép nút danh mục hiện lại trên Sticky Header Mobile */
+    .header-sticky {
+        display: flex;
+        align-items: center;
+    }
+
+    .header-sticky .sticky-category {
+        display: flex !important;
+        align-items: center;
+        flex-shrink: 0;
+        margin: 0 0 0 5px;
+    }
+
+    /* 2. Thu gọn nút: Ẩn chữ "Danh mục sản phẩm", chỉ giữ icon ☰ */
+    .header-sticky .category-title {
+        padding: 5px 8px !important;
+        font-size: 0 !important;
+        /* Ẩn chữ thừa */
+        background-color: rgba(255, 255, 255, 0.15);
+    }
+
+    /* 3. Chỉnh kích thước icon ☰ cho vừa mắt */
+    .header-sticky #categoryArrow::before {
+        font-size: 18px !important;
+        margin: 0 !important;
+        color: #ffffff;
+    }
+
+    /* 4. Tự động thu nhỏ thanh tìm kiếm ở giữa để không bị đè icon */
+    .header-sticky .search-box {
+        margin: 0 5px !important;
+    }
+}
+
+
+/* ==============================================================
+   FIX LỖI BẢNG MENU TRẮNG TINH (KHÔI PHỤC CHỮ BÊN TRONG BẢNG)
+============================================================== */
+@media (max-width: 768px) {
+
+    /* 1. KHÔI PHỤC LẠI CHỮ CHO MENU TÀI KHOẢN */
+    .header-bottom .account-dropdown-menu a,
+    .header-sticky .account-dropdown-menu a {
+        font-size: 14px !important;
+        /* Cho chữ hiện lại */
+        padding: 12px 15px !important;
+        /* Khôi phục độ rộng */
+        margin: 0 !important;
+        display: block !important;
+        text-align: left !important;
+        color: #333 !important;
+    }
+
+    /* 2. KHÔI PHỤC LẠI CHỮ CHO GIỎ HÀNG NHỎ */
+    .mini-cart a,
+    .mini-cart span,
+    .mini-cart div,
+    .mini-cart li {
+        font-size: 13px !important;
+    }
+
+    .mini-cart .checkout-btn {
+        font-size: 14px !important;
+        padding: 10px !important;
+        display: block !important;
+        margin: 10px 0 0 0 !important;
+        text-align: center !important;
+    }
+
+    /* 3. CĂN CHỈNH LẠI VỊ TRÍ BẢNG CHO NGAY NGẮN */
+    .account-dropdown-menu,
+    .mini-cart {
+        top: 45px !important;
+        /* Đẩy bảng xuống nằm ngay dưới icon */
+        right: 0 !important;
+        width: 220px !important;
+        /* Chiều rộng vừa phải */
+        padding: 5px 0 !important;
+        border: 1px solid #ddd !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+    }
+}
+
+/* ==============================================================
+   FIX LỖI BẢNG DANH MỤC TRẮNG TINH & GIAO DIỆN SỔ XUỐNG (ACCORDION)
+============================================================== */
+@media (max-width: 768px) {
+
+    /* 1. Ép bảng bung rộng ra, không bị co rúm */
+    .sticky-category.active .mega-dropdown {
+        width: 280px !important;
+        /* Đặt chiều rộng cố định an toàn */
+        max-width: 90vw !important;
+        left: 0 !important;
+        right: auto !important;
+        height: auto !important;
+        max-height: 80vh !important;
+        /* overflow-y: auto !important; */
+        display: block !important;
+        box-shadow: 2px 8px 15px rgba(0, 0, 0, 0.15) !important;
+        border-top: 1px solid #eee !important;
+        border-radius: 0 0 8px 0 !important;
+    }
+
+    .mega-sidebar {
+        width: 100% !important;
+        padding: 0 !important;
+        display: block !important;
+    }
+
+    .mega-item {
+        display: block !important;
+        width: 100% !important;
+    }
+
+    /* 2. CHÌA KHÓA: KHÔI PHỤC LẠI CHỮ BỊ MẤT CHO CÁC MỤC CHÍNH */
+    .mega-sidebar .mega-item>a {
+        font-size: 13px !important;
+        /* Bắt buộc hiện chữ lại */
+        color: #1435c3 !important;
+        /* Màu xanh đậm */
+        font-weight: bold !important;
+        padding: 12px 15px !important;
+        margin: 0 !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        border-bottom: 1px solid #f0f0f0 !important;
+        text-decoration: none !important;
+        line-height: 1.5 !important;
+    }
+
+    .mega-item:last-child>a {
+        border-bottom: none !important;
+    }
+
+    /* Mũi tên xoay khi ấn vào */
+    .mega-arrow {
+        font-size: 16px !important;
+        transition: transform 0.3s ease !important;
+    }
+
+    .mega-item.open .mega-arrow {
+        transform: rotate(90deg) !important;
+        color: #d70018 !important;
+    }
+
+    /* 3. KHÔI PHỤC VÀ STYLE CHO MENU CON (Khi sổ xuống) */
+    .mega-item:hover .mega-content {
+        display: none !important;
+    }
+
+    /* Tắt lướt mở mặc định trên PC */
+
+    .mega-content {
+        display: none !important;
+        /* Đóng mặc định */
+        position: static !important;
+        /* Để đẩy các mục dưới xuống */
+        width: 100% !important;
+        padding: 10px 15px !important;
+        background-color: #f8f9fa !important;
+        box-sizing: border-box !important;
+    }
+
+    .mega-item.open .mega-content {
+        display: block !important;
+    }
+
+    /* Khôi phục chữ cho menu con bên trong */
+    .mega-col h4 {
+        font-size: 13px !important;
+        /* Bắt buộc hiện chữ tiêu đề con */
+        color: #1435c3 !important;
+        margin: 15px 0 5px 0 !important;
+        text-transform: uppercase !important;
+        font-weight: bold !important;
+    }
+
+    .mega-col h4:first-child {
+        margin-top: 0 !important;
+    }
+
+    .mega-col a {
+        font-size: 13px !important;
+        /* Bắt buộc hiện chữ link con */
+        color: #333 !important;
+        padding: 8px 0 !important;
+        display: block !important;
+        text-decoration: none !important;
+    }
+}
+
+
+/* ==============================================================
+   BỐ CỤC FOOTER "KIM TỰ THÁP": 3 CỘT TRÊN, 2 CỘT DƯỚI CĂN GIỮA
+============================================================== */
+@media (max-width: 1024px) {
+
+    /* Đổi từ Grid sang Flexbox để rớt dòng thông minh */
+    .footer-grid {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        /* CHÌA KHÓA: Ép 2 cột rớt dòng nằm thẳng ra giữa */
+        gap: 40px 15px !important;
+    }
+
+    .footer-col {
+        /* Tính toán: Lấy 100% chia 3 (ép chính xác 3 cột 1 hàng) */
+        width: calc(33.333% - 15px) !important;
+        text-align: center !important;
+        /* Căn giữa toàn bộ chữ cho cân đối */
+    }
+
+    /* Đồng bộ căn giữa các dòng chữ và Icon (Facebook, Zalo...) */
+    .footer-col ul {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+
+    /* Trang trí Tiêu đề (Có gạch chân màu xanh nhấn nhá) */
+    .footer-col h4 {
+        border-bottom: 2px solid var(--primary-color) !important;
+        padding-bottom: 8px !important;
+        display: inline-block !important;
+        margin-bottom: 15px !important;
+    }
+
+    /* Căn giữa cụm Phương thức thanh toán & Ngân hàng */
+    .footer-payment {
+        grid-template-columns: 1fr !important;
+        gap: 30px !important;
+    }
+
+    .payment-col {
+        margin-left: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+
+    .payment-col h4 {
+        border-bottom: 2px solid var(--primary-color) !important;
+        padding-bottom: 8px !important;
+        display: inline-block !important;
+        margin-bottom: 15px !important;
+        text-align: center !important;
+    }
+
+    .payment-icons,
+    .bank-icons {
+        justify-content: center !important;
+        flex-wrap: wrap !important;
+    }
+}
+
+/* ==============================================================
+   GIAO DIỆN ĐIỆN THOẠI (DƯỚI 600PX): BỐ CỤC 2 CỘT 1 HÀNG
+============================================================== */
+@media (max-width: 600px) {
+    .footer-grid {
+        justify-content: space-between !important;
+        gap: 30px 15px !important;
+    }
+
+    /* 4 Cột đầu tiên sẽ xếp thành 2 cột mỗi hàng (Chiếm 50% màn hình) */
+    .footer-col {
+        width: calc(50% - 15px) !important;
+        text-align: left !important;
+        /* Ép chữ căn trái cho dễ đọc */
+    }
+
+    .footer-col ul {
+        align-items: flex-start !important;
+    }
+
+    .footer-col h4 {
+        margin-bottom: 10px !important;
+    }
+
+    /* Riêng cột số 5 cuối cùng (Email liên hệ) chiếm trọn 100% dòng cuối và Căn giữa */
+    .footer-col:last-child {
+        width: 100% !important;
+        text-align: center !important;
+        margin-top: 15px !important;
+    }
+
+    .footer-col:last-child ul {
+        align-items: center !important;
+    }
+}
+
+/* ========================================
+   BỔ SUNG TÍNH NĂNG THÍCH ỨNG (RESPONSIVE)
+   (PHIÊN BẢN GIỮ TRỌN VẸN NỘI DUNG - KHÔNG ẨN)
+=========================================== */
+
+/* 1. Màn hình Tablet (Dưới 1024px) */
+@media (max-width: 1024px) {
+
+    /* Đổi Header Middle thành thanh vuốt ngang thay vì ẩn đi */
+    .header-middle {
+        width: 100%;
+        justify-content: flex-start;
+        /* Canh lề trái để bắt đầu vuốt */
+        overflow-x: auto;
+        /* Cho phép lướt ngang */
+        -webkit-overflow-scrolling: touch;
+        /* Lướt mượt trên iPhone/iPad */
+        padding: 10px 15px;
+    }
+
+    /* Ẩn thanh cuộn (scrollbar) để giao diện sạch đẹp */
+    .header-middle::-webkit-scrollbar {
+        display: none;
+    }
+
+    .header-middle .header-menu {
+        min-width: max-content;
+        /* Ép tất cả mục nằm trên 1 hàng ngang duy nhất */
+        gap: 25px;
+        /* Khoảng cách giữa các mục */
+    }
+
+    .header-bottom,
+    .sticky-content {
+        width: 100%;
+        padding: 0 15px;
+    }
+
+    .search-box {
+        margin: 0 15px;
+    }
+}
+
+/* 2. Màn hình Điện thoại (Dưới 768px) */
+@media (max-width: 768px) {
+    .header-bottom {
+        flex-wrap: wrap;
+        /* Cho phép các thành phần rớt xuống dòng */
+        height: auto;
+        padding: 15px;
+        justify-content: space-between;
+        /* Đẩy Logo và Nút Menu ra 2 góc */
+    }
+
+    .logo {
+        width: 140px;
+        /* Thu nhỏ logo lại một chút */
+        height: auto;
+    }
+
+    .logo img {
+        width: 100%;
+        height: auto;
+    }
+
+    /* Đẩy thanh tìm kiếm xuống hàng thứ 2, chiếm trọn 100% chiều ngang */
+    .search-box {
+        order: 3;
+        width: 100%;
+        max-width: 100%;
+        margin: 15px 0 0 0;
+    }
+
+    /* THỦ THUẬT LÀM GỌN CÁC NÚT (Xếp Icon ở trên, Chữ ở dưới) */
+    .header-menu {
+        gap: 15px;
+    }
+
+    .menu-item a {
+        display: flex;
+        flex-direction: column;
+        /* Ép dọc */
+        align-items: center;
+        font-size: 11px;
+        /* Thu nhỏ chữ */
+        text-align: center;
+        gap: 5px;
+    }
+
+    .menu-item a img {
+        margin-right: 0;
+        /* Xóa margin cũ */
+        width: 22px;
+        /* Thu nhỏ Icon */
+        height: 22px;
+    }
+
+    /* Chỉnh tương tự cho Giỏ hàng và Tài khoản */
+    .cart-wrapper>a,
+    .account-trigger {
+        display: flex;
+        flex-direction: column;
+        /* Ép dọc */
+        align-items: center;
+        font-size: 11px;
+        gap: 5px;
+        padding-right: 0;
+    }
+
+    .cart-wrapper>a img,
+    .account-trigger svg {
+        margin-right: 0;
+        width: 22px;
+        height: 22px;
+    }
+
+    .account-text-wrap {
+        align-items: center;
+    }
+
+    /* Ẩn dòng chữ thừa "Đăng nhập/Đăng ký" trên điện thoại để tiết kiệm chỗ */
+    .acc-small {
+        display: none;
+    }
+
+    .acc-large {
+        font-size: 11px;
+        font-weight: normal;
+    }
+
+    /* Chỉnh lại vị trí số lượng giỏ hàng màu đỏ */
+    .cart-badge {
+        top: -8px;
+        right: 0px;
+    }
+
+    /* HEADER TRƯỢT (STICKY) CHO ĐIỆN THOẠI */
+    .header-sticky {
+        height: 60px;
+    }
+
+    #stickyLogo {
+        height: 30px;
+        margin: 0 10px 0 0;
+    }
+
+    .category-title {
+        font-size: 12px;
+    }
+
+    /* BIẾN DANH SÁCH SẢN PHẨM THÀNH DẠNG VUỐT NGANG GIỐNG SHOPEE */
+    .product-slider {
+        display: flex;
+        overflow-x: auto;
+        gap: 15px;
+        padding: 0 10px 15px 10px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .product-slider::-webkit-scrollbar {
+        display: none;
+    }
+
+    .product-card {
+        min-width: 170px;
+        /* Thu nhỏ card sản phẩm để nhét vừa màn hình đt */
+    }
+}
+
+

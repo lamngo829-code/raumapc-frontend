@@ -1,0 +1,48 @@
+/* --- RESET MẶC ĐỊNH --- */
+* {
+    margin: 0; /* */
+    padding: 0; /*[cite: 1] */
+    box-sizing: border-box; /*[cite: 1] */
+}
+
+/* Bổ sung thêm reset cho link và ảnh (Rất quan trọng) */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* --- BIẾN MÀU SẮC --- */
+:root {
+    --primary-color: #1435c3; /*[cite: 1] */
+    --primary-hover: #1d4ed8; /*[cite: 1] */
+    --dark-bg: #1e293b; /*[cite: 1] */
+    --light-bg: #f8fafc; /*[cite: 1] */
+    --text-main: #333333; /*[cite: 1] */
+    /* Thêm biến màu trắng để dùng chung */
+    --white: #ffffff;
+    --black: #000;
+}
+
+/* --- CẤU HÌNH BODY --- */
+body {
+    font-family: 'Roboto', sans-serif; /*[cite: 1] */
+    background-color: var(--light-bg); /*[cite: 1] */
+    line-height: 1.6; /*[cite: 1] */
+    /* Bổ sung màu chữ mặc định cho toàn web */
+    color: var(--text-main);
+}
+
+html, body {
+    max-width: 100%;
+    overflow-x: hidden; /* Lệnh "tử hình" thanh cuộn ngang */
+}
+
+.header {
+    overflow: visible; /* Cho phép các thành phần con thò ra ngoài */
+}
