@@ -14,7 +14,6 @@ window.parsePrice = function (priceString) {
     return parseInt(priceString.replace(/\./g, '').replace('đ', '')) || 0; 
 };
 
-// Đồng bộ giỏ hàng lên Database MongoDB khi có Thẻ Token
 window.syncCartToCloud = function () {
     var token = localStorage.getItem('authToken');
     if (!token) return; 
@@ -29,7 +28,6 @@ window.syncCartToCloud = function () {
     }).catch(err => console.log("Lỗi đồng bộ giỏ hàng nền"));
 };
 
-// Cập nhật hiển thị số lượng và danh sách giỏ hàng
 window.updateCartUI = function () {
     var currentCart = JSON.parse(localStorage.getItem('myCart')) || [];
     var totalQuantity = 0; 
@@ -63,7 +61,6 @@ window.updateCartUI = function () {
     document.querySelectorAll('.total-price').forEach(priceEl => priceEl.innerText = window.formatCurrency(totalPrice));
 };
 
-// Thêm sản phẩm vào giỏ
 window.addToCart = function (id, name, price, img) {
     var currentCart = JSON.parse(localStorage.getItem('myCart')) || [];
     var existingItem = currentCart.find(item => item.id === id);
@@ -78,7 +75,6 @@ window.addToCart = function (id, name, price, img) {
     window.updateCartUI();
     window.syncCartToCloud();
     
-    // Gọi bảng thông báo xịn thay cho lệnh alert mặc định
     if (typeof window.showGlobalAlert === 'function') {
         window.showGlobalAlert('Đã thêm sản phẩm vào giỏ hàng!', true);
     } else {
@@ -86,7 +82,6 @@ window.addToCart = function (id, name, price, img) {
     }
 };
 
-// Xóa sản phẩm khỏi giỏ
 window.removeFromCart = function (id) {
     var currentCart = JSON.parse(localStorage.getItem('myCart')) || [];
     currentCart = currentCart.filter(item => item.id !== id);
@@ -110,7 +105,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
-
 
 /* ==========================================================================
    PHẦN 2: HEADER TRƯỢT & MENU ĐIỀU HƯỚNG
@@ -150,7 +144,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
-
 
 /* ==========================================================================
    PHẦN 3: TÌM KIẾM SẢN PHẨM TRỰC TIẾP
@@ -206,7 +199,6 @@ document.addEventListener('DOMContentLoaded', function () {
                             let safeImg = `${basePath}assets/images/icons/logo.jpg`;
                             if (p.img && p.img.trim() !== '') {
                                 let imgPath = p.img.trim().replace(/"/g, '').replace(/\\/g, '/');
-                                // Nếu là ảnh Base64 (Kéo thả) thì giữ nguyên, không được nối thêm đường dẫn
                                 if (imgPath.startsWith('data:image')) {
                                     safeImg = imgPath;
                                 } else {
@@ -237,12 +229,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-
 /* ==========================================================================
    PHẦN 4: ĐĂNG NHẬP, ĐĂNG XUẤT & ĐỒNG BỘ GIAO DIỆN TÀI KHOẢN
    ========================================================================== */
 
-// Đăng nhập (Chấp nhận cả Username hoặc Email)
 let loginTimerInterval;
 
 window.handleLoginDedicated = function (event) {
@@ -264,7 +254,6 @@ window.handleLoginDedicated = function (event) {
         
         if (data.success) {
             if (data.requireOtp) {
-                // Đóng dấu Email và Mở bảng OTP
                 document.getElementById('login-otp-email-display').innerText = data.email;
                 document.getElementById('login-otp-email-hidden').value = data.email;
                 var otpBoxes = document.querySelectorAll('#login-otp-inputs .f-otp');
@@ -272,7 +261,6 @@ window.handleLoginDedicated = function (event) {
                 document.getElementById('login-otp-modal').style.display = 'flex';
                 if (otpBoxes.length > 0) otpBoxes[0].focus();
                 
-                // Đếm ngược
                 clearInterval(loginTimerInterval);
                 let timeLeft = 60;
                 let timerEl = document.getElementById('login-otp-timer');
@@ -290,7 +278,6 @@ window.handleLoginDedicated = function (event) {
                     }
                 }, 1000);
             } else {
-                // Admin Đăng nhập thẳng
                 processLoginSuccess(data.token, data.user);
             }
         } else { window.showGlobalAlert(data.message, false); }
@@ -347,17 +334,15 @@ window.closeLoginOtpModal = function(e) {
 
 window.resendLoginOtp = function(e) {
     e.preventDefault();
-    window.handleLoginDedicated(); // Tận dụng lại hàm cũ để gửi yêu cầu lần nữa
+    window.handleLoginDedicated(); 
 }
 
-// Đăng xuất
 window.handleLogout = function (e) {
     if (e) e.preventDefault();
     localStorage.removeItem('currentUser');
     localStorage.removeItem('authToken');
     localStorage.removeItem('myCart');
 
-    // Hàm xử lý UI hoặc chuyển trang sau khi khách bấm "Đồng ý"
     const finishLogout = () => {
         if (window.location.pathname.includes('/pages/')) {
             window.location.href = '../../index.html';
@@ -367,7 +352,6 @@ window.handleLogout = function (e) {
         }
     };
 
-    // Gọi bảng thông báo xịn thay cho lệnh alert
     if (typeof window.showGlobalAlert === 'function') {
         window.showGlobalAlert("Bạn đã đăng xuất thành công!", true, finishLogout);
     } else {
@@ -376,7 +360,6 @@ window.handleLogout = function (e) {
     }
 };
 
-// Hiển thị tên người dùng trên góc phải Header
 window.updateAccountUI = function () {
     var currentUser = null; 
     try { currentUser = JSON.parse(localStorage.getItem('currentUser')); } catch (e) { }
@@ -416,12 +399,10 @@ window.updateAccountUI = function () {
 };
 document.addEventListener('DOMContentLoaded', window.updateAccountUI);
 
-
 /* ==========================================================================
    PHẦN 5: ĐĂNG KÝ TÀI KHOẢN (OTP 6 Ô TỰ NHẢY & ĐẾM NGƯỢC 60S)
    ========================================================================== */
 
-// --- HỆ THỐNG XỬ LÝ 6 Ô OTP THÔNG MINH (CHỐNG LỖI UNIKEY/TELEX) ---
 document.addEventListener("DOMContentLoaded", function() {
     function setupSmartOTP(selector) {
         const otpInputs = document.querySelectorAll(selector);
@@ -431,27 +412,20 @@ document.addEventListener("DOMContentLoaded", function() {
             input.setAttribute('type', 'tel');
             input.setAttribute('autocomplete', 'one-time-code');
 
-            // --- BỔ SUNG ĐOẠN MÃ NÀY ĐỂ XỬ LÝ KHI PASTE ---
             input.addEventListener("paste", (e) => {
-                e.preventDefault(); // Ngăn trình duyệt tự động dán (giúp vượt qua maxlength="1")
-                
-                // Lấy dữ liệu từ clipboard
+                e.preventDefault(); 
                 let pasteData = (e.clipboardData || window.clipboardData).getData("text");
-                // Chỉ lọc lấy các con số
                 let numbers = pasteData.replace(/[^0-9]/g, '').split('');
                 
-                // Phân bổ từng số vào các ô tương ứng
                 numbers.forEach((num, i) => {
                     if (index + i < otpInputs.length) {
                         otpInputs[index + i].value = num;
                     }
                 });
                 
-                // Tự động nhảy con trỏ chuột tới ô cuối cùng được điền
                 let nextFocus = Math.min(index + numbers.length, otpInputs.length) - 1;
                 setTimeout(() => otpInputs[nextFocus].focus(), 10);
             });
-            // ----------------------------------------------
 
             input.addEventListener("input", (e) => {
                 let val = input.value.replace(/[^0-9]/g, ''); 
@@ -512,7 +486,6 @@ function startOtpCountdown() {
     }, 1000);
 }
 
-// Gửi thông tin đăng ký & Mở bảng OTP
 window.handleRegisterDedicated = function (e) {
     e.preventDefault();
     var name = document.getElementById('regName').value.trim();
@@ -550,7 +523,6 @@ window.handleRegisterDedicated = function (e) {
     });
 };
 
-// Gửi lại mã đăng ký
 window.resendRegisterOtp = function (e) {
     e.preventDefault();
     var user = document.getElementById('regUser').value.trim();
@@ -581,7 +553,6 @@ window.resendRegisterOtp = function (e) {
     });
 };
 
-// Xác nhận mã OTP để hoàn tất tạo tài khoản
 window.submitRegistration = function () {
     var name = document.getElementById('regName').value.trim();
     var user = document.getElementById('regUser').value.trim();
@@ -625,75 +596,9 @@ window.closeOtpModal = function (e) {
     clearInterval(otpCountdownInterval);
 };
 
-
 /* ==========================================================================
    PHẦN 6: QUÊN MẬT KHẨU (GIAO DIỆN OTP 6 Ô TẠI TRANG LOGIN)
    ========================================================================== */
-
-// --- HỆ THỐNG XỬ LÝ 6 Ô OTP THÔNG MINH (CHỐNG LỖI UNIKEY/TELEX) ---
-document.addEventListener("DOMContentLoaded", function() {
-    function setupSmartOTP(selector) {
-        const otpInputs = document.querySelectorAll(selector);
-        if (otpInputs.length === 0) return;
-
-        otpInputs.forEach((input, index) => {
-            input.setAttribute('type', 'tel');
-            input.setAttribute('autocomplete', 'one-time-code');
-
-            // --- BỔ SUNG ĐOẠN MÃ NÀY ĐỂ XỬ LÝ KHI PASTE ---
-            input.addEventListener("paste", (e) => {
-                e.preventDefault(); // Ngăn trình duyệt tự động dán (giúp vượt qua maxlength="1")
-                
-                // Lấy dữ liệu từ clipboard
-                let pasteData = (e.clipboardData || window.clipboardData).getData("text");
-                // Chỉ lọc lấy các con số
-                let numbers = pasteData.replace(/[^0-9]/g, '').split('');
-                
-                // Phân bổ từng số vào các ô tương ứng
-                numbers.forEach((num, i) => {
-                    if (index + i < otpInputs.length) {
-                        otpInputs[index + i].value = num;
-                    }
-                });
-                
-                // Tự động nhảy con trỏ chuột tới ô cuối cùng được điền
-                let nextFocus = Math.min(index + numbers.length, otpInputs.length) - 1;
-                setTimeout(() => otpInputs[nextFocus].focus(), 10);
-            });
-            // ----------------------------------------------
-
-            input.addEventListener("input", (e) => {
-                let val = input.value.replace(/[^0-9]/g, ''); 
-                
-                if (val.length > 1) {
-                    let chars = val.split('');
-                    chars.forEach((char, i) => {
-                        if (index + i < otpInputs.length) {
-                            otpInputs[index + i].value = char;
-                        }
-                    });
-                    input.value = chars[0]; 
-                    let nextFocus = Math.min(index + chars.length, otpInputs.length) - 1;
-                    setTimeout(() => otpInputs[nextFocus].focus(), 10);
-                } else {
-                    input.value = val;
-                    if (val !== '' && index < otpInputs.length - 1) {
-                        setTimeout(() => otpInputs[index + 1].focus(), 10);
-                    }
-                }
-            });
-
-            input.addEventListener("keydown", (e) => {
-                if (e.key === "Backspace" && input.value === '' && index > 0) {
-                    setTimeout(() => otpInputs[index - 1].focus(), 10);
-                }
-            });
-        });
-    }
-
-    setupSmartOTP("#otp-inputs .otp-box"); 
-    setupSmartOTP(".f-otp");               
-});
 
 let forgotCountdownInterval;
 
@@ -721,7 +626,6 @@ function startForgotCountdown() {
     }, 1000);
 }
 
-// Mở bảng Quên mật khẩu
 window.handleForgotPassword = function (e) {
     if (e) e.preventDefault();
     document.getElementById('forgot-modal').style.display = 'flex';
@@ -730,7 +634,6 @@ window.handleForgotPassword = function (e) {
     document.getElementById('forgot-email-input').value = '';
 };
 
-// Gửi yêu cầu nhận mã khôi phục
 window.requestForgotPassword = function () {
     var email = document.getElementById('forgot-email-input').value.trim();
     if (!email) return alert("Vui lòng nhập Email!");
@@ -762,7 +665,6 @@ window.requestForgotPassword = function () {
     });
 };
 
-// Gửi lại mã khi hết 60s
 window.resendForgotOtp = function (e) {
     e.preventDefault();
     var email = document.getElementById('forgot-email-input').value.trim();
@@ -789,7 +691,6 @@ window.resendForgotOtp = function (e) {
     });
 };
 
-// Đặt mật khẩu mới
 window.submitForgotPassword = function () {
     var email = document.getElementById('forgot-email-input').value.trim();
     var newPass = document.getElementById('forgot-new-pass').value.trim();
@@ -827,8 +728,6 @@ window.closeForgotModal = function (e) {
     document.getElementById('forgot-modal').style.display = 'none';
     clearInterval(forgotCountdownInterval);
 };
-
-
 
 /* ==========================================================================
    HỆ THỐNG BẢNG THÔNG BÁO TÙY CHỈNH TOÀN CỤC (GLOBAL ALERT)
@@ -870,7 +769,6 @@ window.showGlobalAlert = function(message, isSuccess = true, callback = null) {
     };
 };
 
-
 /* ==========================================================================
    HỆ THỐNG BẢNG XÁC NHẬN TÙY CHỈNH (GLOBAL CONFIRM)
    ========================================================================== */
@@ -900,45 +798,41 @@ window.showGlobalConfirm = function(message, onConfirm) {
     document.getElementById('gcc-message').innerText = message;
     modal.style.display = 'flex';
 
-    // Xử lý nút Hủy
     document.getElementById('gcc-btn-cancel').onclick = function() {
         modal.style.display = 'none';
     };
     
-    // Xử lý nút Đồng ý
     document.getElementById('gcc-btn-confirm').onclick = function() {
         modal.style.display = 'none';
         if(onConfirm) onConfirm();
     };
 };
 
-
 /* ==========================================================================
    PHẦN 8: CHUYỂN TRANG CHI TIẾT & MENU MOBILE
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', function () {
-    var productLinks = document.querySelectorAll('.product-img img, .product-name');
-    productLinks.forEach(function (link) {
-        link.style.cursor = 'pointer';
-        link.addEventListener('click', function (e) {
-            var aTag = this.closest('a');
-            if (aTag && !aTag.classList.contains('add-to-cart')) e.preventDefault();
+    var productCards = document.querySelectorAll('.product-card');
+    
+    productCards.forEach(function (card) {
+        card.style.cursor = 'pointer';
+        
+        card.addEventListener('click', function (e) {
+            if (e.target.classList.contains('add-to-cart')) return;
 
-            var card = this.closest('.product-card');
-            if (!card) return;
+            e.preventDefault();
 
-            var name = card.querySelector('.product-name').innerText;
-            var price = card.querySelector('.product-price').innerText;
-            var img = card.querySelector('.product-img img').src;
-            var numPrice = parseInt(price.replace(/[^0-9]/g, '')) || 0;
-            var oldPrice = new Intl.NumberFormat('vi-VN').format(numPrice * 1.1) + 'đ';
+            var btnAddCart = card.querySelector('.add-to-cart');
+            if (!btnAddCart) return;
 
-            var productData = { name: name, price: price, oldPrice: oldPrice, img: img };
-            localStorage.setItem('viewingProduct', JSON.stringify(productData));
+            var productId = btnAddCart.getAttribute('data-product-id');
+            if (!productId) return;
 
             var inPagesFolder = window.location.pathname.includes('/pages/');
-            window.location.href = inPagesFolder ? '../../pages/shop/product-detail.html' : 'pages/shop/product-detail.html';
+            var detailPath = inPagesFolder ? '../../pages/shop/product-detail.html' : 'pages/shop/product-detail.html';
+            
+            window.location.href = detailPath + '?id=' + productId;
         });
     });
 });
@@ -1009,82 +903,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-
-// --- HỆ THỐNG TỰ ĐỘNG RÚT GỌN URL THÔNG MINH (LOCAL & PRODUCTION) ---
-// Quy ước: /pages/shop/xxx.html -> /shop/xxx | /pages/info/xxx.html -> /info/xxx | /pages/account/xxx.html -> /account/xxx
-// (Khớp với rewrites trong vercel.json - KHÔNG cần sửa vercel.json khi thêm trang mới)
-document.addEventListener('DOMContentLoaded', () => {
-    let hostname = window.location.hostname;
-    let path = window.location.pathname;
-    let cleanPath = path;
-
-    // Hàm dùng chung: rút gọn 1 đường dẫn theo đúng quy ước tiền tố /shop /info /account
-    function shortenPath(p) {
-        return p
-            .replace(/\/pages\/shop\//g, '/shop/')
-            .replace(/\/pages\/info\//g, '/info/')
-            .replace(/\/pages\/account\//g, '/account/')
-            .replace(/\.html/g, '');
-    }
-
-    // 1. NẾU CHẠY LOCAL TÊN MÁY TÍNH (Live Server: 127.0.0.1 hoặc localhost)
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-        // Chỉ ẩn đuôi .html, giữ nguyên cấu trúc thư mục để code không bị lỗi 404
-        // (Live Server không hiểu rewrites - khuyên dùng `vercel dev` để test URL rút gọn thật)
-        if (path.endsWith('.html')) {
-            cleanPath = path.slice(0, -5);
-        }
-        // Làm sạch đuôi index
-        if (cleanPath.endsWith('/index')) {
-            cleanPath = cleanPath.replace('/index', '/');
-        }
-        
-        // Tiến hành thay đổi giao diện thanh địa chỉ (Local)
-        if (path !== cleanPath) {
-            let finalUrl = cleanPath + window.location.search;
-            window.history.replaceState(null, document.title, finalUrl);
-        }
-    } 
-    // 2. NẾU ĐÃ UP LÊN MẠNG (Tên miền thật trên Vercel/Hosting)
-    else {
-        // A. Đổi thư mục dài thành tiền tố ngắn trên thanh địa chỉ hiện tại
-        cleanPath = shortenPath(path);
-
-        if (cleanPath === '/index' || cleanPath === '') {
-            cleanPath = '/';
-        }
-
-        if (path !== cleanPath) {
-            let finalUrl = cleanPath + window.location.search;
-            window.history.replaceState(null, document.title, finalUrl);
-        }
-
-        // B. QUAN TRỌNG: Tự động "thay máu" toàn bộ thẻ <a> trên trang web
-        // Để khi khách bấm vào là đi thẳng đến link rút gọn, không bị nháy URL
-        document.querySelectorAll('a').forEach(link => {
-            let href = link.getAttribute('href');
-            
-            // Bỏ qua các link ngoài, link mail, sdt, thẻ neo
-            if (href && !href.startsWith('http') && !href.startsWith('mailto:') && !href.startsWith('tel:') && !href.startsWith('#')) {
-                let newHref = href.replace(/^(?:\.\.\/)+/, '/'); // Biến ../../ thành /
-                newHref = shortenPath(newHref);
-
-                // Đưa trang chủ về dạng root
-                if (newHref === '/index' || newHref === 'index') {
-                    newHref = '/';
-                }
-                
-                // Đảm bảo link luôn bắt đầu bằng dấu /
-                if (!newHref.startsWith('/')) {
-                    newHref = '/' + newHref;
-                }
-
-                link.setAttribute('href', newHref);
-            }
-        });
-    }
-});
-
 /* ==========================================================================
    PHẦN 9: TỰ ĐỘNG ĐĂNG XUẤT NẾU TÀI KHOẢN BỊ XÓA (KIỂM TRA NGẦM)
    ========================================================================== */
@@ -1096,7 +914,6 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(res => res.json())
         .then(data => {
-            // Nhận tín hiệu trục xuất từ Backend
             if (data.accountDeleted) {
                 localStorage.removeItem('currentUser');
                 localStorage.removeItem('authToken');

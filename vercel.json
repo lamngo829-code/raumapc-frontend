@@ -3,16 +3,16 @@
   "trailingSlash": false,
   "rewrites": [
     {
-      "source": "/shop/:path*",
-      "destination": "/pages/shop/:path*"
+      "source": "/shop/:match*",
+      "destination": "/pages/shop/:match*"
     },
     {
-      "source": "/info/:path*",
-      "destination": "/pages/info/:path*"
+      "source": "/info/:match*",
+      "destination": "/pages/info/:match*"
     },
     {
-      "source": "/account/:path*",
-      "destination": "/pages/account/:path*"
+      "source": "/account/:match*",
+      "destination": "/pages/account/:match*"
     }
   ]
 }
