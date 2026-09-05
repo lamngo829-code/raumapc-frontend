@@ -809,32 +809,34 @@ window.showGlobalConfirm = function(message, onConfirm) {
     };
 };
 
+
 /* ==========================================================================
    PHẦN 8: CHUYỂN TRANG CHI TIẾT & MENU MOBILE
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', function () {
-    var productCards = document.querySelectorAll('.product-card');
-    
-    // Hàm rút gọn chữ tiếng Việt thành Link SEO
+    // HÀM BIẾN TÊN SẢN PHẨM THÀNH LINK CHUẨN SEO
     function toSlug(str) {
         if (!str) return '';
         return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
     }
 
-    productCards.forEach(function (card) {
-        card.style.cursor = 'pointer';
-        card.addEventListener('click', function (e) {
-            if (e.target.classList.contains('add-to-cart')) return;
-            e.preventDefault();
+    var productLinks = document.querySelectorAll('.product-img img, .product-name');
+    productLinks.forEach(function (link) {
+        link.style.cursor = 'pointer';
+        link.addEventListener('click', function (e) {
+            var aTag = this.closest('a');
+            if (aTag && !aTag.classList.contains('add-to-cart')) e.preventDefault();
+
+            var card = this.closest('.product-card');
+            if (!card) return;
 
             var btnAddCart = card.querySelector('.add-to-cart');
-            if (!btnAddCart) return;
-
-            var productId = btnAddCart.getAttribute('data-product-id');
+            var productId = btnAddCart ? btnAddCart.getAttribute('data-product-id') : null;
             var productName = card.querySelector('.product-name').innerText;
-            var slug = toSlug(productName);
+            var slug = toSlug(productName); // Tạo link ngắn
 
+            // KIỂM TRA MÔI TRƯỜNG CHẠY WEB
             var isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
             
             if (isLocal) {
@@ -842,8 +844,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 var detailPath = inPagesFolder ? '../../pages/shop/product-detail.html' : 'pages/shop/product-detail.html';
                 window.location.href = detailPath + '?id=' + productId;
             } else {
-                // CHUYỂN HƯỚNG BẰNG LINK SIÊU NGẮN TRÊN VERCEL
-                window.location.href = '/' + slug;
+                // Nếu chạy trên Vercel, tự động gắn link chuẩn SEO siêu ngắn
+                window.location.href = '/sp/' + slug;
             }
         });
     });

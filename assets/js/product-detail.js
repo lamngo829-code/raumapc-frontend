@@ -10,30 +10,31 @@ function switchTab(tabName) {
 
 let currentProduct = null;
 
-// HÀM TẠO SLUG (Biến tên SP thành link chuẩn SEO)
+// HÀM TẠO SLUG
 function toSlug(str) {
     if (!str) return '';
     return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
 }
 
-// 2. TẢI DỮ LIỆU TỪ MÁY CHỦ
+// 2. TẢI DỮ LIỆU TỪ MÁY CHỦ (HỖ TRỢ ĐỒNG THỜI URL LOCAL VÀ URL VERCEL)
 document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
-    const urlId = urlParams.get('id'); // Nhận diện Local (chạy máy tính)
-    const urlSlug = urlParams.get('slug'); // Nhận diện Vercel (chạy web thật)
+    const urlId = urlParams.get('id');     // Bắt tham số khi chạy Local
+    const urlSlug = urlParams.get('slug'); // Bắt tham số khi chạy trên Vercel
 
     if (!urlId && !urlSlug) {
         document.getElementById('loading-screen').innerHTML = "Lỗi: Không tìm thấy sản phẩm!";
         return;
     }
 
-    // HÀM XUẤT GIAO DIỆN CHUNG
     function renderDetail(sp) {
         if (!sp) {
             document.getElementById('loading-screen').innerHTML = "Rất tiếc, sản phẩm này không tồn tại trong hệ thống!";
             return;
         }
         currentProduct = sp;
+        let realId = sp.productId || sp.id || sp._id;
+
         document.getElementById('detail-name').innerText = sp.name || "";
         document.getElementById('bread-name').innerText = sp.name || "";
         document.title = (sp.name || "Chi tiết sản phẩm") + " - Rau Má PC";
@@ -41,15 +42,15 @@ document.addEventListener('DOMContentLoaded', function () {
         let slug = toSlug(sp.name);
         let isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         
-        // Đóng đinh URL trên thanh địa chỉ thật gọn gàng
+        // Cố định thanh địa chỉ mượt mà không nháy
         if (isLocal) {
-            window.history.replaceState(null, '', '?id=' + (sp.productId || sp.id || sp._id));
+            window.history.replaceState(null, '', '?id=' + realId);
         } else {
-            window.history.replaceState(null, '', '/' + slug);
+            window.history.replaceState(null, '', '/sp/' + slug);
         }
 
         document.getElementById('detail-price').innerText = sp.price || "0đ";
-        document.getElementById('detail-id').innerText = (sp.productId || sp.id || sp._id || "").toUpperCase();
+        document.getElementById('detail-id').innerText = (realId || "").toUpperCase();
 
         let safeLink = sp.img ? sp.img.trim() : "";
         document.querySelector('.main-image').innerHTML = `<img src="${safeLink}" alt="${sp.name}" style="max-width: 100%; height: auto; max-height: 400px; object-fit: contain;" onerror="this.onerror=null; this.src='../../assets/images/icons/logo.jpg'">`;
@@ -77,6 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         currentSpec.value += '<br>' + line.trim();
                     }
                 });
+
                 let tableHTML = ''; let isEven = false;
                 parsedSpecs.forEach(spec => {
                     let bg = isEven ? '#f8f9fa' : '#ffffff';
@@ -96,13 +98,14 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // PHÂN NHÁNH XỬ LÝ (Khi chạy trên máy tính vs Khi chạy web thật)
+    // GỌI API THEO 2 LUỒNG CHUYÊN BIỆT
     if (urlId) {
         fetch('https://raumapc-backend.onrender.com/api/products/detail/' + encodeURIComponent(urlId) + '?v=' + new Date().getTime())
             .then(res => res.ok ? res.json() : null)
             .then(sp => renderDetail(sp))
             .catch(() => document.getElementById('loading-screen').innerHTML = "Lỗi kết nối máy chủ!");
     } else if (urlSlug) {
+        // Dò tìm sản phẩm qua Tên (Slug) khi chạy bằng Vercel
         fetch('https://raumapc-backend.onrender.com/api/products?v=' + new Date().getTime())
             .then(res => res.ok ? res.json() : null)
             .then(products => {
@@ -120,25 +123,22 @@ if (btnAddCart) {
     btnAddCart.addEventListener('click', function () {
         if (currentProduct) {
             let rawPrice = parseInt(String(currentProduct.price).replace(/\D/g, '')) || 0;
+            let realId = currentProduct.productId || currentProduct.id || currentProduct._id;
             
-            // Dùng hàm addToCart từ layout.js để đảm bảo xử lý nhất quán và chỉ gọi 1 Global Alert
             if (typeof window.addToCart === 'function') {
-                window.addToCart(currentProduct.id, currentProduct.name, rawPrice, currentProduct.img);
+                window.addToCart(realId, currentProduct.name, rawPrice, currentProduct.img);
             } else {
-                // Phương án dự phòng nếu layout.js chưa load kịp
                 var currentCart = JSON.parse(localStorage.getItem('myCart')) || [];
-                var existingItem = currentCart.find(item => item.id === currentProduct.id);
+                var existingItem = currentCart.find(item => item.id === realId);
                 if (existingItem) {
                     existingItem.quantity = parseInt(existingItem.quantity) + 1;
                 } else {
-                    currentCart.push({ id: currentProduct.id, name: currentProduct.name, price: rawPrice, img: currentProduct.img, quantity: 1 });
+                    currentCart.push({ id: realId, name: currentProduct.name, price: rawPrice, img: currentProduct.img, quantity: 1 });
                 }
-                
                 localStorage.setItem('myCart', JSON.stringify(currentCart));
                 
                 if(typeof window.updateCartUI === 'function') window.updateCartUI();
                 if(typeof window.syncCartToCloud === 'function') window.syncCartToCloud();
-                
                 alert('Đã thêm sản phẩm vào giỏ hàng!');
             }
         }
@@ -150,19 +150,16 @@ if (btnBuyNow) {
     btnBuyNow.addEventListener('click', function () {
         if (currentProduct) {
             let rawPrice = parseInt(String(currentProduct.price).replace(/\D/g, '')) || 0;
+            let realId = currentProduct.productId || currentProduct.id || currentProduct._id;
             
-            // Thêm trực tiếp vào mảng
             var currentCart = JSON.parse(localStorage.getItem('myCart')) || [];
-            var existingItem = currentCart.find(item => item.id === currentProduct.id);
+            var existingItem = currentCart.find(item => item.id === realId);
             if (existingItem) {
                 existingItem.quantity = parseInt(existingItem.quantity) + 1;
             } else {
-                currentCart.push({ id: currentProduct.id, name: currentProduct.name, price: rawPrice, img: currentProduct.img, quantity: 1 });
+                currentCart.push({ id: realId, name: currentProduct.name, price: rawPrice, img: currentProduct.img, quantity: 1 });
             }
-            
             localStorage.setItem('myCart', JSON.stringify(currentCart));
-            
-            // Chuyển thẳng sang trang Giỏ hàng mà không cần hiện thông báo
             window.location.href = 'cart.html';
         }
     });
@@ -172,7 +169,6 @@ if (btnBuyNow) {
 let uploadedReviewImage = "";
 
 function renderComments(commentsArray) {
-    // --- 1. TÍNH TOÁN VÀ CẬP NHẬT BẢNG THỐNG KÊ SAO ---
     if (commentsArray && commentsArray.length > 0) {
         let totalReviews = commentsArray.length;
         let totalStars = 0;
@@ -185,8 +181,6 @@ function renderComments(commentsArray) {
         });
         
         let avgScore = (totalStars / totalReviews).toFixed(1);
-        
-        // Cập nhật Cột Điểm Số
         const avgEl = document.getElementById('summary-avg-score');
         if (avgEl) avgEl.innerText = `${avgScore}/5`;
         
@@ -199,18 +193,15 @@ function renderComments(commentsArray) {
             starsEl.innerHTML = '<span style="color: #f59e0b;">' + '★'.repeat(roundedStars) + '</span><span style="color:#cbd5e1">' + '★'.repeat(5 - roundedStars) + '</span>';
         }
         
-        // Cập nhật Cột Thanh Sao
         for (let i = 1; i <= 5; i++) {
             let percentage = (starCounts[i] / totalReviews) * 100;
             let barEl = document.getElementById(`summary-bar-${i}`);
             let countEl = document.getElementById(`summary-count-${i}`);
-            
             if (barEl) barEl.style.width = `${percentage}%`;
             if (countEl) countEl.innerText = `${starCounts[i]} đánh giá`;
         }
     }
 
-    // --- 2. HIỂN THỊ DANH SÁCH BÌNH LUẬN ---
     const listEl = document.getElementById('comment-list');
     if (!commentsArray || commentsArray.length === 0) {
         listEl.innerHTML = '<div style="text-align: center; padding: 30px; color: #94a3b8; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">Sản phẩm chưa có đánh giá nào. Bạn hãy là người đầu tiên!</div>';
@@ -244,7 +235,6 @@ function renderComments(commentsArray) {
     listEl.innerHTML = html;
 }
 
-// Chuyển đổi và nén ảnh đính kèm
 const reviewFileInput = document.getElementById('review-file-input');
 if(reviewFileInput) {
     reviewFileInput.addEventListener('change', function(e) {
@@ -257,7 +247,7 @@ if(reviewFileInput) {
             const img = new Image();
             img.onload = function() {
                 const canvas = document.createElement('canvas');
-                const MAX_WIDTH = 600; // Nén kích thước để nhẹ Server
+                const MAX_WIDTH = 600; 
                 let width = img.width; let height = img.height;
                 if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
                 canvas.width = width; canvas.height = height;
@@ -309,7 +299,6 @@ stars.forEach(star => {
         const val = parseInt(this.getAttribute('data-val'));
         document.getElementById('star-selector').setAttribute('data-rating', val);
         if (starText) starText.innerText = texts[val];
-
         stars.forEach(s => {
             if (parseInt(s.getAttribute('data-val')) <= val) s.style.color = '#f59e0b';
             else s.style.color = '#e2e8f0';
@@ -318,7 +307,8 @@ stars.forEach(star => {
 });
 
 window.submitReview = function() {
-    if (!currentProduct || !currentProduct.id) return window.showGlobalAlert("Lỗi tải trang!", false);
+    let realId = currentProduct.productId || currentProduct.id || currentProduct._id;
+    if (!currentProduct || !realId) return window.showGlobalAlert("Lỗi tải trang!", false);
     
     const contentBox = document.getElementById('comment-input');
     const content = contentBox.value.trim();
@@ -336,14 +326,14 @@ window.submitReview = function() {
         if(user) userName = user.fullName; 
     } catch(e) {}
 
-    fetch(`https://raumapc-backend.onrender.com/api/products/${currentProduct.id}/comments`, {
+    fetch(`https://raumapc-backend.onrender.com/api/products/${realId}/comments`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userName: userName, content: content, rating: rating, img: uploadedReviewImage })
     }).then(res => res.json()).then(data => {
         btn.innerText = "GỬI ĐÁNH GIÁ"; btn.disabled = false;
         if (data.success) {
             contentBox.value = '';
-            uploadedReviewImage = ''; // Dọn ảnh sau khi gửi
+            uploadedReviewImage = ''; 
             document.getElementById('review-img-preview').style.display = 'none';
             document.getElementById('review-file-input').value = '';
             document.getElementById('star-selector').setAttribute('data-rating', 0);
