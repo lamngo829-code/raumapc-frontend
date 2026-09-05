@@ -3,19 +3,19 @@
   "trailingSlash": false,
   "rewrites": [
     {
-      "source": "/shop/(.*)",
-      "destination": "/pages/shop/$1"
+      "source": "/shop/:match*",
+      "destination": "/pages/shop/:match*"
     },
     {
-      "source": "/info/(.*)",
-      "destination": "/pages/info/$1"
+      "source": "/info/:match*",
+      "destination": "/pages/info/:match*"
     },
     {
-      "source": "/account/(.*)",
-      "destination": "/pages/account/$1"
+      "source": "/account/:match*",
+      "destination": "/pages/account/:match*"
     },
     {
-      "source": "/([a-zA-Z0-9-]+)",
+      "source": "/:slug([a-zA-Z0-9-]+)",
       "destination": "/pages/shop/product-detail.html"
     }
   ]
