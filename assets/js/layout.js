@@ -1016,3 +1016,33 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+/* ==========================================================================
+   PHẦN 9: TỰ ĐỘNG ĐĂNG XUẤT NẾU TÀI KHOẢN BỊ XÓA (KIỂM TRA NGẦM)
+   ========================================================================== */
+document.addEventListener('DOMContentLoaded', function() {
+    var token = localStorage.getItem('authToken');
+    if (token) {
+        fetch('https://raumapc-backend.onrender.com/api/auth/verify', {
+            headers: { 'Authorization': 'Bearer ' + token }
+        })
+        .then(res => res.json())
+        .then(data => {
+            // Nhận tín hiệu trục xuất từ Backend
+            if (data.accountDeleted) {
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('myCart');
+                
+                if (typeof window.showGlobalAlert === 'function') {
+                    window.showGlobalAlert("Tài khoản của bạn đã bị xóa khỏi hệ thống!", false, () => {
+                        window.location.href = '../../index.html';
+                    });
+                } else {
+                    alert("Tài khoản của bạn đã bị xóa khỏi hệ thống!");
+                    window.location.href = '../../index.html';
+                }
+            }
+        }).catch(err => console.log("Bỏ qua kiểm tra kết nối"));
+    }
+});
