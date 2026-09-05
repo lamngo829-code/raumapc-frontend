@@ -498,6 +498,37 @@
         </div>
     </div>
 
+    <!-- HỘP THOẠI XÁC THỰC OTP ĐĂNG NHẬP 6 Ô -->
+    <div id="login-otp-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(5px);">
+        <div style="background: #fff; padding: 40px 30px; border-radius: 16px; width: 420px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+            <div style="background: #e3f2fd; width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1435c3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            </div>
+
+            <h3 style="color: #1435c3; margin-bottom: 10px; font-size: 22px;">BẢO MẬT ĐĂNG NHẬP</h3>
+            <p style="font-size: 14px; color: #555; margin-bottom: 25px; line-height: 1.6;">Nhập mã bảo mật 6 số vừa được gửi tới <br><strong id="login-otp-email-display" style="color: #2b3674; font-size: 15px;"></strong></p>
+            <input type="hidden" id="login-otp-email-hidden">
+
+            <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 25px;" id="login-otp-inputs">
+                <input type="tel" class="f-otp" maxlength="1">
+                <input type="tel" class="f-otp" maxlength="1">
+                <input type="tel" class="f-otp" maxlength="1">
+                <input type="tel" class="f-otp" maxlength="1">
+                <input type="tel" class="f-otp" maxlength="1">
+                <input type="tel" class="f-otp" maxlength="1">
+            </div>
+
+            <button id="btn-verify-login-otp" onclick="window.submitLoginOtp()" style="width: 100%; background: #1435c3; color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; margin-bottom: 20px; transition: 0.3s; box-shadow: 0 4px 10px rgba(20, 53, 195, 0.2);">XÁC NHẬN VÀO WEB</button>
+
+            <div style="font-size: 14px; color: #666; background: #f8f9fa; padding: 12px; border-radius: 8px;">
+                <span id="login-otp-timer">Mã sẽ hết hạn sau: <strong style="color: #d70018; font-size: 16px;">60s</strong></span>
+                <a href="#" id="btn-resend-login-otp" onclick="window.resendLoginOtp(event)" style="display: none; color: #1435c3; font-weight: bold; text-decoration: none;">🔄 Gửi lại mã mới</a>
+            </div>
+
+            <a href="#" onclick="window.closeLoginOtpModal(event)" style="display: inline-block; margin-top: 20px; font-size: 14px; color: #888; text-decoration: none; transition: 0.2s;">Hủy bỏ đăng nhập</a>
+        </div>
+    </div>
+
     <!-- BỌC NGOÀI FOOTER (Trải dài 100% màn hình) -->
     <div class="footer-wrapper">
         <!-- Dùng class container để giới hạn chiều rộng 1250px và căn giữa -->

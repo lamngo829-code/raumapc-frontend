@@ -243,6 +243,8 @@ document.addEventListener('DOMContentLoaded', function () {
    ========================================================================== */
 
 // Đăng nhập (Chấp nhận cả Username hoặc Email)
+let loginTimerInterval;
+
 window.handleLoginDedicated = function (event) {
     if (event) event.preventDefault();
     var usernameInput = document.getElementById('loginUser').value.trim();
@@ -251,39 +253,101 @@ window.handleLoginDedicated = function (event) {
     if (!usernameInput || !passwordInput) return window.showGlobalAlert("Vui lòng nhập đầy đủ tên tài khoản và mật khẩu!", false);
 
     var btn = document.querySelector('.btn-auth-primary');
-    if (btn) btn.innerText = "ĐANG XỬ LÝ...";
+    if (btn) { btn.innerText = "ĐANG KIỂM TRA..."; btn.disabled = true; }
 
     fetch('https://raumapc-backend.onrender.com/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: usernameInput, password: passwordInput })
     }).then(res => res.json()).then(data => {
+        if (btn) { btn.innerText = "ĐĂNG NHẬP"; btn.disabled = false; }
+        
         if (data.success) {
-            localStorage.setItem('authToken', data.token);
-            localStorage.setItem('currentUser', JSON.stringify(data.user));
+            if (data.requireOtp) {
+                // Đóng dấu Email và Mở bảng OTP
+                document.getElementById('login-otp-email-display').innerText = data.email;
+                document.getElementById('login-otp-email-hidden').value = data.email;
+                var otpBoxes = document.querySelectorAll('#login-otp-inputs .f-otp');
+                otpBoxes.forEach(input => input.value = '');
+                document.getElementById('login-otp-modal').style.display = 'flex';
+                if (otpBoxes.length > 0) otpBoxes[0].focus();
+                
+                // Đếm ngược
+                clearInterval(loginTimerInterval);
+                let timeLeft = 60;
+                let timerEl = document.getElementById('login-otp-timer');
+                let resendBtn = document.getElementById('btn-resend-login-otp');
+                if (timerEl) { timerEl.style.display = 'inline'; timerEl.innerHTML = `Mã sẽ hết hạn sau: <strong style="color: #d70018; font-size: 16px;">${timeLeft}s</strong>`; }
+                if (resendBtn) resendBtn.style.display = 'none';
 
-            var localCart = JSON.parse(localStorage.getItem('myCart')) || [];
-            if (localCart.length > 0 && typeof window.syncCartToCloud === 'function') window.syncCartToCloud();
-            else if (data.user.cart && data.user.cart.length > 0) localStorage.setItem('myCart', JSON.stringify(data.user.cart));
-            else localStorage.removeItem('myCart');
-
-            if (data.user.role === 'admin') {
-                window.showGlobalAlert("Xin chào Quản trị viên! Đang chuyển vào khu vực Admin...", true, () => {
-                    window.location.href = '../../admin/admin.html';
-                });
+                loginTimerInterval = setInterval(() => {
+                    timeLeft--;
+                    if (timerEl) timerEl.innerHTML = `Mã sẽ hết hạn sau: <strong style="color: #d70018; font-size: 16px;">${timeLeft}s</strong>`;
+                    if (timeLeft <= 0) {
+                        clearInterval(loginTimerInterval);
+                        if (timerEl) timerEl.style.display = 'none';
+                        if (resendBtn) resendBtn.style.display = 'inline';
+                    }
+                }, 1000);
             } else {
-                window.showGlobalAlert("Đăng nhập thành công!", true, () => {
-                    window.location.href = '../../index.html';
-                });
+                // Admin Đăng nhập thẳng
+                processLoginSuccess(data.token, data.user);
             }
-        } else {
-            window.showGlobalAlert(data.message, false);
-            if (btn) btn.innerText = "ĐĂNG NHẬP";
-        }
+        } else { window.showGlobalAlert(data.message, false); }
     }).catch(err => {
         window.showGlobalAlert("Lỗi kết nối máy chủ!", false);
-        if (btn) btn.innerText = "ĐĂNG NHẬP";
+        if (btn) { btn.innerText = "ĐĂNG NHẬP"; btn.disabled = false; }
     });
+};
+
+window.submitLoginOtp = function () {
+    var email = document.getElementById('login-otp-email-hidden').value;
+    var otpInputs = document.querySelectorAll('#login-otp-inputs .f-otp');
+    var otp = Array.from(otpInputs).map(input => input.value).join('');
+
+    if (!otp || otp.length !== 6) return window.showGlobalAlert("Vui lòng điền đầy đủ 6 số OTP!", false);
+
+    var btnVerify = document.getElementById('btn-verify-login-otp');
+    btnVerify.innerText = "ĐANG XÁC NHẬN..."; btnVerify.disabled = true;
+
+    fetch('https://raumapc-backend.onrender.com/api/login-verify', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, otp: otp })
+    }).then(res => res.json()).then(data => {
+        btnVerify.innerText = "XÁC NHẬN VÀO WEB"; btnVerify.disabled = false;
+        if (data.success) { processLoginSuccess(data.token, data.user); } 
+        else { window.showGlobalAlert(data.message, false); }
+    }).catch(err => {
+        window.showGlobalAlert("Lỗi kết nối máy chủ!", false);
+        btnVerify.innerText = "XÁC NHẬN VÀO WEB"; btnVerify.disabled = false;
+    });
+};
+
+function processLoginSuccess(token, user) {
+    localStorage.setItem('authToken', token);
+    localStorage.setItem('currentUser', JSON.stringify(user));
+
+    var localCart = JSON.parse(localStorage.getItem('myCart')) || [];
+    if (localCart.length > 0 && typeof window.syncCartToCloud === 'function') window.syncCartToCloud();
+    else if (user.cart && user.cart.length > 0) localStorage.setItem('myCart', JSON.stringify(user.cart));
+    else localStorage.removeItem('myCart');
+
+    if (user.role === 'admin') {
+        window.showGlobalAlert("Xin chào Quản trị viên! Đang chuyển vào khu vực Admin...", true, () => window.location.href = '../../admin/admin.html');
+    } else {
+        window.showGlobalAlert("Đăng nhập thành công!", true, () => window.location.href = '../../index.html');
+    }
+}
+
+window.closeLoginOtpModal = function(e) {
+    if(e) e.preventDefault();
+    document.getElementById('login-otp-modal').style.display = 'none';
+    clearInterval(loginTimerInterval);
+};
+
+window.resendLoginOtp = function(e) {
+    e.preventDefault();
+    window.handleLoginDedicated(); // Tận dụng lại hàm cũ để gửi yêu cầu lần nữa
 };
 
 // Đăng xuất
