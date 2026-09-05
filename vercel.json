@@ -16,7 +16,7 @@
     },
     {
       "source": "/:slug([a-zA-Z0-9-]+)",
-      "destination": "/pages/shop/product-detail.html"
+      "destination": "/pages/shop/product-detail"
     }
   ]
 }
