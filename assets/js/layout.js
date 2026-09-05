@@ -813,7 +813,6 @@ window.showGlobalConfirm = function(message, onConfirm) {
 /* ==========================================================================
    PHẦN 8: CHUYỂN TRANG CHI TIẾT & MENU MOBILE
    ========================================================================== */
-
 document.addEventListener('DOMContentLoaded', function () {
     // HÀM BIẾN TÊN SẢN PHẨM THÀNH LINK CHUẨN SEO
     function toSlug(str) {
@@ -834,9 +833,8 @@ document.addEventListener('DOMContentLoaded', function () {
             var btnAddCart = card.querySelector('.add-to-cart');
             var productId = btnAddCart ? btnAddCart.getAttribute('data-product-id') : null;
             var productName = card.querySelector('.product-name').innerText;
-            var slug = toSlug(productName); // Tạo link ngắn
+            var slug = toSlug(productName);
 
-            // KIỂM TRA MÔI TRƯỜNG CHẠY WEB
             var isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
             
             if (isLocal) {
@@ -844,8 +842,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 var detailPath = inPagesFolder ? '../../pages/shop/product-detail.html' : 'pages/shop/product-detail.html';
                 window.location.href = detailPath + '?id=' + productId;
             } else {
-                // Nếu chạy trên Vercel, tự động gắn link chuẩn SEO siêu ngắn
-                window.location.href = '/sp/' + slug;
+                // CHUYỂN HƯỚNG THEO LINK GỐC (Bỏ chữ sp đi)
+                window.location.href = '/' + slug;
             }
         });
     });

@@ -15,8 +15,8 @@
       "destination": "/pages/account/:match*"
     },
     {
-      "source": "/sp/:slug",
-      "destination": "/pages/shop/product-detail?slug=:slug"
+      "source": "/:slug",
+      "destination": "/pages/shop/product-detail.html?slug=$1"
     }
   ]
 }

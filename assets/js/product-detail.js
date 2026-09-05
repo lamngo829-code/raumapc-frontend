@@ -10,17 +10,25 @@ function switchTab(tabName) {
 
 let currentProduct = null;
 
-// HÀM TẠO SLUG
+// HÀM TẠO SLUG (Biến tên SP thành link chuẩn SEO)
 function toSlug(str) {
     if (!str) return '';
     return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
 }
 
-// 2. TẢI DỮ LIỆU TỪ MÁY CHỦ (HỖ TRỢ ĐỒNG THỜI URL LOCAL VÀ URL VERCEL)
+// 2. TẢI DỮ LIỆU TỪ MÁY CHỦ
 document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
-    const urlId = urlParams.get('id');     // Bắt tham số khi chạy Local
-    const urlSlug = urlParams.get('slug'); // Bắt tham số khi chạy trên Vercel
+    let urlId = urlParams.get('id');     // Nhận diện khi chạy Local máy tính
+    let urlSlug = urlParams.get('slug'); // Bắt tham số từ Vercel
+
+    // Cứu cánh: Đọc trực tiếp URL siêu ngắn từ thanh địa chỉ (Trường hợp F5)
+    let pathname = window.location.pathname;
+    // Bỏ qua các trang tĩnh
+    if (!urlSlug && !urlId && pathname !== '/' && !pathname.includes('.')) {
+        urlSlug = pathname.substring(1); // Lấy phần sau dấu /
+        if (urlSlug.endsWith('/')) urlSlug = urlSlug.slice(0, -1);
+    }
 
     if (!urlId && !urlSlug) {
         document.getElementById('loading-screen').innerHTML = "Lỗi: Không tìm thấy sản phẩm!";
@@ -42,11 +50,11 @@ document.addEventListener('DOMContentLoaded', function () {
         let slug = toSlug(sp.name);
         let isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         
-        // Cố định thanh địa chỉ mượt mà không nháy
+        // Đóng đinh URL trên thanh địa chỉ KHÔNG CÓ CHỮ /sp/
         if (isLocal) {
             window.history.replaceState(null, '', '?id=' + realId);
         } else {
-            window.history.replaceState(null, '', '/sp/' + slug);
+            window.history.replaceState(null, '', '/' + slug);
         }
 
         document.getElementById('detail-price').innerText = sp.price || "0đ";
