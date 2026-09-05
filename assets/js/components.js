@@ -68,3 +68,5 @@ const addToCart = (id, name, price, img) => {
 };
 
 
+
+

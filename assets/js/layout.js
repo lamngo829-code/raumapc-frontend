@@ -348,7 +348,7 @@ window.closeLoginOtpModal = function(e) {
 window.resendLoginOtp = function(e) {
     e.preventDefault();
     window.handleLoginDedicated(); // Tận dụng lại hàm cũ để gửi yêu cầu lần nữa
-};
+}
 
 // Đăng xuất
 window.handleLogout = function (e) {

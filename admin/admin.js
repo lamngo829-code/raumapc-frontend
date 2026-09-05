@@ -63,7 +63,7 @@ function loadProducts() {
             tbody.innerHTML += `
                         <tr>
                             <td><img src="${sp.img}" style="width:45px; height:45px; border-radius:6px; object-fit:cover;"></td>
-                            <td style="font-weight:bold; color:#2b3674;">${sp.name}</td>
+                            <td style="font-weight:bold; color:#2b3674;">${sp.name}<br><span style="font-size:12px; color:#888; font-weight:normal;">Mã SP: <span style="color:#d70018;">${sp.productId || sp.id.slice(-6).toUpperCase()}</span></span></td>
                             <td style="color:#d70018; font-weight:bold;">${sp.price}</td>
                             <td>
                                 <button onclick="editProduct('${sp.id}')" style="background:#e3f2fd; color:#1976d2; border:none; padding:5px 12px; border-radius:5px; cursor:pointer; font-weight:bold; margin-right:5px;">Sửa</button>
@@ -80,6 +80,7 @@ function editProduct(id) {
     if (!sp) return;
 
     if (document.getElementById('edit-id')) document.getElementById('edit-id').value = sp.id;
+    if (document.getElementById('productId')) document.getElementById('productId').value = sp.productId || ''; // MỚI THÊM
     if (document.getElementById('name')) document.getElementById('name').value = sp.name || '';
     if (document.getElementById('price')) document.getElementById('price').value = sp.price || '';
     if (document.getElementById('warranty')) document.getElementById('warranty').value = sp.warranty || '36 Tháng';
@@ -131,6 +132,7 @@ function editProduct(id) {
 function cancelEdit() {
     if (document.getElementById('productForm')) document.getElementById('productForm').reset();
     if (document.getElementById('edit-id')) document.getElementById('edit-id').value = '';
+    if (document.getElementById('productId')) document.getElementById('productId').value = ''; // MỚI THÊM
     
     // Dọn dẹp lại 3 ô danh mục an toàn
     if (document.getElementById('category1')) document.getElementById('category1').value = '';
@@ -150,7 +152,7 @@ function cancelEdit() {
     if (typeof resetImageUploader === 'function') resetImageUploader();
 }
 
-// ĐÃ FIX TOÀN DIỆN HÀM LƯU: Dùng Bảng thông báo tùy chỉnh thay cho Alert
+
 // ĐÃ FIX TOÀN DIỆN HÀM LƯU: Bọc thép chống lỗi null và gộp 3 danh mục
 document.getElementById('productForm').addEventListener('submit', function (e) {
     e.preventDefault();
@@ -177,11 +179,12 @@ document.getElementById('productForm').addEventListener('submit', function (e) {
 
     // 2. Gom dữ liệu sản phẩm an toàn (Chống lỗi null)
     const sp = {
+        productId: document.getElementById('productId') ? document.getElementById('productId').value : '',
         name: document.getElementById('name') ? document.getElementById('name').value : '',
         price: document.getElementById('price') ? document.getElementById('price').value : '',
         img: document.getElementById('img') ? document.getElementById('img').value : '',
         warranty: document.getElementById('warranty') ? document.getElementById('warranty').value : '36 Tháng',
-        category: combinedCategory, // Đưa chuỗi danh mục đã gộp vào đây
+        category: combinedCategory,
         brand: brandValue, 
         specs: document.getElementById('specs') ? document.getElementById('specs').value : '',
         description: document.getElementById('description') ? document.getElementById('description').value : ''
@@ -438,7 +441,7 @@ window.showAdminAlert = function(message, isSuccess = true, callback = null) {
 // =========================================================
 // TÍNH NĂNG TỰ ĐỘNG LƯU NHÁP CHỐNG MẤT DỮ LIỆU
 // =========================================================
-const draftFields = ['brand', 'name', 'price', 'warranty', 'category1', 'category2', 'category3', 'specs', 'description'];
+const draftFields = ['productId', 'brand', 'name', 'price', 'warranty', 'category1', 'category2', 'category3', 'specs', 'description'];
 
 // 1. Phục hồi dữ liệu nháp ngay khi trang vừa được tải lại
 document.addEventListener('DOMContentLoaded', () => {
