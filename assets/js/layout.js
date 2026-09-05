@@ -820,18 +820,19 @@ document.addEventListener('DOMContentLoaded', function () {
         return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
     }
 
-    var productLinks = document.querySelectorAll('.product-img img, .product-name');
-    productLinks.forEach(function (link) {
-        link.style.cursor = 'pointer';
-        link.addEventListener('click', function (e) {
-            var aTag = this.closest('a');
-            if (aTag && !aTag.classList.contains('add-to-cart')) e.preventDefault();
-
-            var card = this.closest('.product-card');
-            if (!card) return;
+    var productCards = document.querySelectorAll('.product-card');
+    
+    productCards.forEach(function (card) {
+        card.style.cursor = 'pointer';
+        
+        card.addEventListener('click', function (e) {
+            if (e.target.classList.contains('add-to-cart')) return;
+            e.preventDefault();
 
             var btnAddCart = card.querySelector('.add-to-cart');
-            var productId = btnAddCart ? btnAddCart.getAttribute('data-product-id') : null;
+            if (!btnAddCart) return;
+
+            var productId = btnAddCart.getAttribute('data-product-id');
             var productName = card.querySelector('.product-name').innerText;
             var slug = toSlug(productName);
 
@@ -842,7 +843,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 var detailPath = inPagesFolder ? '../../pages/shop/product-detail.html' : 'pages/shop/product-detail.html';
                 window.location.href = detailPath + '?id=' + productId;
             } else {
-                // CHUYỂN HƯỚNG THEO LINK GỐC (Bỏ chữ sp đi)
+                // CHUYỂN HƯỚNG THEO LINK SIÊU NGẮN (Không có /sp/)
                 window.location.href = '/' + slug;
             }
         });

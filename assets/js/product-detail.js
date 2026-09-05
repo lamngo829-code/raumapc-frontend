@@ -10,7 +10,7 @@ function switchTab(tabName) {
 
 let currentProduct = null;
 
-// HÀM TẠO SLUG (Biến tên SP thành link chuẩn SEO)
+// HÀM TẠO SLUG
 function toSlug(str) {
     if (!str) return '';
     return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
@@ -19,20 +19,20 @@ function toSlug(str) {
 // 2. TẢI DỮ LIỆU TỪ MÁY CHỦ
 document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
-    let urlId = urlParams.get('id');     // Nhận diện khi chạy Local máy tính
-    let urlSlug = urlParams.get('slug'); // Bắt tham số từ Vercel
+    let urlId = urlParams.get('id'); // Nhận diện khi chạy Local
+    let urlSlug = "";
 
-    // Cứu cánh: Đọc trực tiếp URL siêu ngắn từ thanh địa chỉ (Trường hợp F5)
+    // Đọc URL siêu ngắn từ thanh địa chỉ (Vercel)
     let pathname = window.location.pathname;
-    // Bỏ qua các trang tĩnh
-    if (!urlSlug && !urlId && pathname !== '/' && !pathname.includes('.')) {
-        urlSlug = pathname.substring(1); // Lấy phần sau dấu /
+    
+    // Bỏ qua trang chủ và các thư mục tĩnh
+    if (pathname !== '/' && !pathname.includes('.') && !pathname.includes('/pages/') && !pathname.includes('/assets/')) {
+        urlSlug = pathname.substring(1); 
         if (urlSlug.endsWith('/')) urlSlug = urlSlug.slice(0, -1);
     }
 
     if (!urlId && !urlSlug) {
-        document.getElementById('loading-screen').innerHTML = "Lỗi: Không tìm thấy sản phẩm!";
-        return;
+        return; 
     }
 
     function renderDetail(sp) {
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
         let slug = toSlug(sp.name);
         let isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         
-        // Đóng đinh URL trên thanh địa chỉ KHÔNG CÓ CHỮ /sp/
+        // Khóa URL siêu ngắn không bị nháy
         if (isLocal) {
             window.history.replaceState(null, '', '?id=' + realId);
         } else {
@@ -106,14 +106,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // GỌI API THEO 2 LUỒNG CHUYÊN BIỆT
     if (urlId) {
         fetch('https://raumapc-backend.onrender.com/api/products/detail/' + encodeURIComponent(urlId) + '?v=' + new Date().getTime())
             .then(res => res.ok ? res.json() : null)
             .then(sp => renderDetail(sp))
             .catch(() => document.getElementById('loading-screen').innerHTML = "Lỗi kết nối máy chủ!");
     } else if (urlSlug) {
-        // Dò tìm sản phẩm qua Tên (Slug) khi chạy bằng Vercel
+        // Dò tìm sản phẩm qua Tên (Slug)
         fetch('https://raumapc-backend.onrender.com/api/products?v=' + new Date().getTime())
             .then(res => res.ok ? res.json() : null)
             .then(products => {

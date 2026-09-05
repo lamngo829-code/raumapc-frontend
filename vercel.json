@@ -16,7 +16,7 @@
     },
     {
       "source": "/:slug",
-      "destination": "/pages/shop/product-detail.html?slug=$1"
+      "destination": "/pages/shop/product-detail.html"
     }
   ]
 }
