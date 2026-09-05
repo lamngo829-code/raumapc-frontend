@@ -199,16 +199,17 @@ document.addEventListener('DOMContentLoaded', function () {
                             let safeImg = `${basePath}assets/images/icons/logo.jpg`;
                             if (p.img && p.img.trim() !== '') {
                                 let imgPath = p.img.trim().replace(/"/g, '').replace(/\\/g, '/');
-                                if (imgPath.startsWith('data:image')) {
-                                    safeImg = imgPath;
-                                } else {
-                                    safeImg = (imgPath.startsWith('http://') || imgPath.startsWith('https://') || imgPath.startsWith('/')) ? encodeURI(imgPath) : encodeURI(`${basePath}${imgPath}`);
-                                }
+                                safeImg = (imgPath.startsWith('http://') || imgPath.startsWith('https://') || imgPath.startsWith('data:image')) ? imgPath : encodeURI(`${basePath}${imgPath}`);
                             }
                             let priceStr = typeof p.price === 'number' ? new Intl.NumberFormat('vi-VN').format(p.price) + 'đ' : p.price;
+                            
+                            // TẠO LINK CHUẨN SEO
+                            let slug = (p.name || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+                            let isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+                            let linkHref = isLocal ? `${detailPath}?id=${p.id || p._id}` : `/${slug}`;
 
                             return `
-                                <a href="${detailPath}?id=${p.id || p._id}" style="display:flex; align-items:center; padding:10px 12px; gap:12px; text-decoration:none; border-bottom:1px solid #f1f5f9; background:#fff; transition:0.2s;">
+                                <a href="${linkHref}" style="display:flex; align-items:center; padding:10px 12px; gap:12px; text-decoration:none; border-bottom:1px solid #f1f5f9; background:#fff; transition:0.2s;">
                                     <img src="${safeImg}" alt="${p.name}" style="width:45px; height:45px; object-fit:contain; border-radius:4px; border:1px solid #eee;" onerror="this.onerror=null; this.src='${basePath}assets/images/icons/logo.jpg';">
                                     <div style="flex:1; overflow:hidden;">
                                         <div style="font-size:13.5px; font-weight:600; color:#2b3674; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.name}</div>
@@ -815,24 +816,35 @@ window.showGlobalConfirm = function(message, onConfirm) {
 document.addEventListener('DOMContentLoaded', function () {
     var productCards = document.querySelectorAll('.product-card');
     
+    // Hàm rút gọn chữ tiếng Việt thành Link SEO
+    function toSlug(str) {
+        if (!str) return '';
+        return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+    }
+
     productCards.forEach(function (card) {
         card.style.cursor = 'pointer';
-        
         card.addEventListener('click', function (e) {
             if (e.target.classList.contains('add-to-cart')) return;
-
             e.preventDefault();
 
             var btnAddCart = card.querySelector('.add-to-cart');
             if (!btnAddCart) return;
 
             var productId = btnAddCart.getAttribute('data-product-id');
-            if (!productId) return;
+            var productName = card.querySelector('.product-name').innerText;
+            var slug = toSlug(productName);
 
-            var inPagesFolder = window.location.pathname.includes('/pages/');
-            var detailPath = inPagesFolder ? '../../pages/shop/product-detail.html' : 'pages/shop/product-detail.html';
+            var isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
             
-            window.location.href = detailPath + '?id=' + productId;
+            if (isLocal) {
+                var inPagesFolder = window.location.pathname.includes('/pages/');
+                var detailPath = inPagesFolder ? '../../pages/shop/product-detail.html' : 'pages/shop/product-detail.html';
+                window.location.href = detailPath + '?id=' + productId;
+            } else {
+                // CHUYỂN HƯỚNG BẰNG LINK SIÊU NGẮN TRÊN VERCEL
+                window.location.href = '/' + slug;
+            }
         });
     });
 });

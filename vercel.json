@@ -13,6 +13,10 @@
     {
       "source": "/account/:match*",
       "destination": "/pages/account/:match*"
+    },
+    {
+      "source": "/:slug",
+      "destination": "/pages/shop/product-detail.html?slug=$1"
     }
   ]
 }

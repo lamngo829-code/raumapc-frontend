@@ -10,95 +10,108 @@ function switchTab(tabName) {
 
 let currentProduct = null;
 
+// HÀM TẠO SLUG (Biến tên SP thành link chuẩn SEO)
+function toSlug(str) {
+    if (!str) return '';
+    return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+}
+
 // 2. TẢI DỮ LIỆU TỪ MÁY CHỦ
 document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
-    const urlId = urlParams.get('id'); // Có thể là _id (link cũ) hoặc productId (mã SP, link mới)
+    const urlId = urlParams.get('id'); // Nhận diện Local (chạy máy tính)
+    const urlSlug = urlParams.get('slug'); // Nhận diện Vercel (chạy web thật)
 
-    if (!urlId) {
-        document.getElementById('loading-screen').innerHTML = "Lỗi: Không tìm thấy mã sản phẩm trên URL!";
+    if (!urlId && !urlSlug) {
+        document.getElementById('loading-screen').innerHTML = "Lỗi: Không tìm thấy sản phẩm!";
         return;
     }
 
-    // Gọi API chi tiết - API này tự hiểu urlId là _id hay productId
-    fetch('https://raumapc-backend.onrender.com/api/products/detail/' + encodeURIComponent(urlId) + '?v=' + new Date().getTime())
-        .then(response => response.ok ? response.json() : null)
-        .then(sp => {
+    // HÀM XUẤT GIAO DIỆN CHUNG
+    function renderDetail(sp) {
+        if (!sp) {
+            document.getElementById('loading-screen').innerHTML = "Rất tiếc, sản phẩm này không tồn tại trong hệ thống!";
+            return;
+        }
+        currentProduct = sp;
+        document.getElementById('detail-name').innerText = sp.name || "";
+        document.getElementById('bread-name').innerText = sp.name || "";
+        document.title = (sp.name || "Chi tiết sản phẩm") + " - Rau Má PC";
+        
+        let slug = toSlug(sp.name);
+        let isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        
+        // Đóng đinh URL trên thanh địa chỉ thật gọn gàng
+        if (isLocal) {
+            window.history.replaceState(null, '', '?id=' + (sp.productId || sp.id || sp._id));
+        } else {
+            window.history.replaceState(null, '', '/' + slug);
+        }
 
-            if (sp) {
-                currentProduct = sp;
-                document.getElementById('detail-name').innerText = sp.name || "";
-                
-                document.getElementById('bread-name').innerText = sp.name || "";
-                
-                document.title = (sp.name || "Chi tiết sản phẩm") + " - Rau Má PC";
-                
-                let slug = (sp.name || "").replace(/\s+/g, '-').toLowerCase();
-                // Giữ nguyên productId (mã SP) trên thanh địa chỉ thay vì _id
-                window.history.replaceState(null, '', '?id=' + (sp.productId || sp.id) + '&name=' + encodeURIComponent(slug));
+        document.getElementById('detail-price').innerText = sp.price || "0đ";
+        document.getElementById('detail-id').innerText = (sp.productId || sp.id || sp._id || "").toUpperCase();
 
-                document.getElementById('detail-price').innerText = sp.price || "0đ";
-                
-                // Hiển thị Mã SP (productId) thay vì _id nội bộ của database
-                document.getElementById('detail-id').innerText = (sp.productId || sp.id || "").toUpperCase();
+        let safeLink = sp.img ? sp.img.trim() : "";
+        document.querySelector('.main-image').innerHTML = `<img src="${safeLink}" alt="${sp.name}" style="max-width: 100%; height: auto; max-height: 400px; object-fit: contain;" onerror="this.onerror=null; this.src='../../assets/images/icons/logo.jpg'">`;
 
-                let safeLink = sp.img ? sp.img.trim() : "";
-                
-                document.querySelector('.main-image').innerHTML = `<img src="${safeLink}" alt="${sp.name}" style="max-width: 100%; height: auto; max-height: 400px; object-fit: contain;" onerror="this.onerror=null; this.src='../../assets/images/icons/logo.jpg'">`;
+        const warrantyEl = document.getElementById('warranty-text');
+        if (warrantyEl) warrantyEl.innerText = sp.warranty || "36 Tháng";
 
-                const warrantyEl = document.getElementById('warranty-text');
-                if (warrantyEl) warrantyEl.innerText = sp.warranty || "36 Tháng";
+        document.getElementById('loading-screen').style.display = 'none';
+        document.getElementById('main-content').style.display = 'block';
 
-                document.getElementById('loading-screen').style.display = 'none';
-                document.getElementById('main-content').style.display = 'block';
+        renderComments(sp.comments || []);
 
-                renderComments(sp.comments || []);
-
-                const specsTable = document.getElementById('specs-tbody');
-                if (specsTable) {
-                    if (sp.specs && sp.specs.trim() !== "") {
-                        const lines = sp.specs.split('\n');
-                        let parsedSpecs = [];
-                        let currentSpec = null;
-
-                        lines.forEach(line => {
-                            if (line.includes(':')) {
-                                const colonIndex = line.indexOf(':');
-                                const key = line.substring(0, colonIndex).trim();
-                                const value = line.substring(colonIndex + 1).trim();
-                                currentSpec = { key: key, value: value };
-                                parsedSpecs.push(currentSpec);
-                            } else if (line.trim() !== '' && currentSpec) {
-                                currentSpec.value += '<br>' + line.trim();
-                            }
-                        });
-
-                        let tableHTML = '';
-                        let isEven = false;
-                        parsedSpecs.forEach(spec => {
-                            let bg = isEven ? '#f8f9fa' : '#ffffff';
-                            tableHTML += `<tr style="background-color: ${bg};"><td style="padding: 15px; font-weight: bold; width: 30%; border-bottom: 1px solid #f0f0f0; vertical-align: top;">${spec.key}</td><td style="padding: 15px; border-bottom: 1px solid #f0f0f0; vertical-align: top; line-height: 1.6;">${spec.value}</td></tr>`;
-                            isEven = !isEven;
-                        });
-                        specsTable.innerHTML = tableHTML;
-                    } else {
-                        specsTable.innerHTML = `<tr><td style="padding: 15px;">Chưa có thông số chi tiết...</td></tr>`;
+        const specsTable = document.getElementById('specs-tbody');
+        if (specsTable) {
+            if (sp.specs && sp.specs.trim() !== "") {
+                const lines = sp.specs.split('\n');
+                let parsedSpecs = [];
+                let currentSpec = null;
+                lines.forEach(line => {
+                    if (line.includes(':')) {
+                        const colonIndex = line.indexOf(':');
+                        currentSpec = { key: line.substring(0, colonIndex).trim(), value: line.substring(colonIndex + 1).trim() };
+                        parsedSpecs.push(currentSpec);
+                    } else if (line.trim() !== '' && currentSpec) {
+                        currentSpec.value += '<br>' + line.trim();
                     }
-                }
-
-                const descContent = document.getElementById('desc-content');
-                if (descContent) {
-                    let textDesc = (sp.description && sp.description.trim() !== "") ? sp.description : 'Chưa có bài viết mô tả...';
-                    descContent.innerHTML = `<div style="white-space: pre-wrap; font-family: inherit;">${textDesc}</div>`;
-                }
-
+                });
+                let tableHTML = ''; let isEven = false;
+                parsedSpecs.forEach(spec => {
+                    let bg = isEven ? '#f8f9fa' : '#ffffff';
+                    tableHTML += `<tr style="background-color: ${bg};"><td style="padding: 15px; font-weight: bold; width: 30%; border-bottom: 1px solid #f0f0f0; vertical-align: top;">${spec.key}</td><td style="padding: 15px; border-bottom: 1px solid #f0f0f0; vertical-align: top; line-height: 1.6;">${spec.value}</td></tr>`;
+                    isEven = !isEven;
+                });
+                specsTable.innerHTML = tableHTML;
             } else {
-                document.getElementById('loading-screen').innerHTML = "Rất tiếc, sản phẩm này không tồn tại trong hệ thống!";
+                specsTable.innerHTML = `<tr><td style="padding: 15px;">Chưa có thông số chi tiết...</td></tr>`;
             }
-        })
-        .catch(error => {
-            document.getElementById('loading-screen').innerHTML = "Không thể kết nối đến Máy chủ Backend!";
-        });
+        }
+
+        const descContent = document.getElementById('desc-content');
+        if (descContent) {
+            let textDesc = (sp.description && sp.description.trim() !== "") ? sp.description : 'Chưa có bài viết mô tả...';
+            descContent.innerHTML = `<div style="white-space: pre-wrap; font-family: inherit;">${textDesc}</div>`;
+        }
+    }
+
+    // PHÂN NHÁNH XỬ LÝ (Khi chạy trên máy tính vs Khi chạy web thật)
+    if (urlId) {
+        fetch('https://raumapc-backend.onrender.com/api/products/detail/' + encodeURIComponent(urlId) + '?v=' + new Date().getTime())
+            .then(res => res.ok ? res.json() : null)
+            .then(sp => renderDetail(sp))
+            .catch(() => document.getElementById('loading-screen').innerHTML = "Lỗi kết nối máy chủ!");
+    } else if (urlSlug) {
+        fetch('https://raumapc-backend.onrender.com/api/products?v=' + new Date().getTime())
+            .then(res => res.ok ? res.json() : null)
+            .then(products => {
+                if(!products) return renderDetail(null);
+                const sp = products.find(p => toSlug(p.name) === urlSlug);
+                renderDetail(sp);
+            })
+            .catch(() => document.getElementById('loading-screen').innerHTML = "Lỗi kết nối máy chủ!");
+    }
 });
 
 // 3. SỰ KIỆN CHO NÚT MUA HÀNG
