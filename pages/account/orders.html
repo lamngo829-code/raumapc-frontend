@@ -630,13 +630,14 @@
                             let html = '<h3 style="margin-bottom: 20px; color: #1435c3; border-bottom: 2px solid #eee; padding-bottom: 10px;">LỊCH SỬ ĐẶT HÀNG CỦA BẠN</h3>';
 
                             myOrders.reverse().forEach(order => {
-                                // TỰ ĐỘNG ĐỔI MÀU SẮC THEO TRẠNG THÁI TỪ ADMIN
-                                let badgeBg = "#fff3e0"; let badgeColor = "#ff9800"; let icon = "⏳";
-                                if (order.status === "Hoàn thành") { badgeBg = "#e8f5e9"; badgeColor = "#28a745"; icon = "✅"; }
-                                if (order.status === "Đang giao hàng") { badgeBg = "#e3f2fd"; badgeColor = "#1976d2"; icon = "🚚"; }
-                                if (order.status === "Đã hủy") { badgeBg = "#ffe2e5"; badgeColor = "#d70018"; icon = "❌"; }
+                                // TỰ ĐỘNG ĐỔI MÀU SẮC THEO TRẠNG THÁI ĐỒNG BỘ VỚI ADMIN
+                                let badgeColor = "#1976d2"; let badgeBg = "#e3f2fd"; let icon = "⏳"; // Mặc định (Chờ duyệt): Xanh dương
+                                if (order.status === "Đang giao hàng") { badgeColor = "#ff9800"; badgeBg = "#fff3e0"; icon = "🚚"; } // Đang giao: Cam
+                                if (order.status === "Hoàn thành") { badgeColor = "#28a745"; badgeBg = "#e8f5e9"; icon = "✅"; } // Hoàn thành: Xanh lá
+                                if (order.status === "Đã hủy") { badgeColor = "#dc3545"; badgeBg = "#ffe2e5"; icon = "❌"; } // Đã hủy: Đỏ
 
                                 html += `
+                                
                             <div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
                                 <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #ccc; padding-bottom: 15px; margin-bottom: 15px;">
                                     <div>
