@@ -1011,14 +1011,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 // --- HỆ THỐNG TỰ ĐỘNG RÚT GỌN URL THÔNG MINH (LOCAL & PRODUCTION) ---
+// Quy ước: /pages/shop/xxx.html -> /shop/xxx | /pages/info/xxx.html -> /info/xxx | /pages/account/xxx.html -> /account/xxx
+// (Khớp với rewrites trong vercel.json - KHÔNG cần sửa vercel.json khi thêm trang mới)
 document.addEventListener('DOMContentLoaded', () => {
     let hostname = window.location.hostname;
     let path = window.location.pathname;
     let cleanPath = path;
 
+    // Hàm dùng chung: rút gọn 1 đường dẫn theo đúng quy ước tiền tố /shop /info /account
+    function shortenPath(p) {
+        return p
+            .replace(/\/pages\/shop\//g, '/shop/')
+            .replace(/\/pages\/info\//g, '/info/')
+            .replace(/\/pages\/account\//g, '/account/')
+            .replace(/\.html/g, '');
+    }
+
     // 1. NẾU CHẠY LOCAL TÊN MÁY TÍNH (Live Server: 127.0.0.1 hoặc localhost)
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
         // Chỉ ẩn đuôi .html, giữ nguyên cấu trúc thư mục để code không bị lỗi 404
+        // (Live Server không hiểu rewrites - khuyên dùng `vercel dev` để test URL rút gọn thật)
         if (path.endsWith('.html')) {
             cleanPath = path.slice(0, -5);
         }
@@ -1035,12 +1047,8 @@ document.addEventListener('DOMContentLoaded', () => {
     } 
     // 2. NẾU ĐÃ UP LÊN MẠNG (Tên miền thật trên Vercel/Hosting)
     else {
-        // A. Cắt bỏ toàn bộ thư mục rườm rà trên thanh địa chỉ hiện tại
-        cleanPath = path
-            .replace(/\/pages\/shop/g, '')
-            .replace(/\/pages\/info/g, '')
-            .replace(/\/pages\/account/g, '')
-            .replace(/\.html/g, '');
+        // A. Đổi thư mục dài thành tiền tố ngắn trên thanh địa chỉ hiện tại
+        cleanPath = shortenPath(path);
 
         if (cleanPath === '/index' || cleanPath === '') {
             cleanPath = '/';
@@ -1058,12 +1066,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Bỏ qua các link ngoài, link mail, sdt, thẻ neo
             if (href && !href.startsWith('http') && !href.startsWith('mailto:') && !href.startsWith('tel:') && !href.startsWith('#')) {
-                let newHref = href
-                    .replace(/^(?:\.\.\/)+/, '/')   // Biến ../../ thành /
-                    .replace(/\/pages\/shop/g, '')  // Cắt thư mục shop
-                    .replace(/\/pages\/info/g, '')  // Cắt thư mục info
-                    .replace(/\/pages\/account/g, '') // Cắt thư mục account
-                    .replace(/\.html/g, '');        // Cắt đuôi .html
+                let newHref = href.replace(/^(?:\.\.\/)+/, '/'); // Biến ../../ thành /
+                newHref = shortenPath(newHref);
 
                 // Đưa trang chủ về dạng root
                 if (newHref === '/index' || newHref === 'index') {

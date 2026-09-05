@@ -13,17 +13,17 @@ let currentProduct = null;
 // 2. TẢI DỮ LIỆU TỪ MÁY CHỦ
 document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
-    const productId = urlParams.get('id');
+    const urlId = urlParams.get('id'); // Có thể là _id (link cũ) hoặc productId (mã SP, link mới)
 
-    if (!productId) {
+    if (!urlId) {
         document.getElementById('loading-screen').innerHTML = "Lỗi: Không tìm thấy mã sản phẩm trên URL!";
         return;
     }
 
-    fetch('https://raumapc-backend.onrender.com/api/products?v=' + new Date().getTime())
-        .then(response => response.json())
-        .then(products => {
-            const sp = products.find(item => item.id === productId);
+    // Gọi API chi tiết - API này tự hiểu urlId là _id hay productId
+    fetch('https://raumapc-backend.onrender.com/api/products/detail/' + encodeURIComponent(urlId) + '?v=' + new Date().getTime())
+        .then(response => response.ok ? response.json() : null)
+        .then(sp => {
 
             if (sp) {
                 currentProduct = sp;
@@ -34,11 +34,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.title = (sp.name || "Chi tiết sản phẩm") + " - Rau Má PC";
                 
                 let slug = (sp.name || "").replace(/\s+/g, '-').toLowerCase();
-                window.history.replaceState(null, '', '?id=' + sp.id + '&name=' + encodeURIComponent(slug));
+                // Giữ nguyên productId (mã SP) trên thanh địa chỉ thay vì _id
+                window.history.replaceState(null, '', '?id=' + (sp.productId || sp.id) + '&name=' + encodeURIComponent(slug));
 
                 document.getElementById('detail-price').innerText = sp.price || "0đ";
                 
-                document.getElementById('detail-id').innerText = (sp.id || "").toUpperCase();
+                // Hiển thị Mã SP (productId) thay vì _id nội bộ của database
+                document.getElementById('detail-id').innerText = (sp.productId || sp.id || "").toUpperCase();
 
                 let safeLink = sp.img ? sp.img.trim() : "";
                 
