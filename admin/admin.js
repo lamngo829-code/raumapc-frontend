@@ -67,6 +67,7 @@ function loadProducts() {
                             <td style="color:#d70018; font-weight:bold;">${sp.price}</td>
                             <td>
                                 <button onclick="editProduct('${sp.id}')" style="background:#e3f2fd; color:#1976d2; border:none; padding:5px 12px; border-radius:5px; cursor:pointer; font-weight:bold; margin-right:5px;">Sửa</button>
+                                <button onclick="copyProductLink('${sp.productId || sp.id}')" style="background:#fff3e0; color:#ff9800; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; font-weight:bold; margin-right:5px;">Copy link</button>
                                 <button onclick="deleteProduct('${sp.id}')" style="background:#ffe2e5; color:#d70018; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; font-weight:bold;">Xóa</button>
                             </td>
                         </tr>
@@ -224,6 +225,24 @@ document.getElementById('productForm').addEventListener('submit', function (e) {
         });
     }
 });
+
+// Copy link chi tiết sản phẩm (dùng Mã SP - productId) để dán vào trang chủ
+function copyProductLink(productId) {
+    const link = `pages/shop/product-detail.html?id=${productId}`;
+    navigator.clipboard.writeText(link).then(() => {
+        if (typeof window.showAdminAlert === 'function') {
+            window.showAdminAlert(`Đã copy link: ${link}`, true);
+        } else {
+            alert(`Đã copy link: ${link}`);
+        }
+    }).catch(() => {
+        if (typeof window.showAdminAlert === 'function') {
+            window.showAdminAlert("Không thể copy tự động, link là: " + link, false);
+        } else {
+            alert("Không thể copy tự động, link là: " + link);
+        }
+    });
+}
 
 function deleteProduct(id) {
     if (confirm('Bạn có chắc chắn muốn xóa vĩnh viễn sản phẩm này?')) {
