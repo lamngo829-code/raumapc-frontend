@@ -944,3 +944,43 @@ document.addEventListener('DOMContentLoaded', function() {
         }).catch(err => console.log("Bỏ qua kiểm tra kết nối"));
     }
 });
+
+/* ==========================================================================
+   PHẦN 10: TỰ ĐỘNG RÚT GỌN LINK TRÊN VERCEL (KHÔNG LỖI LOCAL)
+   ========================================================================== */
+document.addEventListener('DOMContentLoaded', () => {
+    // Chỉ kích hoạt ngầm khi chạy trên Vercel (web thật)
+    let isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    
+    if (!isLocal) {
+        document.querySelectorAll('a').forEach(link => {
+            let href = link.getAttribute('href');
+            
+            // Bỏ qua các link ngoài, link rỗng, email, sđt...
+            if (href && !href.startsWith('http') && !href.startsWith('mailto:') && !href.startsWith('tel:') && !href.startsWith('#')) {
+                let newHref = href;
+                
+                // 1. Chuẩn hóa đường dẫn về Root (Bắt đầu bằng dấu /)
+                if (newHref.startsWith('../')) {
+                    newHref = newHref.replace(/^(?:\.\.\/)+/, '/');
+                } else if (!newHref.startsWith('/')) {
+                    newHref = '/' + newHref;
+                }
+                
+                // 2. Xóa sổ thư mục /pages/
+                newHref = newHref.replace(/^\/pages\//, '/');
+                
+                // 3. Gọt luôn cả đuôi .html (Giữ lại tham số phân trang, bộ lọc nếu có)
+                newHref = newHref.split('.html').join('');
+                
+                // 4. Xử lý đường dẫn về Trang chủ
+                if (newHref === '/index' || newHref === '/') {
+                    newHref = '/';
+                }
+
+                // Gắn link siêu sạch trở lại nút bấm
+                link.setAttribute('href', newHref);
+            }
+        });
+    }
+});
