@@ -770,7 +770,42 @@
 
         </div>
     </div>
+<script>
+    // Thêm hàm tạo Slug ngay trước vòng lặp nếu chưa có
+            function toSlug(str) {
+                if (!str) return '';
+                return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+            }
 
+            filtered.forEach(sp => {
+                let isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+                let slug = toSlug(sp.name);
+                
+                // MẤU CHỐT CHỐNG NHÁY: Ép trực tiếp link SEO vào thẻ A ngay lúc tạo giao diện
+                let linkHref = isLocal ? `product-detail.html?id=${sp.id || sp._id}` : `/${slug}`;
+
+                const productHTML = `
+                <div class="product-card">
+                    <a href="${linkHref}" style="text-decoration: none; color: inherit; flex: 1; display: flex; flex-direction: column;">
+                        <div class="product-img"><img src="${sp.img}" alt="${sp.name}" onerror="this.src='../../assets/images/icons/logo.jpg'"></div>
+                        <div class="product-name">${sp.name}</div>
+                    </a>
+                    <div class="product-info" style="flex: unset;">
+                        <div class="product-price">${sp.price}</div>
+                        <!-- Vẫn giữ nguyên cơ chế thêm vào giỏ hàng bằng mã ID gốc -->
+                        <div class="add-to-cart" data-product-id="${sp.id || sp._id}" onclick="
+                            event.preventDefault(); 
+                            if (typeof window.addToCart === 'function') {
+                                window.addToCart('${sp.id || sp._id}', this.closest('.product-card').querySelector('.product-name').innerText, parseInt(String('${sp.price}').replace(/\\D/g, '')) || 0, this.closest('.product-card').querySelector('img').src);
+                            } else {
+                                alert('Đã thêm sản phẩm vào giỏ hàng!');
+                            }
+                        ">Thêm vào giỏ hàng</div>
+                    </div>
+                </div>`;
+                productContainer.innerHTML += productHTML;
+            });
+</script>
 </body>
 
 </html>
