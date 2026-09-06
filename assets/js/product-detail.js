@@ -14,6 +14,7 @@ function toSlug(str) {
     return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
 }
 
+// 2. TẢI DỮ LIỆU TỪ MÁY CHỦ
 document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
     let urlId = urlParams.get('id'); 
@@ -44,7 +45,6 @@ document.addEventListener('DOMContentLoaded', function () {
         let slug = toSlug(sp.name);
         let isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         
-        // Khóa URL trên thanh địa chỉ bằng mã NGẮN GỌN
         if (isLocal) {
             window.history.replaceState(null, '', '?id=' + shortId);
         } else {
@@ -99,21 +99,28 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    if (urlId) {
-        fetch('https://raumapc-backend.onrender.com/api/products/detail/' + encodeURIComponent(urlId) + '?v=' + new Date().getTime())
-            .then(res => res.ok ? res.json() : null)
-            .then(sp => renderDetail(sp))
-            .catch(() => document.getElementById('loading-screen').innerHTML = "Lỗi kết nối máy chủ!");
-    } else if (urlSlug) {
-        fetch('https://raumapc-backend.onrender.com/api/products?v=' + new Date().getTime())
-            .then(res => res.ok ? res.json() : null)
-            .then(products => {
-                if(!products) return renderDetail(null);
-                const sp = products.find(p => toSlug(p.name) === urlSlug);
-                renderDetail(sp);
-            })
-            .catch(() => document.getElementById('loading-screen').innerHTML = "Lỗi kết nối máy chủ!");
-    }
+    // BỌC THÉP TRUY VẤN: Lấy toàn bộ kho và tự động tra cứu bằng mọi loại ID (Mã ngắn, Mã dài, Link SEO)
+    fetch('https://raumapc-backend.onrender.com/api/products?v=' + new Date().getTime())
+        .then(res => res.ok ? res.json() : null)
+        .then(products => {
+            if(!products) return renderDetail(null);
+            
+            let sp = null;
+            if (urlId) {
+                // Dò tìm thông minh: Khớp mã Database (24 ký tự), hoặc khớp Mã tùy chỉnh (VGA...), hoặc khớp 6 ký tự cuối
+                sp = products.find(p => 
+                    p.id === urlId || 
+                    p._id === urlId || 
+                    (p.productId && p.productId.toUpperCase() === urlId.toUpperCase()) || 
+                    ((p.id || p._id).toString().slice(-6).toUpperCase() === urlId.toUpperCase())
+                );
+            } else if (urlSlug) {
+                sp = products.find(p => toSlug(p.name) === urlSlug);
+            }
+            
+            renderDetail(sp);
+        })
+        .catch(() => document.getElementById('loading-screen').innerHTML = "Lỗi kết nối máy chủ!");
 });
 
 const btnAddCart = document.querySelector('.btn-add-cart');
