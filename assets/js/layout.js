@@ -946,7 +946,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 /* ==========================================================================
-   PHẦN 10: TỰ ĐỘNG RÚT GỌN LINK TRÊN VERCEL (KHÔNG LỖI LOCAL)
+   PHẦN 10: TỰ ĐỘNG RÚT GỌN LINK TRÊN VERCEL (ẨN SHOP, INFO, ACCOUNT)
    ========================================================================== */
 document.addEventListener('DOMContentLoaded', () => {
     // Chỉ kích hoạt ngầm khi chạy trên Vercel (web thật)
@@ -956,7 +956,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('a').forEach(link => {
             let href = link.getAttribute('href');
             
-            // Bỏ qua các link ngoài, link rỗng, email, sđt...
+            // Bỏ qua các link ngoài, link rỗng, email, sđt, thẻ neo...
             if (href && !href.startsWith('http') && !href.startsWith('mailto:') && !href.startsWith('tel:') && !href.startsWith('#')) {
                 let newHref = href;
                 
@@ -967,10 +967,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     newHref = '/' + newHref;
                 }
                 
-                // 2. Xóa sổ thư mục /pages/
-                newHref = newHref.replace(/^\/pages\//, '/');
+                // 2. Chém sạch toàn bộ các thư mục rườm rà
+                newHref = newHref.replace(/^\/pages\/shop\//, '/');
+                newHref = newHref.replace(/^\/pages\/info\//, '/');
+                newHref = newHref.replace(/^\/pages\/account\//, '/');
+                newHref = newHref.replace(/^\/shop\//, '/');
+                newHref = newHref.replace(/^\/info\//, '/');
+                newHref = newHref.replace(/^\/account\//, '/');
                 
-                // 3. Gọt luôn cả đuôi .html (Giữ lại tham số phân trang, bộ lọc nếu có)
+                // 3. Gọt luôn đuôi .html
                 newHref = newHref.split('.html').join('');
                 
                 // 4. Xử lý đường dẫn về Trang chủ
@@ -978,7 +983,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     newHref = '/';
                 }
 
-                // Gắn link siêu sạch trở lại nút bấm
+                // Gắn lại link siêu sạch vào nút bấm
                 link.setAttribute('href', newHref);
             }
         });

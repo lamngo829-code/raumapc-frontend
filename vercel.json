@@ -3,27 +3,32 @@
   "trailingSlash": false,
   "redirects": [
     {
-      "source": "/pages/(.*)",
-      "destination": "/$1",
+      "source": "/pages/(shop|info|account)/:path*",
+      "destination": "/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/(shop|info|account)/:path*",
+      "destination": "/:path*",
       "permanent": true
     }
   ],
   "rewrites": [
     {
-      "source": "/shop/:match*",
-      "destination": "/pages/shop/:match*"
+      "source": "/:page(login|register|profile|orders)",
+      "destination": "/pages/account/:page.html"
     },
     {
-      "source": "/info/:match*",
-      "destination": "/pages/info/:match*"
+      "source": "/:page(showroom|enterprise|contact|news|promotion|about|recruitment|purchase|payment|warranty|complaint|condition|guarantee|transport|return|service|security)",
+      "destination": "/pages/info/:page.html"
     },
     {
-      "source": "/account/:match*",
-      "destination": "/pages/account/:match*"
+      "source": "/:page(build-pc|cart|cpu|cpu-intel|cpu-amd|psu|vga|vga-nvidia|vga-amd|main|case-xigmatek|ram|ram-ddr5|ram-ddr4|ram-32gb|ram-16gb|cooling|thermal-paste|air-cooler|aio-cooler|monitor|monitor-asus|monitor-msi|monitor-viewsonic|storage|wireless-mouse|wireless-keyboard|licensed-software|win-copyright|win-server|win-enterprise|office-365|office-2019|office-enterprise)",
+      "destination": "/pages/shop/:page.html"
     },
     {
       "source": "/:slug([a-zA-Z0-9-]+)",
-      "destination": "/pages/shop/product-detail"
+      "destination": "/pages/shop/product-detail.html"
     }
   ]
 }
