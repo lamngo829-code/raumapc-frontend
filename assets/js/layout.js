@@ -814,53 +814,44 @@ window.showGlobalConfirm = function(message, onConfirm) {
    PHẦN 8: CHUYỂN TRANG CHI TIẾT & MENU MOBILE
    ========================================================================== */
 
-// 1. CHUYỂN TRANG CHI TIẾT (Áp dụng Event Delegation cho cả sản phẩm tải động)
-// 1. BỘ ĐỊNH TUYẾN CHUYỂN TRANG SẢN PHẨM (BỌC THÉP CHỐNG LỖI NULL)
+// 1. BỘ ĐỊNH TUYẾN CHUYỂN TRANG SẢN PHẨM ĐỈNH CAO (KHÔNG BAO GIỜ NHÁY LINK)
 document.addEventListener('click', function (e) {
-    let target = e.target.closest('.product-img, .product-name');
-    if (!target) return; 
-    
+    // Kiểm tra xem khách có đang bấm vào khu vực thẻ sản phẩm không
+    let card = e.target.closest('.product-card');
+    if (!card) return; 
+
     // Bỏ qua nếu khách đang cố bấm nút Thêm vào giỏ hàng
     if (e.target.closest('.add-to-cart')) return;
 
+    // BẮT BUỘC: Chặn đứng ngay lập tức hành động load link HTML cũ của trình duyệt
     e.preventDefault();
 
-    let card = target.closest('.product-card');
-    if (!card) return;
-
-    let btnAddCart = card.querySelector('.add-to-cart');
-    let productId = btnAddCart ? btnAddCart.getAttribute('data-product-id') : null;
-    
-    // CHẶN ĐỨNG LỖI ID NULL: Nếu nút giỏ hàng quên gắn ID, tự cứu vãn bằng thẻ <a>
-    if (!productId || productId === 'null' || productId === 'undefined') {
-        let aTag = card.querySelector('a');
-        if (aTag && aTag.getAttribute('href') && aTag.getAttribute('href') !== '#') {
-            window.location.href = aTag.getAttribute('href');
-            return;
-        }
-        // Nếu bó tay toàn tập, báo lỗi văn minh thay vì văng trang trắng
-        if (typeof window.showGlobalAlert === 'function') {
-            window.showGlobalAlert('Sản phẩm này đang được cập nhật, chưa thể xem chi tiết!', false);
-        } else {
-            alert('Sản phẩm này đang được cập nhật!');
-        }
-        return;
-    }
-
-    let productName = card.querySelector('.product-name').innerText;
-    
-    // TỰ ĐỘNG CHUYỂN MÃ MONGODB (24 KÝ TỰ) THÀNH MÃ NGẮN SIÊU GỌN
-    let shortId = productId.length === 24 ? productId.slice(-6).toUpperCase() : productId;
-    
+    // Dùng chính tên sản phẩm trên màn hình để tạo đường link chuẩn SEO
+    let nameEl = card.querySelector('.product-name');
+    if (!nameEl) return;
+    let productName = nameEl.innerText;
     let slug = productName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
 
     let isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     
     if (isLocal) {
+        // NẾU CHẠY Ở MÁY TÍNH: Lấy ID để hiển thị
+        let btnAddCart = card.querySelector('.add-to-cart');
+        let productId = btnAddCart ? btnAddCart.getAttribute('data-product-id') : null;
+        
+        // Cứu vãn nếu sản phẩm thiếu ID
+        if (!productId || productId === 'null' || productId === 'undefined') {
+            let aTag = card.querySelector('a');
+            if (aTag && aTag.href) { window.location.href = aTag.href; }
+            return;
+        }
+
+        let shortId = productId.length === 24 ? productId.slice(-6).toUpperCase() : productId;
         let inPagesFolder = window.location.pathname.includes('/pages/');
         let detailPath = inPagesFolder ? '../../pages/shop/product-detail.html' : 'pages/shop/product-detail.html';
         window.location.href = detailPath + '?id=' + shortId;
     } else {
+        // NẾU CHẠY TRÊN VERCEL: Ép buộc chuyển thẳng sang link xịn không chứa ID, không bị nháy!
         window.location.href = '/' + slug;
     }
 });
