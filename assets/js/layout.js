@@ -813,43 +813,41 @@ window.showGlobalConfirm = function(message, onConfirm) {
 /* ==========================================================================
    PHẦN 8: CHUYỂN TRANG CHI TIẾT & MENU MOBILE
    ========================================================================== */
-document.addEventListener('DOMContentLoaded', function () {
-    // HÀM BIẾN TÊN SẢN PHẨM THÀNH LINK CHUẨN SEO
-    function toSlug(str) {
-        if (!str) return '';
-        return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
-    }
 
-    var productCards = document.querySelectorAll('.product-card');
+// 1. CHUYỂN TRANG CHI TIẾT (Áp dụng Event Delegation cho cả sản phẩm tải động)
+document.addEventListener('click', function (e) {
+    // Kiểm tra xem người dùng có click vào khu vực ảnh hoặc tên sản phẩm không
+    let target = e.target.closest('.product-img, .product-name');
+    if (!target) return; 
     
-    productCards.forEach(function (card) {
-        card.style.cursor = 'pointer';
-        
-        card.addEventListener('click', function (e) {
-            if (e.target.classList.contains('add-to-cart')) return;
-            e.preventDefault();
+    // Chặn ngay lập tức hành động load link HTML cũ
+    e.preventDefault();
 
-            var btnAddCart = card.querySelector('.add-to-cart');
-            if (!btnAddCart) return;
+    let card = target.closest('.product-card');
+    if (!card) return;
 
-            var productId = btnAddCart.getAttribute('data-product-id');
-            var productName = card.querySelector('.product-name').innerText;
-            var slug = toSlug(productName);
+    let btnAddCart = card.querySelector('.add-to-cart');
+    if (!btnAddCart) return;
 
-            var isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-            
-            if (isLocal) {
-                var inPagesFolder = window.location.pathname.includes('/pages/');
-                var detailPath = inPagesFolder ? '../../pages/shop/product-detail.html' : 'pages/shop/product-detail.html';
-                window.location.href = detailPath + '?id=' + productId;
-            } else {
-                // CHUYỂN HƯỚNG THEO LINK SIÊU NGẮN (Không có /sp/)
-                window.location.href = '/' + slug;
-            }
-        });
-    });
+    let productId = btnAddCart.getAttribute('data-product-id');
+    let productName = card.querySelector('.product-name').innerText;
+    
+    // Tạo link chuẩn SEO trực tiếp
+    let slug = productName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+
+    let isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    
+    if (isLocal) {
+        let inPagesFolder = window.location.pathname.includes('/pages/');
+        let detailPath = inPagesFolder ? '../../pages/shop/product-detail.html' : 'pages/shop/product-detail.html';
+        window.location.href = detailPath + '?id=' + productId;
+    } else {
+        // Chuyển thẳng sang link siêu ngắn trên Vercel ngay từ giây đầu tiên
+        window.location.href = '/' + slug;
+    }
 });
 
+// 2. XỬ LÝ CLICK MENU MOBILE
 document.addEventListener('click', function (e) {
     if (window.innerWidth <= 768) {
         var accWrap = e.target.closest('.account-wrapper');
@@ -879,6 +877,7 @@ document.addEventListener('click', function (e) {
     }
 });
 
+// 3. XỬ LÝ MENU MEGA DROP-DOWN (Cột trái & Cột phải)
 document.addEventListener('DOMContentLoaded', function () {
     const megaLinks = document.querySelectorAll('.mega-item > a');
     megaLinks.forEach(link => {
