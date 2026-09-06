@@ -1,4 +1,3 @@
-// 1. HÀM CHUYỂN ĐỔI TAB
 function switchTab(tabName) {
     document.getElementById('tab-specs').style.display = tabName === 'specs' ? 'block' : 'none';
     document.getElementById('tab-desc').style.display = tabName === 'desc' ? 'block' : 'none';
@@ -10,30 +9,23 @@ function switchTab(tabName) {
 
 let currentProduct = null;
 
-// HÀM TẠO SLUG
 function toSlug(str) {
     if (!str) return '';
     return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
 }
 
-// 2. TẢI DỮ LIỆU TỪ MÁY CHỦ
 document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
-    let urlId = urlParams.get('id'); // Nhận diện khi chạy Local
+    let urlId = urlParams.get('id'); 
     let urlSlug = "";
 
-    // Đọc URL siêu ngắn từ thanh địa chỉ (Vercel)
     let pathname = window.location.pathname;
-    
-    // Bỏ qua trang chủ và các thư mục tĩnh
     if (pathname !== '/' && !pathname.includes('.') && !pathname.includes('/pages/') && !pathname.includes('/assets/')) {
         urlSlug = pathname.substring(1); 
         if (urlSlug.endsWith('/')) urlSlug = urlSlug.slice(0, -1);
     }
 
-    if (!urlId && !urlSlug) {
-        return; 
-    }
+    if (!urlId && !urlSlug) return; 
 
     function renderDetail(sp) {
         if (!sp) {
@@ -41,7 +33,9 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
         currentProduct = sp;
-        let realId = sp.productId || sp.id || sp._id;
+        
+        let realId = sp.id || sp._id;
+        let shortId = sp.productId || realId.slice(-6).toUpperCase();
 
         document.getElementById('detail-name').innerText = sp.name || "";
         document.getElementById('bread-name').innerText = sp.name || "";
@@ -50,15 +44,15 @@ document.addEventListener('DOMContentLoaded', function () {
         let slug = toSlug(sp.name);
         let isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         
-        // Khóa URL siêu ngắn không bị nháy
+        // Khóa URL trên thanh địa chỉ bằng mã NGẮN GỌN
         if (isLocal) {
-            window.history.replaceState(null, '', '?id=' + realId);
+            window.history.replaceState(null, '', '?id=' + shortId);
         } else {
             window.history.replaceState(null, '', '/' + slug);
         }
 
         document.getElementById('detail-price').innerText = sp.price || "0đ";
-        document.getElementById('detail-id').innerText = (realId || "").toUpperCase();
+        document.getElementById('detail-id').innerText = shortId;
 
         let safeLink = sp.img ? sp.img.trim() : "";
         document.querySelector('.main-image').innerHTML = `<img src="${safeLink}" alt="${sp.name}" style="max-width: 100%; height: auto; max-height: 400px; object-fit: contain;" onerror="this.onerror=null; this.src='../../assets/images/icons/logo.jpg'">`;
@@ -86,7 +80,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         currentSpec.value += '<br>' + line.trim();
                     }
                 });
-
                 let tableHTML = ''; let isEven = false;
                 parsedSpecs.forEach(spec => {
                     let bg = isEven ? '#f8f9fa' : '#ffffff';
@@ -112,7 +105,6 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(sp => renderDetail(sp))
             .catch(() => document.getElementById('loading-screen').innerHTML = "Lỗi kết nối máy chủ!");
     } else if (urlSlug) {
-        // Dò tìm sản phẩm qua Tên (Slug)
         fetch('https://raumapc-backend.onrender.com/api/products?v=' + new Date().getTime())
             .then(res => res.ok ? res.json() : null)
             .then(products => {
@@ -124,13 +116,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-// 3. SỰ KIỆN CHO NÚT MUA HÀNG
 const btnAddCart = document.querySelector('.btn-add-cart');
 if (btnAddCart) {
     btnAddCart.addEventListener('click', function () {
         if (currentProduct) {
             let rawPrice = parseInt(String(currentProduct.price).replace(/\D/g, '')) || 0;
-            let realId = currentProduct.productId || currentProduct.id || currentProduct._id;
+            let realId = currentProduct.id || currentProduct._id; 
             
             if (typeof window.addToCart === 'function') {
                 window.addToCart(realId, currentProduct.name, rawPrice, currentProduct.img);
@@ -157,7 +148,7 @@ if (btnBuyNow) {
     btnBuyNow.addEventListener('click', function () {
         if (currentProduct) {
             let rawPrice = parseInt(String(currentProduct.price).replace(/\D/g, '')) || 0;
-            let realId = currentProduct.productId || currentProduct.id || currentProduct._id;
+            let realId = currentProduct.id || currentProduct._id; 
             
             var currentCart = JSON.parse(localStorage.getItem('myCart')) || [];
             var existingItem = currentCart.find(item => item.id === realId);
@@ -172,9 +163,7 @@ if (btnBuyNow) {
     });
 }
 
-// 4. HỆ THỐNG ĐÁNH GIÁ (RATING) & BÌNH LUẬN CÓ ẢNH
 let uploadedReviewImage = "";
-
 function renderComments(commentsArray) {
     if (commentsArray && commentsArray.length > 0) {
         let totalReviews = commentsArray.length;
@@ -314,8 +303,8 @@ stars.forEach(star => {
 });
 
 window.submitReview = function() {
-    let realId = currentProduct.productId || currentProduct.id || currentProduct._id;
-    if (!currentProduct || !realId) return window.showGlobalAlert("Lỗi tải trang!", false);
+    let dbId = currentProduct.id || currentProduct._id; 
+    if (!currentProduct || !dbId) return window.showGlobalAlert("Lỗi tải trang!", false);
     
     const contentBox = document.getElementById('comment-input');
     const content = contentBox.value.trim();
@@ -333,7 +322,7 @@ window.submitReview = function() {
         if(user) userName = user.fullName; 
     } catch(e) {}
 
-    fetch(`https://raumapc-backend.onrender.com/api/products/${realId}/comments`, {
+    fetch(`https://raumapc-backend.onrender.com/api/products/${dbId}/comments`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userName: userName, content: content, rating: rating, img: uploadedReviewImage })
     }).then(res => res.json()).then(data => {

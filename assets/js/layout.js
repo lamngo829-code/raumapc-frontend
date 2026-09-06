@@ -815,24 +815,43 @@ window.showGlobalConfirm = function(message, onConfirm) {
    ========================================================================== */
 
 // 1. CHUYỂN TRANG CHI TIẾT (Áp dụng Event Delegation cho cả sản phẩm tải động)
+// 1. BỘ ĐỊNH TUYẾN CHUYỂN TRANG SẢN PHẨM (BỌC THÉP CHỐNG LỖI NULL)
 document.addEventListener('click', function (e) {
-    // Kiểm tra xem người dùng có click vào khu vực ảnh hoặc tên sản phẩm không
     let target = e.target.closest('.product-img, .product-name');
     if (!target) return; 
     
-    // Chặn ngay lập tức hành động load link HTML cũ
+    // Bỏ qua nếu khách đang cố bấm nút Thêm vào giỏ hàng
+    if (e.target.closest('.add-to-cart')) return;
+
     e.preventDefault();
 
     let card = target.closest('.product-card');
     if (!card) return;
 
     let btnAddCart = card.querySelector('.add-to-cart');
-    if (!btnAddCart) return;
+    let productId = btnAddCart ? btnAddCart.getAttribute('data-product-id') : null;
+    
+    // CHẶN ĐỨNG LỖI ID NULL: Nếu nút giỏ hàng quên gắn ID, tự cứu vãn bằng thẻ <a>
+    if (!productId || productId === 'null' || productId === 'undefined') {
+        let aTag = card.querySelector('a');
+        if (aTag && aTag.getAttribute('href') && aTag.getAttribute('href') !== '#') {
+            window.location.href = aTag.getAttribute('href');
+            return;
+        }
+        // Nếu bó tay toàn tập, báo lỗi văn minh thay vì văng trang trắng
+        if (typeof window.showGlobalAlert === 'function') {
+            window.showGlobalAlert('Sản phẩm này đang được cập nhật, chưa thể xem chi tiết!', false);
+        } else {
+            alert('Sản phẩm này đang được cập nhật!');
+        }
+        return;
+    }
 
-    let productId = btnAddCart.getAttribute('data-product-id');
     let productName = card.querySelector('.product-name').innerText;
     
-    // Tạo link chuẩn SEO trực tiếp
+    // TỰ ĐỘNG CHUYỂN MÃ MONGODB (24 KÝ TỰ) THÀNH MÃ NGẮN SIÊU GỌN
+    let shortId = productId.length === 24 ? productId.slice(-6).toUpperCase() : productId;
+    
     let slug = productName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
 
     let isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
@@ -840,9 +859,8 @@ document.addEventListener('click', function (e) {
     if (isLocal) {
         let inPagesFolder = window.location.pathname.includes('/pages/');
         let detailPath = inPagesFolder ? '../../pages/shop/product-detail.html' : 'pages/shop/product-detail.html';
-        window.location.href = detailPath + '?id=' + productId;
+        window.location.href = detailPath + '?id=' + shortId;
     } else {
-        // Chuyển thẳng sang link siêu ngắn trên Vercel ngay từ giây đầu tiên
         window.location.href = '/' + slug;
     }
 });
