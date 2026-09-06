@@ -207,10 +207,10 @@
                                     <a href="../../pages/shop/ram.html">
                                         <h4>RAM - BỘ NHỚ TRONG</h4>
                                     </a>
-                                    <a href="../../pages/shop/ram-ddr5.html">RAM DDR5</a>
-                                    <a href="../../pages/shop/ram-ddr4.html">RAM DDR4</a>
-                                    <a href="../../pages/shop/ram-32gb.html">RAM 32GB</a>
-                                    <a href="../../pages/shop/ram-16gb.html">RAM 16GB</a>
+                                    <a href="../../pages/shop/ram.html?gen=ddr5">RAM DDR5</a>
+                                    <a href="../../pages/shop/ram.html?gen=ddr4">RAM DDR4</a>
+                                    <a href="../../pages/shop/ram.html?capacity=32gb">RAM 32GB</a>
+                                    <a href="../../pages/shop/ram.html?capacity=16gb">RAM 16GB</a>
                                     <!-- <a href="#">RAM theo hãng</a> -->
 
                                     <a href="../../pages/shop/cooling.html">
@@ -800,6 +800,25 @@
         document.addEventListener('DOMContentLoaded', function () {
             const productContainer = document.getElementById('dynamic-product-list');
             if (!productContainer) return;
+
+            // --- BẮT ĐẦU: ĐỌC URL TỪ MENU ĐỂ TỰ ĐỘNG TICK Ô ---
+            const urlParams = new URLSearchParams(window.location.search);
+            const targetCapacity = urlParams.get('capacity');
+            const targetGen = urlParams.get('gen');
+
+            if (targetCapacity) {
+                const cb = document.querySelector(`input[data-type="capacity"][value="${targetCapacity.toLowerCase()}"]`);
+                if (cb) cb.checked = true;
+                document.querySelector('.category-header h1').innerText = `RAM - BỘ NHỚ TRONG ${targetCapacity.toUpperCase()}`;
+            }
+
+            if (targetGen) {
+                const cb = document.querySelector(`input[data-type="gen"][value="${targetGen.toLowerCase()}"]`);
+                if (cb) cb.checked = true;
+                document.querySelector('.category-header h1').innerText = `RAM - BỘ NHỚ TRONG ${targetGen.toUpperCase()}`;
+            }
+            // --- KẾT THÚC: ĐỌC URL ---
+
             productContainer.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 40px 0; color: #666; font-size: 15px;">Đang tải dữ liệu từ kho...</div>';
 
             document.querySelectorAll('.view-more-btn').forEach(btn => {
@@ -841,6 +860,8 @@
                         const isNotMain = !cat.includes('main') && !name.includes('main') && !name.includes('bo mạch chủ');
                         return isRam && isNotVGA && isNotMain;
                     });
+                    
+                    // CHẠY BỘ LỌC NGAY KHI TẢI DỮ LIỆU ĐỂ HIỂN THỊ SP ĐÃ TICK
                     applyFilters();
                 })
                 .catch(error => {
@@ -928,7 +949,6 @@
                 return;
             }
 
-            // Thêm hàm tạo Slug ngay trước vòng lặp nếu chưa có
             function toSlug(str) {
                 if (!str) return '';
                 return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
@@ -937,8 +957,6 @@
             filtered.forEach(sp => {
                 let isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
                 let slug = toSlug(sp.name);
-                
-                // MẤU CHỐT CHỐNG NHÁY: Ép trực tiếp link SEO vào thẻ A ngay lúc tạo giao diện
                 let linkHref = isLocal ? `product-detail.html?id=${sp.id || sp._id}` : `/${slug}`;
 
                 const productHTML = `
@@ -949,7 +967,6 @@
                     </a>
                     <div class="product-info" style="flex: unset;">
                         <div class="product-price">${sp.price}</div>
-                        <!-- Vẫn giữ nguyên cơ chế thêm vào giỏ hàng bằng mã ID gốc -->
                         <div class="add-to-cart" data-product-id="${sp.id || sp._id}" onclick="
                             event.preventDefault(); 
                             if (typeof window.addToCart === 'function') {
