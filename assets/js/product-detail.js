@@ -71,19 +71,43 @@ document.addEventListener('DOMContentLoaded', function () {
                 const lines = sp.specs.split('\n');
                 let parsedSpecs = [];
                 let currentSpec = null;
+                
                 lines.forEach(line => {
                     if (line.includes(':')) {
-                        const colonIndex = line.indexOf(':');
-                        currentSpec = { key: line.substring(0, colonIndex).trim(), value: line.substring(colonIndex + 1).trim() };
+                        // Tách toàn bộ các phần bằng dấu hai chấm để hỗ trợ 3 cột
+                        const parts = line.split(':');
+                        currentSpec = { 
+                            key: parts[0].trim(), 
+                            values: parts.slice(1).map(p => p.trim()) 
+                        };
                         parsedSpecs.push(currentSpec);
                     } else if (line.trim() !== '' && currentSpec) {
-                        currentSpec.value += '<br>' + line.trim();
+                        currentSpec.values[currentSpec.values.length - 1] += '<br>' + line.trim();
                     }
                 });
+                
                 let tableHTML = ''; let isEven = false;
                 parsedSpecs.forEach(spec => {
                     let bg = isEven ? '#f8f9fa' : '#ffffff';
-                    tableHTML += `<tr style="background-color: ${bg};"><td style="padding: 15px; font-weight: bold; width: 30%; border-bottom: 1px solid #f0f0f0; vertical-align: top;">${spec.key}</td><td style="padding: 15px; border-bottom: 1px solid #f0f0f0; vertical-align: top; line-height: 1.6;">${spec.value}</td></tr>`;
+                    let trHtml = `<tr style="background-color: ${bg};">`;
+                    
+                    // Cột 1: Tên thông số (Nếu trống thì để khoảng trắng)
+                    trHtml += `<td style="padding: 15px; font-weight: bold; width: 30%; border-bottom: 1px solid #f0f0f0; vertical-align: top;">${spec.key}</td>`;
+                    
+                    // Nếu nhập 2 dấu hai chấm -> Có 2 giá trị -> Chia làm 2 cột (Cột 2 và Cột 3)
+                    if (spec.values.length >= 2) {
+                        // Tự động in đậm nếu dòng đó không có Tên thông số (dòng tiêu đề Fan 1, Fan 2)
+                        let fontWeight = spec.key === '' ? 'bold' : 'normal';
+                        trHtml += `<td style="padding: 15px; border-bottom: 1px solid #f0f0f0; vertical-align: top; line-height: 1.6; width: 35%; font-weight: ${fontWeight};">${spec.values[0]}</td>`;
+                        trHtml += `<td style="padding: 15px; border-bottom: 1px solid #f0f0f0; vertical-align: top; line-height: 1.6; width: 35%; font-weight: ${fontWeight};">${spec.values[1]}</td>`;
+                    } 
+                    // Nếu chỉ nhập 1 dấu hai chấm -> Gộp Cột 2 và Cột 3 lại thành 1 cột rộng
+                    else if (spec.values.length === 1) {
+                        trHtml += `<td colspan="2" style="padding: 15px; border-bottom: 1px solid #f0f0f0; vertical-align: top; line-height: 1.6;">${spec.values[0]}</td>`;
+                    }
+                    
+                    trHtml += `</tr>`;
+                    tableHTML += trHtml;
                     isEven = !isEven;
                 });
                 specsTable.innerHTML = tableHTML;
@@ -97,6 +121,29 @@ document.addEventListener('DOMContentLoaded', function () {
             let textDesc = (sp.description && sp.description.trim() !== "") ? sp.description : 'Chưa có bài viết mô tả...';
             descContent.innerHTML = `<div style="white-space: pre-wrap; font-family: inherit;">${textDesc}</div>`;
         }
+
+        // ==========================================
+        // KHU VỰC MỚI: HIỂN THỊ VÀ TĂNG LƯỢT XEM
+        // ==========================================
+        // 1. Tự động chèn số lượt xem lên giao diện (kế bên Mã SP)
+        const idEl = document.getElementById('detail-id');
+        if (idEl && !document.getElementById('detail-views')) {
+            const viewsSpan = document.createElement('span');
+            viewsSpan.id = 'detail-views';
+            viewsSpan.style.marginLeft = '20px';
+            viewsSpan.style.color = '#1435c3';
+            viewsSpan.style.fontWeight = 'bold';
+            viewsSpan.style.fontSize = '14px';
+            // Hiển thị số lượt xem hiện tại + 1 (cho lần xem này của khách)
+            viewsSpan.innerHTML = `👁 ${(sp.views || 0) + 1} lượt xem`;
+            idEl.parentNode.appendChild(viewsSpan);
+        }
+
+        // 2. Kích hoạt API tăng lượt xem chạy ngầm dưới máy chủ
+        fetch(`https://raumapc-backend.onrender.com/api/products/${shortId}/view`, { 
+            method: 'PUT' 
+        }).catch(err => console.log("Lỗi tăng view"));
+        
     }
 
     // BỌC THÉP TRUY VẤN: Lấy toàn bộ kho và tự động tra cứu bằng mọi loại ID (Mã ngắn, Mã dài, Link SEO)
