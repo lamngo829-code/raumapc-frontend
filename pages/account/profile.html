@@ -414,7 +414,11 @@
             <!-- CỘT TRÁI: MENU -->
             <div class="account-sidebar">
                 <div class="account-sidebar-user">
-                    <div class="avt" id="sideAvt">U</div>
+                    <div style="position: relative; display: inline-block;">
+                        <div class="avt" id="sideAvt" style="cursor: pointer; overflow: hidden; padding: 0; display: flex; justify-content: center; align-items: center;" onclick="document.getElementById('avatarInput').click()" title="Đổi ảnh đại diện">U</div>
+                        <div style="position: absolute; bottom: -2px; right: -5px; background: #1435c3; color: white; border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.2);" onclick="document.getElementById('avatarInput').click()">📷</div>
+                        <input type="file" id="avatarInput" accept="image/*" style="display: none;" onchange="window.handleAvatarUpload(event)">
+                    </div>
                     <div>
                         <div style="font-size:13px; color:#888; margin-bottom: 3px;">Tài khoản của</div>
                         <strong id="sideName" style="font-size: 16px;">Đang tải...</strong>
@@ -784,7 +788,12 @@
             if (!user) return window.location.href = '../../index.html';
 
             document.getElementById('sideName').innerText = user.fullName;
-            document.getElementById('sideAvt').innerText = user.fullName.charAt(0).toUpperCase();
+            // Kiểm tra xem khách đã có Avatar chưa, chưa có thì dùng chữ cái đầu
+            if (user.avatar && user.avatar.trim() !== '') {
+                document.getElementById('sideAvt').innerHTML = `<img src="${user.avatar}" style="width:100%; height:100%; object-fit:cover;">`;
+            } else {
+                document.getElementById('sideAvt').innerText = user.fullName.charAt(0).toUpperCase();
+            }
             document.getElementById('infoName').value = user.fullName;
             document.getElementById('infoUser').value = user.username;
             document.getElementById('currentEmail').value = user.email;
@@ -1082,6 +1091,57 @@
                 } else { showCustomAlert(data.message, false); }
             }).catch(err => showCustomAlert("Lỗi kết nối máy chủ!", false));
         };
+
+        // ================= XỬ LÝ TẢI ẢNH ĐẠI DIỆN =================
+    window.handleAvatarUpload = function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        if (!file.type.match('image.*')) return window.showCustomAlert("Vui lòng chỉ chọn file hình ảnh!", false);
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+                // Cắt và ép nén ảnh xuống tối đa 300px để máy chủ chạy siêu nhẹ
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 300; 
+                let width = img.width; let height = img.height;
+
+                if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                canvas.width = width; canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                const base64Avatar = canvas.toDataURL('image/jpeg', 0.8);
+
+                // Hiển thị icon load tạm thời
+                const avtBox = document.getElementById('sideAvt');
+                const oldContent = avtBox.innerHTML;
+                avtBox.innerHTML = '<span style="font-size:14px; animation: pulse 1s infinite;">⏳</span>';
+
+                // Gửi ảnh lên Máy chủ
+                fetch('https://raumapc-backend.onrender.com/api/users/me/update', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('authToken') },
+                    body: JSON.stringify({ avatar: base64Avatar })
+                }).then(res => res.json()).then(data => {
+                    if (data.success) {
+                        localStorage.setItem('currentUser', JSON.stringify(data.user));
+                        avtBox.innerHTML = `<img src="${data.user.avatar}" style="width:100%; height:100%; object-fit:cover;">`;
+                        window.showCustomAlert("Đã đổi ảnh đại diện thành công!", true);
+                    } else {
+                        avtBox.innerHTML = oldContent;
+                        window.showCustomAlert(data.message, false);
+                    }
+                }).catch(err => {
+                    avtBox.innerHTML = oldContent;
+                    window.showCustomAlert("Lỗi mạng! Không thể tải ảnh lên.", false);
+                });
+            }
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    };
     </script>
 </body>
 
