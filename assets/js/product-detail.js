@@ -255,19 +255,27 @@ function renderComments(commentsArray) {
     const listEl = document.getElementById('comment-list');
     listEl.innerHTML = ''; 
 
-    // ĐÂY LÀ ĐOẠN MÃ QUYẾT ĐỊNH HIỂN THỊ NÚT BẤM (CHỈ CHẠY KHI KHÔNG CÓ BÌNH LUẬN NÀO)
+    // 1. LUÔN IN NÚT ĐÁNH GIÁ Ở TRÊN CÙNG (Ngay dưới bảng thống kê sao)
+    // Thiết kế thanh ngang linh hoạt: Chữ bên trái, Nút bên phải
+    let html = `
+        <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 15px 25px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 25px;">
+            <div style="font-size: 15px; color: #1e293b; font-weight: 500;">Bạn đánh giá sao sản phẩm này?</div>
+            <button onclick="openReviewModal()" style="background: #1976d2; color: white; border: none; padding: 10px 30px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(25, 118, 210, 0.2);">Đánh giá ngay</button>
+        </div>
+    `;
+
+    // 2. NẾU CHƯA CÓ BÌNH LUẬN NÀO: Hiện thêm thông báo trống ở dưới nút
     if (!commentsArray || commentsArray.length === 0) {
-        listEl.innerHTML = `
-            <div style="text-align: center; padding: 40px 20px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
-                <p style="color: #94a3b8; font-size: 15px; margin-bottom: 25px;">Sản phẩm chưa có đánh giá nào. Bạn hãy là người đầu tiên!</p>
-                <button onclick="openReviewModal()" style="background: #1976d2; color: white; border: none; padding: 12px 35px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(25, 118, 210, 0.2);">Đánh giá ngay</button>
+        html += `
+            <div style="text-align: center; padding: 40px 20px; background: #fff; border-radius: 8px; border: 1px dashed #cbd5e1;">
+                <p style="color: #94a3b8; font-size: 15px; margin: 0;">Sản phẩm chưa có đánh giá nào. Bạn hãy là người đầu tiên!</p>
             </div>
         `;
+        listEl.innerHTML = html;
         return;
     }
 
-    // ĐÂY LÀ ĐOẠN MÃ VẼ DANH SÁCH BÌNH LUẬN & GẮN THÊM NÚT BẤM Ở DƯỚI CÙNG KHI CÓ DỮ LIỆU
-    let html = '';
+    // 3. NẾU ĐÃ CÓ BÌNH LUẬN: In danh sách nối tiếp vào bên dưới nút bấm
     [...commentsArray].reverse().forEach(cmt => {
         let initial = (cmt.userName && cmt.userName.length > 0) ? cmt.userName.charAt(0).toUpperCase() : "U";
         let stars = parseInt(cmt.rating) || 5;
@@ -296,14 +304,7 @@ function renderComments(commentsArray) {
         </div>`;
     });
 
-    // CHÈN NÚT BẤM VÀO CUỐI DANH SÁCH
-    html += `
-        <div style="text-align: center; margin-top: 30px; padding-top: 30px; border-top: 1px dashed #e2e8f0;">
-            <p style="font-size: 15px; margin-bottom: 15px; color: #1e293b; font-weight: 500;">Bạn đánh giá sao sản phẩm này?</p>
-            <button onclick="openReviewModal()" style="background: #1976d2; color: white; border: none; padding: 12px 35px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(25, 118, 210, 0.2);">Đánh giá ngay</button>
-        </div>
-    `;
-
+    // In toàn bộ giao diện ra màn hình
     listEl.innerHTML = html;
 }
 
