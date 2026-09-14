@@ -265,10 +265,16 @@ function renderComments(commentsArray) {
         let starHtml = '<span style="color: #f59e0b; letter-spacing: 2px; font-size: 14px;">' + '★'.repeat(stars) + '<span style="color:#e2e8f0">' + '★'.repeat(5 - stars) + '</span></span>';
         let imgHtml = cmt.img ? `<img src="${cmt.img}" class="cmt-attached-img" alt="Ảnh đánh giá">` : '';
 
+        // MỚI: Kiểm tra xem đánh giá này có Avatar không, nếu có thì vẽ ảnh, không có thì dùng chữ cái
+        let avatarDisplay = (cmt.userAvatar && cmt.userAvatar.trim() !== '') 
+            ? `<img src="${cmt.userAvatar}" style="width:100%; height:100%; object-fit:cover;">` 
+            : initial;
+
         html += `
         <div class="cmt-box">
             <div class="cmt-header">
-                <div class="cmt-avt">${initial}</div>
+                <!-- Áp dụng CSS ép khung viền tròn cho ảnh -->
+                <div class="cmt-avt" style="overflow: hidden; padding: 0; display: flex; align-items: center; justify-content: center;">${avatarDisplay}</div>
                 <div class="cmt-name">${cmt.userName}</div>
                 <div class="cmt-time">🕒 ${cmt.date}</div>
             </div>
@@ -371,14 +377,20 @@ window.submitReview = function() {
     btn.innerText = "ĐANG GỬI..."; btn.disabled = true;
 
     let userName = "Khách ghé thăm";
+    let userAvatar = ""; // Khởi tạo biến lưu Avatar
+
     try { 
         const user = JSON.parse(localStorage.getItem('currentUser'));
-        if(user) userName = user.fullName; 
+        if(user) {
+            userName = user.fullName; 
+            userAvatar = user.avatar || ""; // Lấy ảnh từ LocalStorage
+        }
     } catch(e) {}
 
     fetch(`https://raumapc-backend.onrender.com/api/products/${dbId}/comments`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userName: userName, content: content, rating: rating, img: uploadedReviewImage })
+        // Gửi kèm userAvatar lên server
+        body: JSON.stringify({ userName: userName, userAvatar: userAvatar, content: content, rating: rating, img: uploadedReviewImage })
     }).then(res => res.json()).then(data => {
         btn.innerText = "GỬI ĐÁNH GIÁ"; btn.disabled = false;
         if (data.success) {
