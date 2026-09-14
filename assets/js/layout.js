@@ -340,17 +340,15 @@ window.resendLoginOtp = function(e) {
 
 window.handleLogout = function (e) {
     if (e) e.preventDefault();
+    
+    // Dọn dẹp SẠCH SẼ mọi dấu vết của tài khoản cũ
     localStorage.removeItem('currentUser');
     localStorage.removeItem('authToken');
     localStorage.removeItem('myCart');
 
     const finishLogout = () => {
-        if (window.location.pathname.includes('/pages/')) {
-            window.location.href = '../../index.html';
-        } else {
-            window.updateAccountUI();
-            if (typeof window.updateCartUI === 'function') window.updateCartUI();
-        }
+        // Dùng replace để đá văng khách về trang chủ và chặn nút Back của trình duyệt
+        window.location.replace('../../index.html');
     };
 
     if (typeof window.showGlobalAlert === 'function') {

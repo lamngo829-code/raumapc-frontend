@@ -785,7 +785,12 @@
         document.addEventListener('DOMContentLoaded', function () {
             var user = null;
             try { user = JSON.parse(localStorage.getItem('currentUser')); } catch (e) { }
-            if (!user) return window.location.href = '../../index.html';
+            
+            // ĐÃ NÂNG CẤP: Trục xuất ngay lập tức nếu khách chưa đăng nhập (hoặc vừa đăng xuất)
+            if (!user) {
+                window.location.replace('../../index.html');
+                return;
+            }
 
             document.getElementById('sideName').innerText = user.fullName;
             // Kiểm tra xem khách đã có Avatar chưa, chưa có thì dùng chữ cái đầu
