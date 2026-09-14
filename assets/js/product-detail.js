@@ -255,12 +255,11 @@ function renderComments(commentsArray) {
     const listEl = document.getElementById('comment-list');
     listEl.innerHTML = ''; 
 
-    // 1. LUÔN IN NÚT ĐÁNH GIÁ Ở TRÊN CÙNG (Ngay dưới bảng thống kê sao)
-    // Thiết kế thanh ngang linh hoạt: Chữ bên trái, Nút bên phải
+    // 1. LUÔN IN NÚT ĐÁNH GIÁ Ở TRÊN CÙNG (Căn giữa tuyệt đối)
     let html = `
-        <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 15px 25px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 25px;">
-            <div style="font-size: 15px; color: #1e293b; font-weight: 500;">Bạn đánh giá sao sản phẩm này?</div>
-            <button onclick="openReviewModal()" style="background: #1976d2; color: white; border: none; padding: 10px 30px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(25, 118, 210, 0.2);">Đánh giá ngay</button>
+        <div style="text-align: center; background: #f8fafc; padding: 25px 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 25px;">
+            <p style="font-size: 15px; color: #1e293b; font-weight: 500; margin-bottom: 15px;">Bạn đánh giá sao sản phẩm này?</p>
+            <button onclick="openReviewModal()" style="background: #1976d2; color: white; border: none; padding: 12px 35px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(25, 118, 210, 0.2);">Đánh giá ngay</button>
         </div>
     `;
 
