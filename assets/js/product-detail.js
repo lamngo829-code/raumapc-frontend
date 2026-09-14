@@ -253,14 +253,20 @@ function renderComments(commentsArray) {
     }
 
     const listEl = document.getElementById('comment-list');
-    
     listEl.innerHTML = ''; 
 
+    // ĐÂY LÀ ĐOẠN MÃ QUYẾT ĐỊNH HIỂN THỊ NÚT BẤM (CHỈ CHẠY KHI KHÔNG CÓ BÌNH LUẬN NÀO)
     if (!commentsArray || commentsArray.length === 0) {
-        listEl.innerHTML = '<div style="text-align: center; padding: 30px; color: #94a3b8; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">Sản phẩm chưa có đánh giá nào. Bạn hãy là người đầu tiên!</div>';
+        listEl.innerHTML = `
+            <div style="text-align: center; padding: 40px 20px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
+                <p style="color: #94a3b8; font-size: 15px; margin-bottom: 25px;">Sản phẩm chưa có đánh giá nào. Bạn hãy là người đầu tiên!</p>
+                <button onclick="openReviewModal()" style="background: #1976d2; color: white; border: none; padding: 12px 35px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(25, 118, 210, 0.2);">Đánh giá ngay</button>
+            </div>
+        `;
         return;
     }
 
+    // ĐÂY LÀ ĐOẠN MÃ VẼ DANH SÁCH BÌNH LUẬN & GẮN THÊM NÚT BẤM Ở DƯỚI CÙNG KHI CÓ DỮ LIỆU
     let html = '';
     [...commentsArray].reverse().forEach(cmt => {
         let initial = (cmt.userName && cmt.userName.length > 0) ? cmt.userName.charAt(0).toUpperCase() : "U";
@@ -268,7 +274,6 @@ function renderComments(commentsArray) {
         let starHtml = '<span style="color: #f59e0b; letter-spacing: 2px; font-size: 14px;">' + '★'.repeat(stars) + '<span style="color:#e2e8f0">' + '★'.repeat(5 - stars) + '</span></span>';
         let imgHtml = cmt.img ? `<img src="${cmt.img}" class="cmt-attached-img" alt="Ảnh đánh giá">` : '';
 
-        // MỚI: Kiểm tra xem đánh giá này có Avatar không, nếu có thì vẽ ảnh, không có thì dùng chữ cái
         let avatarDisplay = (cmt.userAvatar && cmt.userAvatar.trim() !== '') 
             ? `<img src="${cmt.userAvatar}" style="width:100%; height:100%; object-fit:cover;">` 
             : initial;
@@ -276,7 +281,6 @@ function renderComments(commentsArray) {
         html += `
         <div class="cmt-box">
             <div class="cmt-header">
-                <!-- Áp dụng CSS ép khung viền tròn cho ảnh -->
                 <div class="cmt-avt" style="overflow: hidden; padding: 0; display: flex; align-items: center; justify-content: center;">${avatarDisplay}</div>
                 <div class="cmt-name">${cmt.userName}</div>
                 <div class="cmt-time">🕒 ${cmt.date}</div>
@@ -291,6 +295,15 @@ function renderComments(commentsArray) {
             </div>
         </div>`;
     });
+
+    // CHÈN NÚT BẤM VÀO CUỐI DANH SÁCH
+    html += `
+        <div style="text-align: center; margin-top: 30px; padding-top: 30px; border-top: 1px dashed #e2e8f0;">
+            <p style="font-size: 15px; margin-bottom: 15px; color: #1e293b; font-weight: 500;">Bạn đánh giá sao sản phẩm này?</p>
+            <button onclick="openReviewModal()" style="background: #1976d2; color: white; border: none; padding: 12px 35px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(25, 118, 210, 0.2);">Đánh giá ngay</button>
+        </div>
+    `;
+
     listEl.innerHTML = html;
 }
 
