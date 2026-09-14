@@ -253,6 +253,9 @@ function renderComments(commentsArray) {
     }
 
     const listEl = document.getElementById('comment-list');
+    
+    listEl.innerHTML = ''; 
+
     if (!commentsArray || commentsArray.length === 0) {
         listEl.innerHTML = '<div style="text-align: center; padding: 30px; color: #94a3b8; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">Sản phẩm chưa có đánh giá nào. Bạn hãy là người đầu tiên!</div>';
         return;
@@ -260,7 +263,7 @@ function renderComments(commentsArray) {
 
     let html = '';
     [...commentsArray].reverse().forEach(cmt => {
-        let initial = cmt.userName.charAt(0).toUpperCase();
+        let initial = (cmt.userName && cmt.userName.length > 0) ? cmt.userName.charAt(0).toUpperCase() : "U";
         let stars = parseInt(cmt.rating) || 5;
         let starHtml = '<span style="color: #f59e0b; letter-spacing: 2px; font-size: 14px;">' + '★'.repeat(stars) + '<span style="color:#e2e8f0">' + '★'.repeat(5 - stars) + '</span></span>';
         let imgHtml = cmt.img ? `<img src="${cmt.img}" class="cmt-attached-img" alt="Ảnh đánh giá">` : '';
@@ -380,12 +383,18 @@ window.submitReview = function() {
     let userAvatar = ""; // Khởi tạo biến lưu Avatar
 
     try { 
-        const user = JSON.parse(localStorage.getItem('currentUser'));
-        if(user) {
-            userName = user.fullName; 
-            userAvatar = user.avatar || ""; // Lấy ảnh từ LocalStorage
+        // Thay vì chỉ lấy từ currentUser, hãy lấy cả từ biến userData lúc đăng nhập trả về
+        const userStr = localStorage.getItem('currentUser');
+        if(userStr) {
+            const user = JSON.parse(userStr);
+            userName = user.fullName || "Khách ghé thăm"; 
+            
+            // Ép buộc kiểm tra và lấy đường link Base64 thực sự
+            if (user.avatar && typeof user.avatar === 'string' && user.avatar.includes('data:image')) {
+                userAvatar = user.avatar; 
+            }
         }
-    } catch(e) {}
+    } catch(e) { console.error("Lỗi lấy thông tin User:", e); }
 
     fetch(`https://raumapc-backend.onrender.com/api/products/${dbId}/comments`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
