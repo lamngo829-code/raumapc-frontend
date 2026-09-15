@@ -62,8 +62,6 @@ window.removePageItem = function(index) {
     window.renderCartPage(); 
 };
 
-
-// --- XỬ LÝ ĐẶT HÀNG & GỬI EMAIL XỊN SÒ (ĐỒNG BỘ GIAO DIỆN CHỜ DUYỆT) ---
 // --- XỬ LÝ ĐẶT HÀNG AN TOÀN (GIAO VIỆC GỬI MAIL CHO BACKEND) ---
 window.processCheckout = function() {
     var currentUser = JSON.parse(localStorage.getItem('currentUser')); 
@@ -119,7 +117,15 @@ window.processCheckout = function() {
     })
     .then(response => response.json())
     .then(data => {
+        // Xóa giỏ hàng cục bộ
         localStorage.removeItem('myCart'); 
+        
+        // MỚI THÊM: Cập nhật lại thông tin User trong LocalStorage để phản ánh giỏ hàng đã trống
+        if (currentUser) {
+            currentUser.cart = [];
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        }
+
         if (typeof window.showGlobalAlert === 'function') {
             window.showGlobalAlert('🎉 Đặt hàng thành công! Hóa đơn chi tiết đã được gửi vào Email.', true, () => {
                 window.location.href = '../../pages/account/orders.html';
