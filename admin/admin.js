@@ -270,6 +270,10 @@ function loadOrders() {
                                     <option value="Đã hủy" ${order.status === 'Đã hủy' ? 'selected' : ''}>Hủy đơn</option>
                                 </select>
                             </td>
+
+                            <td>
+                                <button onclick="deleteOrder('${order.orderId}')" style="background:#ffe2e5; color:#dc2626; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; font-weight:bold; transition:0.2s;" onmouseover="this.style.background='#fca5a5'" onmouseout="this.style.background='#ffe2e5'">Xóa</button>
+                            </td>
                         </tr>
                     `;
             });
@@ -288,6 +292,25 @@ function changeOrderStatus(orderId, newStatus) {
             loadRevenue(); 
         })
         .catch(err => alert("Lỗi khi cập nhật trạng thái!"));
+}
+
+function deleteOrder(orderId) {
+    if (confirm(`⚠️ CẢNH BÁO NGUY HIỂM\n\nBạn có chắc chắn muốn xóa vĩnh viễn đơn hàng #${orderId} không? Dữ liệu sẽ không thể khôi phục!`)) {
+        fetch(`${API_ORDERS}/${orderId}`, { method: 'DELETE' })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    if(typeof window.showAdminAlert === 'function') window.showAdminAlert(data.message, true);
+                    loadOrders(); // Tải lại bảng đơn hàng
+                    loadRevenue(); // Cập nhật lại doanh thu lỡ xóa trúng đơn đã "Hoàn thành"
+                } else {
+                    if(typeof window.showAdminAlert === 'function') window.showAdminAlert(data.message, false);
+                }
+            })
+            .catch(err => {
+                if(typeof window.showAdminAlert === 'function') window.showAdminAlert("Lỗi kết nối máy chủ!", false);
+            });
+    }
 }
 
 loadProducts();
