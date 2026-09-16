@@ -73,7 +73,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 let currentSpec = null;
                 
                 lines.forEach(line => {
-                    if (line.includes(':')) {
+                    // MỚI: Dấu ">" báo hiệu đây là nội dung con, ép gộp chung vào ô trước đó (kể cả khi dòng này có chứa dấu ":")
+                    if (line.trim().startsWith('>') && currentSpec) {
+                        currentSpec.values[currentSpec.values.length - 1] += '<br>' + line.trim().substring(1).trim();
+                    } 
+                    else if (line.includes(':')) {
                         // Tách toàn bộ các phần bằng dấu hai chấm để hỗ trợ 3 cột
                         const parts = line.split(':');
                         currentSpec = { 
@@ -81,7 +85,8 @@ document.addEventListener('DOMContentLoaded', function () {
                             values: parts.slice(1).map(p => p.trim()) 
                         };
                         parsedSpecs.push(currentSpec);
-                    } else if (line.trim() !== '' && currentSpec) {
+                    } 
+                    else if (line.trim() !== '' && currentSpec) {
                         currentSpec.values[currentSpec.values.length - 1] += '<br>' + line.trim();
                     }
                 });
