@@ -73,12 +73,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 let currentSpec = null;
                 
                 lines.forEach(line => {
-                    // MỚI: Dấu ">" báo hiệu đây là nội dung con, ép gộp chung vào ô trước đó (kể cả khi dòng này có chứa dấu ":")
                     if (line.trim().startsWith('>') && currentSpec) {
-                        currentSpec.values[currentSpec.values.length - 1] += '<br>' + line.trim().substring(1).trim();
+                        let lastIdx = currentSpec.values.length - 1;
+                        let appendText = line.trim().substring(1).trim();
+                        
+                        // ĐÃ SỬA: Nếu ô đang trống thì điền trực tiếp, không chèn <br> ở đầu
+                        if (currentSpec.values[lastIdx] === '') {
+                            currentSpec.values[lastIdx] = appendText;
+                        } else {
+                            currentSpec.values[lastIdx] += '<br>' + appendText;
+                        }
                     } 
                     else if (line.includes(':')) {
-                        // Tách toàn bộ các phần bằng dấu hai chấm để hỗ trợ 3 cột
                         const parts = line.split(':');
                         currentSpec = { 
                             key: parts[0].trim(), 
@@ -87,7 +93,13 @@ document.addEventListener('DOMContentLoaded', function () {
                         parsedSpecs.push(currentSpec);
                     } 
                     else if (line.trim() !== '' && currentSpec) {
-                        currentSpec.values[currentSpec.values.length - 1] += '<br>' + line.trim();
+                        let lastIdx = currentSpec.values.length - 1;
+                        // Sửa tương tự cho các dòng thông thường
+                        if (currentSpec.values[lastIdx] === '') {
+                            currentSpec.values[lastIdx] = line.trim();
+                        } else {
+                            currentSpec.values[lastIdx] += '<br>' + line.trim();
+                        }
                     }
                 });
                 
