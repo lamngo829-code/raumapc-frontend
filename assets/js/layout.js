@@ -370,9 +370,21 @@ window.updateAccountUI = function () {
 
         if (currentUser) {
             var firstName = currentUser.fullName.split(' ')[0];
+            
+            // LOGIC XỬ LÝ AVATAR HOẶC CHỮ CÁI ĐẦU TIÊN
+            var avatarHTML = '';
+            if (currentUser.avatar && currentUser.avatar.trim() !== '') {
+                // Trường hợp 1: Người dùng có avatar
+                avatarHTML = `<img src="${currentUser.avatar}" alt="Avatar" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid #ffeb3b; background: white;">`;
+            } else {
+                // Trường hợp 2: Không có avatar -> Lấy chữ cái đầu tiên của Tên
+                var firstLetter = firstName.charAt(0).toUpperCase();
+                avatarHTML = `<div style="width: 32px; height: 32px; border-radius: 50%; background-color: #ffeb3b; color: #1435c3; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px;">${firstLetter}</div>`;
+            }
+
             wrapper.innerHTML = `
                 <div class="account-trigger">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffeb3b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    ${avatarHTML}
                     <div class="account-text-wrap">
                         <span class="acc-small" style="color:#ffeb3b;">Xin chào,</span>
                         <span class="acc-large" style="color:#ffeb3b;">${firstName} ▾</span>
@@ -384,6 +396,7 @@ window.updateAccountUI = function () {
                     <a href="#" class="user-menu-link logout-text" onclick="window.handleLogout(event)">Đăng xuất</a>
                 </div>`;
         } else {
+            // Trường hợp 3: Chưa đăng nhập -> Vẫn là icon SVG mặc định
             wrapper.innerHTML = `
                 <div class="account-trigger">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
@@ -396,6 +409,7 @@ window.updateAccountUI = function () {
         }
     });
 };
+
 document.addEventListener('DOMContentLoaded', window.updateAccountUI);
 
 /* ==========================================================================
