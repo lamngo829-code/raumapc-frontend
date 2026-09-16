@@ -407,8 +407,11 @@ window.updateAccountUI = function () {
                     <a href="${prefix}${pagesPrefix}../../pages/account/register.html" style="display:block; text-align:center; text-decoration:none; background:white; color:#333; border:1px solid #ccc; padding:10px; border-radius:4px; font-weight:bold;">Đăng ký</a>
                 </div>`;
         }
+
+        wrapper.style.opacity = '1';
+
     });
-};
+}; // ĐÃ THÊM DẤU ĐÓNG NGOẶC NÀY
 
 document.addEventListener('DOMContentLoaded', window.updateAccountUI);
 

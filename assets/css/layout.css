@@ -862,6 +862,8 @@
     position: relative;
     cursor: pointer;
     padding: 10px 0;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
 }
 
 .account-trigger {
