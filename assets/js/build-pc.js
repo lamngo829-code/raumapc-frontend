@@ -15,15 +15,21 @@ async function fetchProductsFromAPI() {
 
 // 1. DANH MỤC LINH KIỆN & PHỤ KIỆN HIỆN CÓ
 const componentCategories = [
-    { key: 'vga', name: 'VGA - Card màn hình' },
-    { key: 'main', name: 'Mainboard - Bo mạch chủ' },
-    { key: 'ram', name: 'RAM - Bộ nhớ trong' },
-    { key: 'ssd', name: 'Ổ cứng SSD' },
-    { key: 'monitor', name: 'Màn hình máy tính' },
-    { key: 'mouse', name: 'Mouse - Chuột' },
     { key: 'cpu', name: 'CPU - Vi xử lý' },
+    { key: 'main', name: 'Mainboard - Bo mạch chủ' },
+    { key: 'ram1', name: 'RAM - Bộ nhớ trong 1' },
+    { key: 'ram2', name: 'RAM - Bộ nhớ trong 2' },
+    { key: 'vga', name: 'VGA - Card màn hình' },
+    { key: 'ssd1', name: 'Ổ cứng (SSD/HDD) 1' },
+    { key: 'ssd2', name: 'Ổ cứng (SSD/HDD) 2' },
     { key: 'psu', name: 'Nguồn máy tính' },
-    { key: 'case', name: 'Vỏ ca-se' }
+    { key: 'case', name: 'Vỏ Case' },
+    { key: 'cooling', name: 'Tản nhiệt' },
+    { key: 'monitor1', name: 'Màn hình máy tính 1' },
+    { key: 'monitor2', name: 'Màn hình máy tính 2' },
+    { key: 'keyboard', name: 'Bàn phím' },
+    { key: 'mouse', name: 'Mouse - Chuột' },
+    { key: 'software', name: 'Phần mềm bản quyền' }
 ];
 
 // 3. LOGIC LƯU TRỮ VÀ XỬ LÝ GIAO DIỆN
@@ -85,23 +91,47 @@ window.openPickerModal = function(categoryCode, categoryName) {
     }
 
     
-    // BỘ LỌC NGHIÊM NGẶT: Chỉ nhận diện qua Category (Danh mục)
+    // BỘ LỌC NGHIÊM NGẶT CÓ LOẠI TRỪ CHÉO
     const filteredProducts = allProducts.filter(p => {
         const dbCategory = (p.category || '').toLowerCase();
-        const searchCode = categoryCode.toLowerCase(); 
+        const pName = (p.name || '').toLowerCase();
+        const searchCode = categoryCode.toLowerCase().replace(/[0-9]/g, ''); 
         
-        // Nhận diện cho nhóm CPU
+        // 1. Lọc CPU: Chặn Tản nhiệt lọt vào
         if (searchCode === 'cpu') {
-            return dbCategory.includes('cpu') || dbCategory === 'intel' || dbCategory === 'amd';
+            if (pName.includes('tản') || pName.includes('cooling')) return false;
+            return dbCategory.includes('cpu') || dbCategory === 'intel' || dbCategory === 'amd' || /\bcpu\b/.test(pName) || /\bcore\b/.test(pName) || /\bryzen\b/.test(pName);
         }
-        
-        // Nhận diện cho nhóm Ổ Cứng (Chấp nhận mã 'storage')
+        // 2. Lọc Ổ cứng
         if (searchCode === 'ssd' || searchCode === 'hdd') {
-            return dbCategory === 'storage' || dbCategory.includes('ssd') || dbCategory.includes('hdd');
+            return dbCategory === 'storage' || dbCategory.includes('ssd') || dbCategory.includes('hdd') || /\bssd\b/.test(pName) || /\bhdd\b/.test(pName) || pName.includes('ổ cứng');
+        }
+        // 3. Lọc RAM: Chặn Main, VGA, Tản nhiệt
+        if (searchCode === 'ram') {
+            if (pName.includes('main') || pName.includes('bo mạch') || pName.includes('vga') || pName.includes('card') || pName.includes('tản')) return false;
+            return dbCategory.includes('ram') || /\bram\b/.test(pName) || pName.includes('ddr');
+        }
+        // 4. Lọc Tản nhiệt: Loại bỏ Keo tản nhiệt
+        if (searchCode === 'cooling') {
+            if (pName.includes('keo')) return false;
+            return dbCategory.includes('cooling') || pName.includes('tản nhiệt') || pName.includes('aio');
+        }
+        // 5. Lọc Màn hình: Chặn Card màn hình
+        if (searchCode === 'monitor') {
+            if (pName.includes('card')) return false; 
+            return dbCategory.includes('monitor') || dbCategory.includes('màn hình') || pName.includes('màn hình');
+        }
+        // 6. Lọc Bàn phím
+        if (searchCode === 'keyboard') {
+            return dbCategory.includes('phím') || dbCategory.includes('keyboard') || pName.includes('bàn phím');
+        }
+        // 7. Lọc Phần mềm bản quyền
+        if (searchCode === 'software') {
+            return dbCategory.includes('win') || dbCategory.includes('office') || dbCategory.includes('phần mềm') || dbCategory.includes('virus') || pName.includes('phần mềm') || pName.includes('microsoft');
         }
 
         // Khóa chặt các linh kiện còn lại
-        return dbCategory.includes(searchCode);
+        return dbCategory.includes(searchCode) || pName.includes(searchCode);
     });
 
     const searchInput = document.getElementById('modalSearchInput');
@@ -176,19 +206,34 @@ window.filterModalProducts = function() {
     
     const filteredProducts = allProducts.filter(p => {
         const dbCategory = (p.category || '').toLowerCase();
-        const dbBrand = (p.brand || '').toLowerCase();
-        const searchCode = currentModalCategory.toLowerCase();
+        const pName = (p.name || '').toLowerCase();
+        const searchCode = currentModalCategory.toLowerCase().replace(/[0-9]/g, '');
         
         let isMatchCategory = false;
+        
         if (searchCode === 'cpu') {
-            isMatchCategory = dbCategory.includes('cpu') || dbCategory === 'intel' || dbCategory === 'amd' || dbBrand === 'intel' || dbBrand === 'amd';
-        } else if (searchCode === 'vga') {
-            isMatchCategory = dbCategory.includes('vga');
+            if (pName.includes('tản') || pName.includes('cooling')) return false;
+            isMatchCategory = dbCategory.includes('cpu') || dbCategory === 'intel' || dbCategory === 'amd' || /\bcpu\b/.test(pName) || /\bcore\b/.test(pName) || /\bryzen\b/.test(pName);
+        } else if (searchCode === 'ssd' || searchCode === 'hdd') {
+            isMatchCategory = dbCategory === 'storage' || dbCategory.includes('ssd') || dbCategory.includes('hdd') || /\bssd\b/.test(pName) || /\bhdd\b/.test(pName) || pName.includes('ổ cứng');
+        } else if (searchCode === 'ram') {
+            if (pName.includes('main') || pName.includes('bo mạch') || pName.includes('vga') || pName.includes('card') || pName.includes('tản')) return false;
+            isMatchCategory = dbCategory.includes('ram') || /\bram\b/.test(pName) || pName.includes('ddr');
+        } else if (searchCode === 'cooling') {
+            if (pName.includes('keo')) return false;
+            isMatchCategory = dbCategory.includes('cooling') || pName.includes('tản nhiệt') || pName.includes('aio');
+        } else if (searchCode === 'monitor') {
+            if (pName.includes('card')) return false;
+            isMatchCategory = dbCategory.includes('monitor') || dbCategory.includes('màn hình') || pName.includes('màn hình');
+        } else if (searchCode === 'keyboard') {
+            isMatchCategory = dbCategory.includes('phím') || dbCategory.includes('keyboard') || pName.includes('bàn phím');
+        } else if (searchCode === 'software') {
+            isMatchCategory = dbCategory.includes('win') || dbCategory.includes('office') || dbCategory.includes('phần mềm') || dbCategory.includes('virus') || pName.includes('phần mềm') || pName.includes('microsoft');
         } else {
-            isMatchCategory = dbCategory.includes(searchCode) || searchCode.includes(dbCategory);
+            isMatchCategory = dbCategory.includes(searchCode) || pName.includes(searchCode);
         }
 
-        const isMatchName = p.name.toLowerCase().includes(keyword);
+        const isMatchName = pName.includes(keyword);
         return isMatchCategory && isMatchName;
     });
 

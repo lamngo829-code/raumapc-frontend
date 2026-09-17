@@ -57,6 +57,30 @@ document.addEventListener('DOMContentLoaded', function () {
         let safeLink = sp.img ? sp.img.trim() : "";
         document.querySelector('.main-image').innerHTML = `<img src="${safeLink}" alt="${sp.name}" style="max-width: 100%; height: auto; max-height: 400px; object-fit: contain;" onerror="this.onerror=null; this.src='../../assets/images/icons/logo.jpg'">`;
 
+        // XỬ LÝ ẢNH NHỎ (GALLERY)
+        const galleryContainer = document.getElementById('detail-gallery');
+        if (galleryContainer) {
+            let galleryHtml = '';
+            let allImages = [];
+            
+            if (safeLink) allImages.push(safeLink); // Đưa ảnh gốc lên đầu tiên
+            if (sp.gallery && sp.gallery.length > 0) {
+                allImages = allImages.concat(sp.gallery); // Nối các ảnh phụ vào
+            }
+            
+            if (allImages.length > 1) { // Chỉ hiện hàng ảnh nhỏ nếu có từ 2 ảnh trở lên
+                allImages.forEach((imgSrc, index) => {
+                    let activeClass = index === 0 ? 'active' : '';
+                    galleryHtml += `
+                        <div class="thumb-item ${activeClass}" onclick="changeMainImage(this, '${imgSrc}')">
+                            <img src="${imgSrc}" onerror="this.src='../../assets/images/icons/logo.jpg'">
+                        </div>
+                    `;
+                });
+            }
+            galleryContainer.innerHTML = galleryHtml;
+        }
+
         const warrantyEl = document.getElementById('warranty-text');
         if (warrantyEl) warrantyEl.innerText = sp.warranty || "36 Tháng";
 
@@ -449,4 +473,14 @@ window.submitReview = function() {
         btn.innerText = "GỬI ĐÁNH GIÁ"; btn.disabled = false;
         window.showGlobalAlert("Lỗi mạng! Không thể kết nối với máy chủ.", false);
     });
+};
+
+// Hàm chuyển đổi ảnh chính khi click vào ảnh nhỏ
+window.changeMainImage = function(thumbEl, src) {
+    const mainImgEl = document.querySelector('.main-image img');
+    if (mainImgEl) mainImgEl.src = src; // Đổi ảnh gốc
+    
+    // Đổi viền xanh sang ảnh vừa click
+    document.querySelectorAll('.thumb-item').forEach(el => el.classList.remove('active'));
+    thumbEl.classList.add('active');
 };

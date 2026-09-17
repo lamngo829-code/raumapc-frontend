@@ -136,7 +136,6 @@
                                 <option value="cooling">Tản Nhiệt</option>
                                 <option value="case">Vỏ Case</option>
                                 <option value="monitor">Màn Hình</option>
-                                <option value="thermal-paste">Keo Tản Nhiệt</option>
                                 <option value="wireless-keyboard">Bàn Phím Không Dây</option>
                                 <option value="wireless-mouse">Chuột Không Dây</option>
                                 <option value="win-copyright">Windows</option>
@@ -148,10 +147,10 @@
                             </select>
                         </div>
                         
-                        <!-- KHU VỰC KÉO THẢ ẢNH -->
+                        <!-- 1. KHU VỰC KÉO THẢ ẢNH CHÍNH -->
                         <div class="form-group full-width">
                             <label>Hình Ảnh Sản Phẩm *</label>
-                            <input type="hidden" id="img" required> <!-- Giữ ID ẩn để không phá vỡ logic cũ -->
+                            <input type="hidden" id="img" required>
                             
                             <div id="drop-zone" style="border: 2px dashed #cbd5e1; border-radius: 8px; padding: 40px 20px; text-align: center; cursor: pointer; background: #f8fafc; transition: 0.3s; position: relative; overflow: hidden;">
                                 <input type="file" id="file-input" accept="image/*" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10;">
@@ -165,12 +164,22 @@
                                 <img id="image-preview" src="" style="display: none; max-height: 250px; max-width: 100%; margin: 0 auto; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: relative; z-index: 5;">
                                 <button type="button" id="btn-remove-img" style="display: none; position: absolute; top: 15px; right: 15px; background: #d70018; color: white; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 14px; font-weight: bold; cursor: pointer; z-index: 20; box-shadow: 0 2px 5px rgba(215,0,24,0.3);">X</button>
                             </div>
+                        </div> <!-- ĐÂY LÀ DẤU ĐÓNG CỦA ẢNH CHÍNH -->
+
+                        <!-- 2. KHU VỰC ẢNH PHỤ (GALLERY) NẰM ĐỘC LẬP BÊN DƯỚI -->
+                        <div class="form-group full-width" style="margin-top: 15px;">
+                            <label>Ảnh Thư Viện Phụ (Chọn nhiều ảnh, trượt ngang để xem)</label>
+                            <input type="file" id="gallery-input" accept="image/*" multiple style="padding: 10px; border: 1px dashed #cbd5e1; border-radius: 8px; width: 100%; cursor: pointer; background: #f8fafc;">
+                            <!-- ĐÃ SỬA: Đổi flex-wrap thành overflow-x: auto để tạo thanh trượt -->
+                            <div id="gallery-preview" style="display: flex; gap: 15px; margin-top: 15px; overflow-x: auto; padding-bottom: 15px;"></div>
                         </div>
-                        
+
+                        <!-- 3. KHU VỰC THÔNG SỐ KỸ THUẬT -->
                         <div class="form-group full-width">
                             <label>Thông số kỹ thuật (Mỗi thông số 1 dòng. Cú pháp: Tên thông số : Giá trị)</label>
                             <textarea id="specs" rows="4" placeholder="Ví dụ:&#10;CPU : Intel Core i5-14400F&#10;Socket : LGA1700&#10;Số nhân : 10"></textarea>
                         </div>
+
                         <div class="form-group full-width">
                             <label>Mô tả chi tiết sản phẩm</label>
                             <textarea id="description" rows="4" placeholder="Nhập bài viết mô tả sản phẩm vào đây..."></textarea>

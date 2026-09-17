@@ -126,6 +126,10 @@ function editProduct(id) {
     }
     if (document.getElementById('btn-cancel')) document.getElementById('btn-cancel').style.display = "block"; 
 
+    // Tải ảnh thư viện cũ vào biến và vẽ ra màn hình
+    galleryBase64 = sp.gallery || [];
+    if (typeof window.renderGallery === 'function') window.renderGallery();
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -148,6 +152,10 @@ function cancelEdit() {
         btnSubmit.style.background = "#1435c3"; 
     }
     if (document.getElementById('btn-cancel')) document.getElementById('btn-cancel').style.display = "none";
+
+    // Dọn dẹp ảnh thư viện khi hủy
+    galleryBase64 = [];
+    if (typeof window.renderGallery === 'function') window.renderGallery();
     
     if (typeof resetImageUploader === 'function') resetImageUploader();
 }
@@ -187,7 +195,8 @@ document.getElementById('productForm').addEventListener('submit', function (e) {
         category: combinedCategory,
         brand: brandValue, 
         specs: document.getElementById('specs') ? document.getElementById('specs').value : '',
-        description: document.getElementById('description') ? document.getElementById('description').value : ''
+        description: document.getElementById('description') ? document.getElementById('description').value : '',
+        gallery: galleryBase64
     };
 
     const editIdInput = document.getElementById('edit-id');
@@ -493,3 +502,65 @@ document.getElementById('productForm').addEventListener('submit', () => {
         draftFields.forEach(id => localStorage.removeItem('draft_product_' + id));
     }
 });
+
+// --- XỬ LÝ ẢNH THƯ VIỆN PHỤ (GALLERY) ---
+let galleryBase64 = [];
+const galleryInput = document.getElementById('gallery-input');
+const galleryPreview = document.getElementById('gallery-preview');
+
+window.renderGallery = function() {
+    if (!galleryPreview) return;
+    galleryPreview.innerHTML = '';
+    galleryBase64.forEach((dataUrl, index) => {
+        // ĐÃ SỬA: Thêm thuộc tính flex-shrink: 0 để ảnh không bị bóp méo khi vượt quá chiều ngang
+        galleryPreview.innerHTML += `
+            <div style="position: relative; display: inline-block; flex-shrink: 0; margin-top: 5px; margin-right: 5px;">
+                <img src="${dataUrl}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; border: 1px solid #cbd5e1; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                <button type="button" onclick="removeGalleryImage(${index})" style="position: absolute; top: -8px; right: -8px; background: #d70018; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(215,0,24,0.3); display: flex; align-items: center; justify-content: center; z-index: 10;">X</button>
+            </div>
+        `;
+    });
+};
+
+window.removeGalleryImage = function(index) {
+    galleryBase64.splice(index, 1);
+    renderGallery(); 
+    if (galleryBase64.length === 0 && galleryInput) galleryInput.value = '';
+};
+
+if (galleryInput) {
+    galleryInput.addEventListener('change', function(e) {
+        // ĐÃ SỬA: Bỏ giới hạn .slice(0, 4) để cho phép lấy toàn bộ ảnh được chọn
+        const files = Array.from(e.target.files); 
+        let loadedCount = 0;
+        
+        galleryBase64 = []; 
+        
+        files.forEach(file => {
+            if (!file.type.match('image.*')) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 600; 
+                    let width = img.width; let height = img.height;
+                    if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                    canvas.width = width; canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                    
+                    galleryBase64.push(dataUrl);
+                    loadedCount++;
+                    
+                    if(loadedCount === files.length) {
+                        renderGallery();
+                    }
+                }
+                img.src = evt.target.result;
+            }
+            reader.readAsDataURL(file);
+        });
+    });
+}
