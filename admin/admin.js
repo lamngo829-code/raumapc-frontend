@@ -158,8 +158,7 @@ const formEl = document.getElementById('productForm');
 const formBtn = document.getElementById('btn-submit');
 
 if (formEl) {
-    formEl.setAttribute('novalidate', 'true'); // Ép Chrome tắt kiểm tra lỗi
-    // Cấm form tự động tải lại trang bằng mọi giá
+    formEl.setAttribute('novalidate', 'true'); 
     formEl.addEventListener('submit', function(e) {
         e.preventDefault();
         submitProductForm(e);
@@ -167,7 +166,6 @@ if (formEl) {
 }
 
 if (formBtn) {
-    // Tước bỏ quyền submit mặc định của nút bấm để chống giật trang
     formBtn.setAttribute('type', 'button');
     formBtn.onclick = function(e) {
         e.preventDefault();
@@ -175,7 +173,6 @@ if (formBtn) {
     };
 }
 
-// HÀM XỬ LÝ LƯU DỮ LIỆU
 async function submitProductForm(e) {
     if (e) e.preventDefault();
     
@@ -185,9 +182,7 @@ async function submitProductForm(e) {
 
     let combinedCategory = [cat1, cat2, cat3].filter(c => c && c !== '').join(', ');
 
-    if (combinedCategory === '') {
-        return window.showAdminAlert("Vui lòng chọn ít nhất 1 Danh mục sản phẩm!", false);
-    }
+    if (combinedCategory === '') return window.showAdminAlert("Vui lòng chọn ít nhất 1 Danh mục sản phẩm!", false);
 
     const btn = document.getElementById('btn-submit');
     const oldText = btn ? btn.innerText : "LƯU CẬP NHẬT";
@@ -196,7 +191,6 @@ async function submitProductForm(e) {
     const brandInput = document.getElementById('brand');
     const brandValue = brandInput ? brandInput.value.toLowerCase().trim() : '';
 
-    // Lấy ảnh gốc không bị sai link
     let finalImageBase64 = '';
     const hiddenImgEl = document.getElementById('img');
     if (hiddenImgEl && hiddenImgEl.value.trim() !== '') {
@@ -243,7 +237,6 @@ async function submitProductForm(e) {
         if (btn) btn.innerText = "LƯU SẢN PHẨM";
         
     } catch (err) {
-        // TỰ ĐỘNG THỬ LẠI KHI MÁY CHỦ NGỦ
         if(typeof window.showAdminAlert === 'function') window.showAdminAlert("Máy chủ đang ngủ đông. Hệ thống đang tự động đánh thức, vui lòng chờ 5-10 giây...", false);
         if (btn) btn.innerText = "ĐANG ĐÁNH THỨC...";
         
@@ -254,7 +247,7 @@ async function submitProductForm(e) {
                 });
                 if (!retryRes.ok) throw new Error("Retry failed");
                 
-                document.getElementById('admin-custom-alert').style.display = 'none'; // Tắt thông báo lỗi
+                document.getElementById('admin-custom-alert').style.display = 'none';
                 window.showAdminAlert(editId !== '' ? "Cập nhật sản phẩm thành công!" : "Thêm sản phẩm mới thành công!", true);
                 if(typeof cancelEdit === 'function') cancelEdit(); 
                 if(typeof loadProducts === 'function') loadProducts();
@@ -276,22 +269,16 @@ function deleteProduct(id) {
     }
 }
 
-// ================= KHU VỰC CODE ĐƠN HÀNG =================
 function loadOrders() {
     fetch(API_ORDERS + '?v=' + new Date().getTime())
         .then(res => res.json())
         .then(orders => {
             const tbody = document.getElementById('order-table-body');
             tbody.innerHTML = '';
-
-            if (orders.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Kho chưa có đơn hàng nào!</td></tr>';
-                return;
-            }
+            if (orders.length === 0) return tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Kho chưa có đơn hàng nào!</td></tr>';
 
             orders.reverse().forEach(order => {
                 let itemsHtml = order.items.map(item => `<div style="margin-bottom:4px;">- ${item.name} <strong style="color:#d70018;">(x${item.quantity})</strong></div>`).join('');
-
                 let badgeColor = "#1976d2"; let badgeBg = "#e3f2fd";
                 if (order.status === "Đang giao hàng") { badgeColor = "#ff9800"; badgeBg = "#fff3e0"; }
                 if (order.status === "Hoàn thành") { badgeColor = "#28a745"; badgeBg = "#e8f5e9"; }
@@ -312,11 +299,8 @@ function loadOrders() {
                                     <option value="Đã hủy" ${order.status === 'Đã hủy' ? 'selected' : ''}>Hủy đơn</option>
                                 </select>
                             </td>
-                            <td>
-                                <button onclick="deleteOrder('${order.orderId}')" style="background:#ffe2e5; color:#dc2626; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; font-weight:bold; transition:0.2s;" onmouseover="this.style.background='#fca5a5'" onmouseout="this.style.background='#ffe2e5'">Xóa</button>
-                            </td>
-                        </tr>
-                    `;
+                            <td><button onclick="deleteOrder('${order.orderId}')" style="background:#ffe2e5; color:#dc2626; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; font-weight:bold; transition:0.2s;" onmouseover="this.style.background='#fca5a5'" onmouseout="this.style.background='#ffe2e5'">Xóa</button></td>
+                        </tr>`;
             });
         });
 }
@@ -338,10 +322,7 @@ function deleteOrder(orderId) {
                 } else {
                     if(typeof window.showAdminAlert === 'function') window.showAdminAlert(data.message, false);
                 }
-            })
-            .catch(err => {
-                if(typeof window.showAdminAlert === 'function') window.showAdminAlert("Lỗi kết nối máy chủ!", false);
-            });
+            }).catch(err => { if(typeof window.showAdminAlert === 'function') window.showAdminAlert("Lỗi kết nối máy chủ!", false); });
     }
 }
 
@@ -353,10 +334,8 @@ function loadRevenue() {
         .then(data => {
             document.getElementById('revenue-total').innerText = new Intl.NumberFormat('vi-VN').format(data.totalRevenue || 0) + ' đ';
             document.getElementById('revenue-orders').innerText = data.totalOrders || 0;
-        })
-        .catch(err => console.error("Lỗi tải doanh thu:", err));
+        }).catch(err => console.error("Lỗi tải doanh thu:", err));
 }
-
 loadRevenue();
 
 // ================= HỆ THỐNG KÉO THẢ & NÉN ẢNH (DRAG & DROP) =================
@@ -368,29 +347,15 @@ const imgHiddenInput = document.getElementById('img');
 const btnRemoveImg = document.getElementById('btn-remove-img');
 
 if (dropZone) {
-    dropZone.addEventListener('dragover', (e) => {
-        e.preventDefault(); dropZone.style.borderColor = '#1435c3'; dropZone.style.background = '#eef2ff';
-    });
-    dropZone.addEventListener('dragleave', () => {
-        dropZone.style.borderColor = '#cbd5e1'; dropZone.style.background = '#f8fafc';
-    });
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.style.borderColor = '#1435c3'; dropZone.style.background = '#eef2ff'; });
+    dropZone.addEventListener('dragleave', () => { dropZone.style.borderColor = '#cbd5e1'; dropZone.style.background = '#f8fafc'; });
     dropZone.addEventListener('drop', (e) => {
         e.preventDefault(); dropZone.style.borderColor = '#cbd5e1'; dropZone.style.background = '#f8fafc';
         if (e.dataTransfer.files && e.dataTransfer.files[0]) processImageFile(e.dataTransfer.files[0]);
     });
 }
-
-if (fileInput) {
-    fileInput.addEventListener('change', (e) => {
-        if (e.target.files && e.target.files[0]) processImageFile(e.target.files[0]);
-    });
-}
-
-if (btnRemoveImg) {
-    btnRemoveImg.addEventListener('click', (e) => {
-        e.preventDefault(); e.stopPropagation(); resetImageUploader();
-    });
-}
+if (fileInput) fileInput.addEventListener('change', (e) => { if (e.target.files && e.target.files[0]) processImageFile(e.target.files[0]); });
+if (btnRemoveImg) btnRemoveImg.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); resetImageUploader(); });
 
 function resetImageUploader() {
     if (imgHiddenInput) imgHiddenInput.value = '';
@@ -402,7 +367,6 @@ function resetImageUploader() {
 
 function processImageFile(file) {
     if (!file.type.match('image.*')) return alert("Vui lòng chỉ chọn file hình ảnh!");
-    
     const reader = new FileReader();
     reader.onload = function(e) {
         const img = new Image();
@@ -426,9 +390,6 @@ function processImageFile(file) {
     reader.readAsDataURL(file);
 }
 
-// =========================================================
-// HỆ THỐNG BẢNG THÔNG BÁO TÙY CHỈNH CHO TRANG ADMIN
-// =========================================================
 window.showAdminAlert = function(message, isSuccess = true, callback = null) {
     let modal = document.getElementById('admin-custom-alert');
     if (!modal) {
@@ -460,17 +421,10 @@ window.showAdminAlert = function(message, isSuccess = true, callback = null) {
     }
 
     modal.style.display = 'flex';
-    document.getElementById('aca-btn').onclick = function() {
-        modal.style.display = 'none';
-        if(callback) callback();
-    };
+    document.getElementById('aca-btn').onclick = function() { modal.style.display = 'none'; if(callback) callback(); };
 };
 
-// =========================================================
-// TÍNH NĂNG TỰ ĐỘNG LƯU NHÁP CHỐNG MẤT DỮ LIỆU
-// =========================================================
 const draftFields = ['productId', 'brand', 'name', 'price', 'warranty', 'category1', 'category2', 'category3', 'specs', 'description'];
-
 document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('edit-id') && document.getElementById('edit-id').value === '') {
         draftFields.forEach(id => {
@@ -485,20 +439,14 @@ const prodForm = document.getElementById('productForm');
 if (prodForm) {
     prodForm.addEventListener('input', (e) => {
         if (draftFields.includes(e.target.id)) {
-            if (document.getElementById('edit-id') && document.getElementById('edit-id').value === '') {
-                localStorage.setItem('draft_product_' + e.target.id, e.target.value);
-            }
+            if (document.getElementById('edit-id') && document.getElementById('edit-id').value === '') localStorage.setItem('draft_product_' + e.target.id, e.target.value);
         }
     });
 }
-
 function clearDrafts() {
-    if (document.getElementById('edit-id') && document.getElementById('edit-id').value === '') {
-        draftFields.forEach(id => localStorage.removeItem('draft_product_' + id));
-    }
+    if (document.getElementById('edit-id') && document.getElementById('edit-id').value === '') draftFields.forEach(id => localStorage.removeItem('draft_product_' + id));
 }
 
-// --- XỬ LÝ ẢNH THƯ VIỆN PHỤ (GALLERY) ---
 let galleryBase64 = [];
 const galleryInput = document.getElementById('gallery-input');
 const galleryPreview = document.getElementById('gallery-preview');
@@ -509,10 +457,9 @@ window.renderGallery = function() {
     galleryBase64.forEach((dataUrl, index) => {
         galleryPreview.innerHTML += `
             <div style="position: relative; display: inline-block; flex-shrink: 0; margin-top: 5px; margin-right: 5px;">
-                <img src="${dataUrl}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; border: 1px solid #cbd5e1; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-                <button type="button" onclick="removeGalleryImage(${index})" style="position: absolute; top: -8px; right: -8px; background: #d70018; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(215,0,24,0.3); display: flex; align-items: center; justify-content: center; z-index: 10;">X</button>
-            </div>
-        `;
+                <img src="${dataUrl}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; border: 1px solid #cbd5e1;">
+                <button type="button" onclick="removeGalleryImage(${index})" style="position: absolute; top: -8px; right: -8px; background: #d70018; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; font-weight: bold; cursor: pointer;">X</button>
+            </div>`;
     });
 };
 
@@ -525,8 +472,7 @@ window.removeGalleryImage = function(index) {
 if (galleryInput) {
     galleryInput.addEventListener('change', function(e) {
         const files = Array.from(e.target.files); 
-        let loadedCount = 0;
-        galleryBase64 = []; 
+        let loadedCount = 0; galleryBase64 = []; 
         files.forEach(file => {
             if (!file.type.match('image.*')) return;
             const reader = new FileReader();
@@ -551,41 +497,65 @@ if (galleryInput) {
     });
 }
 
-// ================= KHU VỰC CÀI ĐẶT TRANG CHỦ =================
+// ================= KHU VỰC CÀI ĐẶT TRANG CHỦ (CLOUD SYNC) =================
 function loadHomeSettings() {
-    if (document.getElementById('home-title-1')) document.getElementById('home-title-1').value = localStorage.getItem('homeTitle1') || 'VGA - Card Màn Hình';
-    if (document.getElementById('home-title-2')) document.getElementById('home-title-2').value = localStorage.getItem('homeTitle2') || 'Ổ Cứng';
-    if (document.getElementById('home-title-3')) document.getElementById('home-title-3').value = localStorage.getItem('homeTitle3') || 'RAM - Bộ Nhớ Trong';
-    if (document.getElementById('home-title-4')) document.getElementById('home-title-4').value = localStorage.getItem('homeTitle4') || 'Mainboard - Bo mạch chủ';
-    if (document.getElementById('home-title-5')) document.getElementById('home-title-5').value = localStorage.getItem('homeTitle5') || 'Chuột Không Dây';
-    if (document.getElementById('home-title-6')) document.getElementById('home-title-6').value = localStorage.getItem('homeTitle6') || 'Màn Hình Máy Tính';
+    fetch('https://raumapc-backend.onrender.com/api/settings/home')
+        .then(res => res.json())
+        .then(data => {
+            const defaultTitles = ['VGA - Card Màn Hình', 'Ổ Cứng', 'RAM - Bộ Nhớ Trong', 'Mainboard - Bo mạch chủ', 'Chuột Không Dây', 'Màn Hình Máy Tính'];
+            
+            for (let i = 1; i <= 6; i++) { 
+                let titleEl = document.getElementById(`home-title-${i}`);
+                if (titleEl) titleEl.value = data[`homeTitle${i}`] || defaultTitles[i-1];
 
+                for (let j = 1; j <= 6; j++) {
+                    let elId = `home-sp${i}-${j}`;
+                    let el = document.getElementById(elId);
+                    if (el) el.value = data[elId] || '';
+                }
+            }
+        }).catch(err => console.error("Lỗi tải cấu hình:", err));
+}
+
+async function syncSettingsToCloud(alertMessage) {
+    let configData = {};
     for (let i = 1; i <= 6; i++) { 
+        let titleEl = document.getElementById(`home-title-${i}`);
+        if (titleEl) configData[`homeTitle${i}`] = titleEl.value;
+
         for (let j = 1; j <= 6; j++) {
             let elId = `home-sp${i}-${j}`;
             let el = document.getElementById(elId);
-            if (el) el.value = localStorage.getItem(elId) || '';
+            if (el) configData[elId] = el.value;
         }
+    }
+
+    try {
+        const btnTitle = document.querySelector('button[onclick="saveHomeSettings()"]');
+        const btnPro = document.querySelector('button[onclick="saveHomeProducts()"]');
+        if(btnTitle) btnTitle.innerText = "ĐANG ĐỒNG BỘ CLOUD...";
+        if(btnPro) btnPro.innerText = "ĐANG ĐỒNG BỘ CLOUD...";
+
+        const token = localStorage.getItem('authToken');
+        let res = await fetch('https://raumapc-backend.onrender.com/api/settings/home', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+            body: JSON.stringify(configData)
+        });
+        
+        if (res.ok) {
+            if(typeof window.showAdminAlert === 'function') window.showAdminAlert(alertMessage, true);
+        } else {
+            if(typeof window.showAdminAlert === 'function') window.showAdminAlert("Lỗi bảo mật hoặc máy chủ!", false);
+        }
+
+        if(btnTitle) btnTitle.innerText = "LƯU TÙY CHỈNH TIÊU ĐỀ";
+        if(btnPro) btnPro.innerText = "LƯU TÙY CHỈNH SẢN PHẨM";
+
+    } catch (e) {
+        if(typeof window.showAdminAlert === 'function') window.showAdminAlert("Lỗi mạng khi lưu Cloud!", false);
     }
 }
 
-window.saveHomeSettings = function() {
-    if (document.getElementById('home-title-1')) localStorage.setItem('homeTitle1', document.getElementById('home-title-1').value);
-    if (document.getElementById('home-title-2')) localStorage.setItem('homeTitle2', document.getElementById('home-title-2').value);
-    if (document.getElementById('home-title-3')) localStorage.setItem('homeTitle3', document.getElementById('home-title-3').value);
-    if (document.getElementById('home-title-4')) localStorage.setItem('homeTitle4', document.getElementById('home-title-4').value);
-    if (document.getElementById('home-title-5')) localStorage.setItem('homeTitle5', document.getElementById('home-title-5').value);
-    if (document.getElementById('home-title-6')) localStorage.setItem('homeTitle6', document.getElementById('home-title-6').value);
-    if(typeof window.showAdminAlert === 'function') window.showAdminAlert("Đã lưu Tiêu đề trang chủ!", true);
-}
-
-window.saveHomeProducts = function() {
-    for (let i = 1; i <= 6; i++) { 
-        for (let j = 1; j <= 6; j++) {
-            let elId = `home-sp${i}-${j}`;
-            let el = document.getElementById(elId);
-            if (el) localStorage.setItem(elId, el.value);
-        }
-    }
-    if(typeof window.showAdminAlert === 'function') window.showAdminAlert("Đã lưu cấu hình Sản phẩm!", true);
-}
+window.saveHomeSettings = function() { syncSettingsToCloud("Đã lưu Tiêu đề trang chủ lên Cloud thành công!"); }
+window.saveHomeProducts = function() { syncSettingsToCloud("Đã lưu Cấu hình Sản phẩm lên Cloud thành công!"); }
