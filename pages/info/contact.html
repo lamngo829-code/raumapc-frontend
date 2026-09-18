@@ -188,8 +188,8 @@
 
                                     <a href="../../pages/shop/cooling.html"><h4 style="margin-top: 25px;">TẢN NHIỆT PC - COOLING</h4></a>
                                     <a href="../../pages/shop/cooling.html?type=keo">Keo tản nhiệt</a>
-<a href="../../pages/shop/cooling.html?type=khi">Tản nhiệt khí</a>
-<a href="../../pages/shop/cooling.html?type=aio">Tản Nhiệt Nước AIO</a>
+                                    <a href="../../pages/shop/cooling.html?type=khi">Tản nhiệt khí</a>
+                                    <a href="../../pages/shop/cooling.html?type=aio">Tản Nhiệt Nước AIO</a>
                                 </div>
                             </div>
                         </li>
@@ -398,253 +398,218 @@
         <a href="../../pages/info/contact.html" class="bc-current">Liên Hệ</a>
     </div>
 
-    <div class="pv-info-bg" style="background: #f4f6f9; padding: 40px 0;">
-        <div class="pv-info-container">
+    <!-- BẮT ĐẦU KHU VỰC LIÊN HỆ -->
+    <div class="contact-premium-container">
+        <!-- 1. HERO BANNER -->
+        <section class="cp-hero">
+            <div class="cp-hero-content">
+                <span class="ap-badge" style="margin-bottom: 20px;">⚡ Phản hồi siêu tốc trong 15 phút</span>
+                <h1>Hệ Thống Hỗ Trợ <span class="text-gradient">Đỉnh Cao</span></h1>
+                <p>Khám phá không gian Showroom chuẩn Premium hoặc kết nối ngay với đội ngũ chuyên gia của Rau Má PC. Mọi vấn đề của bạn đều được giải quyết với tốc độ chớp nhoáng.</p>
+            </div>
+        </section>
 
-            <!-- 1. HERO BANNER SANG TRỌNG -->
-            <div style="background: linear-gradient(135deg, #0d1b2a 0%, #1b263b 50%, #1435c3 100%); color: #fff; padding: 45px 30px; border-radius: 16px; margin-bottom: 30px; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(20,53,195,0.25);">
-                <div style="position: relative; z-index: 2; max-width: 650px;">
-                    <span style="background: rgba(255,255,255,0.15); backdrop-filter: blur(5px); color: #64dfdf; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px; display: inline-block; margin-bottom: 12px;">⚡ Phản hồi siêu tốc trong 15 phút</span>
-                    <h1 style="font-size: 32px; font-weight: 800; margin-bottom: 12px; line-height: 1.2;">Bạn Cần Hỗ Trợ? <br><span style="color: #64dfdf;">Rau Má PC</span> Luôn Đồng Hành</h1>
-                    <p style="font-size: 15px; opacity: 0.85; margin: 0; line-height: 1.6;">Kết nối ngay với đội ngũ chuyên viên kỹ thuật và tư vấn viên để nhận hỗ trợ nhanh chóng, chính xác nhất.</p>
+        <!-- 2. TRUST BADGES -->
+        <div class="cp-trust-grid">
+            <div class="cp-trust-card">
+                <div class="icon">🚀</div>
+                <div>
+                    <h4>Giao Hỏa Tốc</h4>
+                    <p>Nội thành chỉ trong 2h</p>
+                </div>
+            </div>
+            <div class="cp-trust-card">
+                <div class="icon">🛡️</div>
+                <div>
+                    <h4>100% Chính Hãng</h4>
+                    <p>Bảo hành nhà sản xuất</p>
+                </div>
+            </div>
+            <div class="cp-trust-card">
+                <div class="icon">🔄</div>
+                <div>
+                    <h4>Đổi Trả VIP</h4>
+                    <p>1 đổi 1 trong 30 ngày</p>
+                </div>
+            </div>
+            <div class="cp-trust-card">
+                <div class="icon">🎧</div>
+                <div>
+                    <h4>Technical 24/7</h4>
+                    <p>Giải đáp mọi thắc mắc</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. BENTO GRID: BẢN ĐỒ CHI NHÁNH & FORM LIÊN HỆ -->
+        <div class="cp-main-grid">
+            <!-- BÊN TRÁI: BỘ CHỌN CHI NHÁNH & BẢN ĐỒ -->
+            <div class="cp-bento-box">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2>Trạm Không Gian Showroom</h2>
+                    <span style="background: rgba(16, 185, 129, 0.1); color: #10b981; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.3); animation: pulse 2s infinite;">● ĐANG MỞ CỬA</span>
+                </div>
+
+                <div class="cp-tabs">
+                    <button onclick="switchBranch('hcm1', this)" class="cp-tab-btn active">Trụ Sở HCM</button>
+                    <button onclick="switchBranch('hcm2', this)" class="cp-tab-btn">Chi Nhánh Q12</button>
+                    <button onclick="switchBranch('dt', this)" class="cp-tab-btn">Đồng Tháp</button>
+                    <button onclick="switchBranch('ld', this)" class="cp-tab-btn">Lâm Đồng</button>
+                </div>
+
+                <div id="branchInfo" style="padding: 20px; border-radius: 16px; margin-bottom: 20px; font-size: 14px; line-height: 1.8; border-left: 4px solid #1435c3;">
+                    <strong style="color: #1435c3; font-size: 16px; display: block; margin-bottom: 8px;">Showroom Trụ Sở Chính (Quận 12)</strong>
+                    <div>📍 <strong>Địa chỉ:</strong> Đỗ Mười/331A-331B An Phú Đông 10, An Phú Đông, HCM</div>
+                    <div>📞 <strong>Hotline VIP:</strong> <span style="color: #d70018; font-weight: 800; font-size: 16px;">1900 3636</span></div>
+                    <div>⏰ <strong>Giờ hoạt động:</strong> 08:00 - 21:30 (Cả tuần)</div>
+                </div>
+
+                <div style="border-radius: 16px; overflow: hidden; flex-grow: 1; min-height: 350px; border: 1px solid #edf2f7; position: relative;">
+                    <iframe id="branchMap" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d62706.028651320405!2d106.7109338708694!3d10.801599934473268!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317529c17978287d%3A0xec48f5a17b7d5741!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBOZ3V54buFbiBU4bqldCBUaMOgbmggLSBDxqEgc-G7nyBxdeG6rW4gMTI!5e0!3m2!1svi!2s!4v1787205368755!5m2!1svi!2s" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                 </div>
             </div>
 
-            <!-- 2. THANH CAM KẾT DỊCH VỤ (TRUST BADGES) -->
-            <div class="pv-grid-4" style="margin-bottom: 35px; gap: 15px;">
-                <div style="background: #fff; padding: 20px; border-radius: 12px; display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #edf2f7;">
-                    <span style="font-size: 30px;">🚀</span>
-                    <div>
-                        <strong style="display: block; font-size: 14px; color: #1a202c;">Giao Hàng Hỏa Tốc</strong>
-                        <span style="font-size: 12px; color: #718096;">Nội thành chỉ trong 2h</span>
+            <!-- BÊN PHẢI: FORM GỬI YÊU CẦU CAO CẤP -->
+            <div class="cp-bento-box">
+                <h2 style="margin: 0 0 10px 0;">Kênh Kết Nối Đặc Quyền</h2>
+                <p style="font-size: 14px; margin-bottom: 30px;">Hệ thống sẽ tự động định tuyến yêu cầu của bạn đến trực tiếp chuyên gia phụ trách để xử lý ngay lập tức.</p>
+
+                <form onsubmit="event.preventDefault(); document.getElementById('successModal').style.display='flex';">
+                    <label class="cp-form-label">HỌ VÀ TÊN BẠN</label>
+                    <input type="text" class="cp-input-dark" placeholder="Vd: Nguyễn Văn A" required>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <label class="cp-form-label">SỐ ĐIỆN THOẠI</label>
+                            <input type="tel" class="cp-input-dark" placeholder="0901234567" required>
+                        </div>
+                        <div>
+                            <label class="cp-form-label">EMAIL LIÊN HỆ</label>
+                            <input type="email" class="cp-input-dark" placeholder="name@domain.com" required>
+                        </div>
                     </div>
-                </div>
-                <div style="background: #fff; padding: 20px; border-radius: 12px; display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #edf2f7;">
-                    <span style="font-size: 30px;">🛡️</span>
-                    <div>
-                        <strong style="display: block; font-size: 14px; color: #1a202c;">100% Chính Hãng</strong>
-                        <span style="font-size: 12px; color: #718096;">Bảo hành nhà sản xuất</span>
-                    </div>
-                </div>
-                <div style="background: #fff; padding: 20px; border-radius: 12px; display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #edf2f7;">
-                    <span style="font-size: 30px;">🔄</span>
-                    <div>
-                        <strong style="display: block; font-size: 14px; color: #1a202c;">Đổi Trả Dễ Dàng</strong>
-                        <span style="font-size: 12px; color: #718096;">1 đổi 1 trong 15 ngày</span>
-                    </div>
-                </div>
-                <div style="background: #fff; padding: 20px; border-radius: 12px; display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #edf2f7;">
-                    <span style="font-size: 30px;">🎧</span>
-                    <div>
-                        <strong style="display: block; font-size: 14px; color: #1a202c;">Hỗ Trợ Technical 24/7</strong>
-                        <span style="font-size: 12px; color: #718096;">Giải đáp mọi thắc mắc</span>
-                    </div>
+
+                    <label class="cp-form-label">BẠN CẦN CHÚNG TÔI HỖ TRỢ VỀ?</label>
+                    <select class="cp-input-dark">
+                        <option>🛒 Tư vấn Xây dựng Cấu hình PC / Linh kiện</option>
+                        <option>🏢 Báo giá Dự án Phòng Net / Doanh nghiệp B2B</option>
+                        <option>🛠️ Trợ giúp Kỹ thuật / Bảo hành Sửa chữa</option>
+                        <option>💬 Kênh Góp ý & Khiếu nại Dịch vụ trực tiếp CEO</option>
+                    </select>
+
+                    <label class="cp-form-label">NỘI DUNG YÊU CẦU</label>
+                    <textarea class="cp-input-dark" rows="5" placeholder="Nhập chi tiết nhu cầu hoặc thắc mắc của bạn..." style="resize: vertical;" required></textarea>
+
+                    <button type="submit" class="cp-submit-btn">KÍCH HOẠT YÊU CẦU HỖ TRỢ</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 4. FAQ ACCORDION -->
+        <div class="cp-faq-container">
+            <h2 class="cp-faq-title">Câu Hỏi Thường Gặp <span class="text-gradient">(FAQ)</span></h2>
+            
+            <div class="cp-faq-item">
+                <button onclick="toggleFaq(this)" class="cp-faq-question">
+                    <span>Thời gian xử lý bảo hành tại Rau Má PC mất bao lâu?</span>
+                    <span class="cp-faq-icon">+</span>
+                </button>
+                <div class="cp-faq-answer">
+                    Đối với các trường hợp lỗi phần cứng cơ bản, kỹ thuật viên sẽ thẩm định tại chỗ và áp dụng chính sách 1 ĐỔI 1 ngay trong 30 phút. Các sản phẩm cần gửi về hãng sẽ được xử lý hỏa tốc trong 3 - 7 ngày làm việc, kèm chế độ mượn linh kiện dùng tạm.
                 </div>
             </div>
 
-            <!-- 3. KHỐI CHÍNH: BẢN ĐỒ CHI NHÁNH TƯƠNG TÁC + FORM LIÊN HỆ -->
-            <div class="pv-grid-2" style="gap: 30px; margin-bottom: 40px;">
-                
-                <!-- BÊN TRÁI: BỘ CHỌN CHI NHÁNH & BẢN ĐỒ DỘNG -->
-                <div style="background: #fff; padding: 28px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); border: 1px solid #edf2f7; display: flex; flex-direction: column;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                        <strong style="font-size: 18px; color: #1a202c;">Hệ Thống Showroom</strong>
-                        <span style="background: #e6fffa; color: #047857; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 12px;">● Đang mở cửa</span>
-                    </div>
-
-                    <!-- TAB CHỌN THÀNH PHỐ -->
-                    <div style="display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid #f0f4f8; padding-bottom: 10px;">
-                        <button onclick="switchBranch('hcm1', this)" class="branch-tab active-tab">TP. Hồ Chí Minh</button>
-                        <button onclick="switchBranch('hcm2', this)" class="branch-tab">TP. Hồ Chí Minh</button>
-                        <button onclick="switchBranch('dt', this)" class="branch-tab">Đồng Tháp</button>
-                        <button onclick="switchBranch('ld', this)" class="branch-tab">Lâm Đồng</button>
-                    </div>
-
-                    <!-- THÔNG TIN CHI NHÁNH ĐỘNG -->
-                    <div id="branchInfo" style="background: #f8fafc; padding: 16px; border-radius: 10px; margin-bottom: 20px; font-size: 13.5px; line-height: 1.6; border-left: 4px solid #1435c3;">
-                        <strong style="color: #1435c3; font-size: 15px; display: block; margin-bottom: 4px;">Showroom Trụ Sở Chính (Quận 12)</strong>
-                        <div>📍 <strong>Địa chỉ:</strong> Đỗ Mười/331A-331B An Phú Đông 10, An Phú Đông, Hồ Chí Minh, Việt Nam</div>
-                        <div>📞 <strong>Hotline bán hàng:</strong> <span style="color: #d70018; font-weight: 700;">1900 3636</span></div>
-                        <div>⏰ <strong>Giờ làm việc:</strong> 08:00 - 21:30 (Mỗi ngày)</div>
-                    </div>
-
-                    <!-- MAP IFRAME -->
-                    <div style="border-radius: 12px; overflow: hidden; flex-grow: 1; min-height: 280px; border: 1px solid #e2e8f0;">
-                        <iframe id="branchMap"
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d62706.028651320405!2d106.7109338708694!3d10.801599934473268!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317529c17978287d%3A0xec48f5a17b7d5741!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBOZ3V54buFbiBU4bqldCBUaMOgbmggLSBDxqEgc-G7nyBxdeG6rW4gMTI!5e0!3m2!1svi!2s!4v1787205368755!5m2!1svi!2s"
-                            width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-                    </div>
-                </div>
-
-                <!-- BÊN PHẢI: FORM GỬI YÊU CẦU CAO CẤP -->
-                <div style="background: #fff; padding: 28px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); border: 1px solid #edf2f7;">
-                    <strong style="font-size: 18px; color: #1a202c; display: block; margin-bottom: 5px;">Gửi Yêu Cầu Hỗ Trợ</strong>
-                    <p style="font-size: 13.5px; color: #718096; margin-bottom: 20px;">Vui lòng nhập thông tin, chúng tôi sẽ phân loại câu hỏi tới đúng phòng ban chuyên trách.</p>
-
-                    <form onsubmit="event.preventDefault(); alert('Cảm ơn quý khách! Yêu cầu hỗ trợ đã được chuyển tới bộ phận xử lý.');">
-                        <div style="margin-bottom: 14px;">
-                            <label style="font-size: 12.5px; font-weight: 700; color: #4a5568; display: block; margin-bottom: 6px;">HỌ VÀ TÊN *</label>
-                            <input type="text" class="pv-input custom-input" placeholder="Nguyễn Văn A" required>
-                        </div>
-
-                        <div class="pv-grid-2" style="gap: 12px; margin-bottom: 14px;">
-                            <div>
-                                <label style="font-size: 12.5px; font-weight: 700; color: #4a5568; display: block; margin-bottom: 6px;">SỐ ĐIỆN THOẠI *</label>
-                                <input type="tel" class="pv-input custom-input" placeholder="0901234567" required>
-                            </div>
-                            <div>
-                                <label style="font-size: 12.5px; font-weight: 700; color: #4a5568; display: block; margin-bottom: 6px;">EMAIL *</label>
-                                <input type="email" class="pv-input custom-input" placeholder="name@domain.com" required>
-                            </div>
-                        </div>
-
-                        <div style="margin-bottom: 14px;">
-                            <label style="font-size: 12.5px; font-weight: 700; color: #4a5568; display: block; margin-bottom: 6px;">BỘ PHẬN CẦN BÁO GIÁ / HỖ TRỢ</label>
-                            <select class="pv-input custom-input" style="cursor: pointer;">
-                                <option>🛒 Tư vấn Mua PC / Linh kiện (Kinh doanh)</option>
-                                <option>🏢 Báo giá Dự án Doanh nghiệp (B2B)</option>
-                                <option>🛠️ Bảo hành / Sửa chữa Kỹ thuật</option>
-                                <option>💬 Góp ý & Khiếu nại Dịch vụ</option>
-                            </select>
-                        </div>
-
-                        <div style="margin-bottom: 20px;">
-                            <label style="font-size: 12.5px; font-weight: 700; color: #4a5568; display: block; margin-bottom: 6px;">NỘI DUNG CHI TIẾT *</label>
-                            <textarea class="pv-input custom-input" rows="4" placeholder="Nhập nhu cầu tư vấn cấu hình, model sản phẩm hoặc thắc mắc..." required></textarea>
-                        </div>
-
-                        <button type="submit" class="pv-btn" style="width: 100%; padding: 14px; font-weight: 700; background: linear-gradient(135deg, #1435c3 0%, #081b74 100%); border: none; border-radius: 8px; box-shadow: 0 4px 12px rgba(20,53,195,0.3); cursor: pointer; transition: all 0.2s;">GỬI THÔNG TIN NGAY</button>
-                    </form>
-                </div>
-
-            </div>
-
-            <!-- 4. KHỐI CÂU HỎI THƯỜNG GẶP (FAQ ACCORDION) -->
-            <div style="background: #fff; padding: 30px; border-radius: 16px; border: 1px solid #edf2f7; box-shadow: 0 4px 20px rgba(0,0,0,0.04);">
-                <h2 style="font-size: 20px; font-weight: 700; color: #1a202c; margin-bottom: 20px; text-align: center;">Câu Hỏi Thường Gặp (FAQ)</h2>
-                
-                <div style="max-width: 850px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px;">
-                    <div class="faq-item">
-                        <button onclick="toggleFaq(this)" class="faq-question">
-                            <span>Thời gian xử lý bảo hành tại Rau Má PC mất bao lâu?</span>
-                            <span class="faq-icon">+</span>
-                        </button>
-                        <div class="faq-answer">
-                            Sản phẩm bảo hành thông thường sẽ được xử lý trong 3 - 7 ngày làm việc. Đối với linh kiện hỗ trợ đổi mới ngay, kỹ thuật viên sẽ thẩm định tại chỗ trong 30 phút.
-                        </div>
-                    </div>
-
-                    <div class="faq-item">
-                        <button onclick="toggleFaq(this)" class="faq-question">
-                            <span>Rau Má PC có hỗ trợ giao hàng và lắp đặt tận nơi không?</span>
-                            <span class="faq-icon">+</span>
-                        </button>
-                        <div class="faq-answer">
-                            Có. Rau Má PC hỗ trợ giao hàng hỏa tốc trong 2h tại khu vực nội thành TP.HCM, Hà Nội, Đà Nẵng và hỗ trợ lắp đặt PC complete miễn phí tại nhà.
-                        </div>
-                    </div>
-
-                    <div class="faq-item">
-                        <button onclick="toggleFaq(this)" class="faq-question">
-                            <span>Doanh nghiệp muốn mua số lượng lớn có được xuất hóa đơn VAT không?</span>
-                            <span class="faq-icon">+</span>
-                        </button>
-                        <div class="faq-answer">
-                            Tất cả sản phẩm bán ra đều có đầy đủ hóa đơn VAT điện tử. Khách hàng doanh nghiệp mua dự án sẽ nhận thêm mức chiết khấu B2B đặc biệt.
-                        </div>
-                    </div>
+            <div class="cp-faq-item">
+                <button onclick="toggleFaq(this)" class="cp-faq-question">
+                    <span>Rau Má PC có hỗ trợ giao hàng và lắp ráp PC tận nơi không?</span>
+                    <span class="cp-faq-icon">+</span>
+                </button>
+                <div class="cp-faq-answer">
+                    Hoàn toàn có! Đội ngũ Kỹ thuật viên (Technical Team) của chúng tôi sẵn sàng giao PC hỏa tốc trong 2H, hỗ trợ đi dây điện gọn gàng, lắp đặt bàn ghế Gaming và cài đặt phần mềm hoàn thiện ngay tại nhà bạn.
                 </div>
             </div>
 
+            <div class="cp-faq-item">
+                <button onclick="toggleFaq(this)" class="cp-faq-question">
+                    <span>Doanh nghiệp muốn mua số lượng lớn có được xuất hóa đơn VAT không?</span>
+                    <span class="cp-faq-icon">+</span>
+                </button>
+                <div class="cp-faq-answer">
+                    100% sản phẩm tại Rau Má PC đều hợp lệ pháp lý và xuất hóa đơn VAT điện tử đầy đủ. Riêng khách hàng khối Doanh nghiệp/Dự án sẽ được áp dụng bảng giá sỉ B2B siêu chiết khấu và hợp đồng công nợ linh hoạt.
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- STYLE BỔ SUNG & SCRIPT TƯƠNG TÁC -->
+    <!-- MODAL THÔNG BÁO THÀNH CÔNG -->
+    <div id="successModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 99999; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+        <div style="background: #ffffff; width: 420px; padding: 40px 30px; border-radius: 24px; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.2); animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;">
+            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #1435c3 0%, #0ea5e9 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; color: white; font-size: 40px; box-shadow: 0 10px 25px rgba(20, 53, 195, 0.3);">
+                ✓
+            </div>
+            <h2>Tiếp Nhận Thành Công!</h2>
+            <p style="line-height: 1.6; margin-bottom: 30px; font-size: 15px;">Tín hiệu của bạn đã được truyền đến Trạm điều hành. Chuyên gia của chúng tôi sẽ liên hệ lại qua Số điện thoại của bạn ngay lập tức.</p>
+            <button onclick="document.getElementById('successModal').style.display='none'" class="cp-submit-btn" style="padding: 12px; font-size: 14px;">ĐÓNG TRÌNH DUYỆT</button>
+        </div>
+    </div>
+
     <style>
-        .branch-tab {
-            background: none; border: none; padding: 8px 16px; font-weight: 600; font-size: 13.5px;
-            color: #718096; cursor: pointer; border-radius: 6px; transition: all 0.2s;
-        }
-        .branch-tab:hover { color: #1435c3; background: #edf2f7; }
-        .branch-tab.active-tab { color: #1435c3; background: #eef2ff; font-weight: 700; }
-
-        .custom-input {
-            border: 1px solid #cbd5e0 !important; border-radius: 8px !important; padding: 10px 12px !important;
-            transition: all 0.2s ease;
-        }
-        .custom-input:focus {
-            border-color: #1435c3 !important; box-shadow: 0 0 0 3px rgba(20,53,195,0.15) !important; outline: none;
-        }
-
-        .faq-item { border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }
-        .faq-question {
-            width: 100%; background: #f8fafc; text-align: left; padding: 14px 18px; font-size: 14.5px;
-            font-weight: 600; color: #2d3748; border: none; cursor: pointer; display: flex;
-            justify-content: space-between; align-items: center; transition: background 0.2s;
-        }
-        .faq-question:hover { background: #edf2f7; }
-        .faq-answer { display: none; padding: 14px 18px; font-size: 13.5px; color: #4a5568; line-height: 1.6; background: #fff; border-top: 1px solid #e2e8f0; }
-        .faq-item.active .faq-answer { display: block; }
-        .faq-item.active .faq-icon { transform: rotate(45deg); }
-        .faq-icon { font-size: 18px; transition: transform 0.2s; color: #1435c3; font-weight: bold; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        @keyframes popUp { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
     </style>
 
     <script>
-        // Chuyển đổi dữ liệu Showroom
         const branchData = {
             hcm1: {
                 title: "Showroom Trụ Sở Chính (Quận 12)",
-                address: "Đỗ Mười/331A-331B An Phú Đông 10, An Phú Đông, Hồ Chí Minh, Việt Nam",
+                address: "Đỗ Mười/331A-331B An Phú Đông 10, An Phú Đông, HCM",
                 hotline: "1900 3636",
-                hours: "08:00 - 21:30 (Mỗi ngày)",
+                hours: "08:00 - 21:30 (Cả tuần)",
                 map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d62706.028651320405!2d106.7109338708694!3d10.801599934473268!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317529c17978287d%3A0xec48f5a17b7d5741!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBOZ3V54buFbiBU4bqldCBUaMOgbmggLSBDxqEgc-G7nyBxdeG6rW4gMTI!5e0!3m2!1svi!2s!4v1787205368755!5m2!1svi!2s"
             },
             hcm2: {
-                title: "Showroom Chi Nhánh 2",
-                address: "1165 QL1A, An Phú Đông, Hồ Chí Minh, Việt Nam",
+                title: "Showroom Phân Phối (Quận 12)",
+                address: "1165 QL1A, An Phú Đông, HCM",
                 hotline: "1900 3636",
-                hours: "08:00 - 21:00 (Mỗi ngày)",
+                hours: "08:00 - 21:00 (Cả tuần)",
                 map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d62706.028651320405!2d106.7109338708694!3d10.801599934473268!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752997dcba7963%3A0x6a20e57611e21358!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBOZ3V54buFbiBU4bqldCBUaMOgbmggKGPGoSBz4bufIEFuIFBow7ogxJDDtG5nKQ!5e0!3m2!1svi!2s!4v1787205592816!5m2!1svi!2s"
             },
             dt: {
-                title: "Showroom Chi Nhánh Đồng Tháp (Cai Lậy)",
+                title: "Trạm Không Gian Đồng Tháp",
                 address: "Long Tiên, Đồng Tháp, Việt Nam",
                 hotline: "1900 3636",
-                hours: "08:00 - 21:30 (Mỗi ngày)",
+                hours: "08:00 - 21:30 (Cả tuần)",
                 map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3924.940325320136!2d106.1453153!3d10.3466568!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x310a99dd6c57da2b%3A0x7387ee11f658215c!2zTWF5LCBz4butYSBxdeG6p24gw6FvIEtpbSBOaMaw!5e0!3m2!1svi!2s!4v1787205252360!5m2!1svi!2s"
             },
             ld: {
-                title: "Showroom Chi Nhánh Lâm Đồng",
-                address: "300A Xóm Chiếu, Phường, Xóm Chiếu, Hồ Chí Minh 70000, Việt Nam",
+                title: "Showroom Highland (Lâm Đồng)",
+                address: "300A Xóm Chiếu, Hồ Chí Minh 70000, Việt Nam",
                 hotline: "1900 3636",
-                hours: "08:00 - 21:30 (Mỗi ngày)",
+                hours: "08:00 - 21:30 (Cả tuần)",
                 map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d62706.028651320405!2d106.7109338708694!3d10.801599934473268!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f6f49df11ad%3A0xa5a5beda991d13c5!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBOZ3V54buFbiBU4bqldCBUaMOgbmg!5e0!3m2!1svi!2s!4v1787205685378!5m2!1svi!2s"
             }
         };
 
         function switchBranch(key, btn) {
-            document.querySelectorAll('.branch-tab').forEach(t => t.classList.remove('active-tab'));
-            btn.classList.add('active-tab');
+            document.querySelectorAll('.cp-tab-btn').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
 
             const info = branchData[key];
             document.getElementById('branchInfo').innerHTML = `
-                <strong style="color: #1435c3; font-size: 15px; display: block; margin-bottom: 4px;">${info.title}</strong>
+                <strong style="color: #1435c3; font-size: 16px; display: block; margin-bottom: 8px;">${info.title}</strong>
                 <div>📍 <strong>Địa chỉ:</strong> ${info.address}</div>
-                <div>📞 <strong>Hotline bán hàng:</strong> <span style="color: #d70018; font-weight: 700;">${info.hotline}</span></div>
-                <div>⏰ <strong>Giờ làm việc:</strong> ${info.hours}</div>
+                <div>📞 <strong>Hotline VIP:</strong> <span style="color: #d70018; font-weight: 800; font-size: 16px;">${info.hotline}</span></div>
+                <div>⏰ <strong>Giờ hoạt động:</strong> ${info.hours}</div>
             `;
             document.getElementById('branchMap').src = info.map;
         }
 
-        // Đóng mở FAQ
         function toggleFaq(btn) {
             const item = btn.parentElement;
             item.classList.toggle('active');
         }
     </script>
-
-
-
+    <!-- KẾT THÚC KHU VỰC LIÊN HỆ -->
 
     <!-- BỌC NGOÀI FOOTER (Trải dài 100% màn hình) -->
     <div class="footer-wrapper">

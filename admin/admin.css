@@ -63,6 +63,7 @@ body {
     pointer-events: none;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
+
 /* Vùng Nội Dung */
 .main-content {
     flex: 1;
@@ -139,19 +140,6 @@ body {
     color: #a8f3b9;
 }
 
-
-.btn-add {
-    background: #1435c3;
-    color: white;
-    border: none;
-    padding: 14px 30px;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
-    font-size: 15px;
-}
-
 /* Bảng Dữ Liệu Chung */
 table {
     width: 100%;
@@ -193,4 +181,74 @@ td {
     outline: none;
     font-weight: bold;
     cursor: pointer;
+}
+
+/* =========================================================
+   NÂNG CẤP GIAO DIỆN NÚT BẤM (ANTI-SLIP)
+   ========================================================= */
+
+/* 1. Bọc nhóm nút Lưu / Hủy (Quản lý sản phẩm) để không bị trượt */
+.form-actions-wrapper {
+    display: flex;
+    justify-content: center; /* Đổi từ flex-end thành center để căn giữa */
+    gap: 15px;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+}
+
+/* 2. Bọc các nút Lưu Tùy Chỉnh (Cài đặt trang chủ) */
+.settings-action-wrapper {
+    display: flex;
+    justify-content: center; /* Ép nút ra chính giữa */
+    margin-top: 25px;
+    padding-top: 20px;
+}
+
+/* 3. Tinh chỉnh lại kích thước và hiệu ứng nút vững chắc (Không nhúc nhích) */
+.btn-add {
+    background: #1435c3;
+    color: white;
+    border: none;
+    padding: 14px 40px; 
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease; /* Chỉ giữ lại hiệu ứng chuyển màu cho mượt */
+    font-size: 15px;
+    box-shadow: 0 4px 10px rgba(20, 53, 195, 0.2); 
+    min-width: 180px; 
+}
+
+.btn-add:hover {
+    background: #0d2587;
+    /* Đã xóa hiệu ứng nhảy lên (transform) để nút không bị trượt */
+    box-shadow: 0 6px 15px rgba(20, 53, 195, 0.3);
+}
+
+.btn-add:active {
+    /* Thêm hiệu ứng chìm màu khi click thực tế để có cảm giác bấm thay vì nhúc nhích */
+    background: #0a1b66; 
+    box-shadow: 0 2px 5px rgba(20, 53, 195, 0.2);
+}
+
+#btn-cancel {
+    background: #64748b;
+    color: white;
+    border: none;
+    padding: 14px 40px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    font-size: 15px;
+    min-width: 150px;
+}
+
+#btn-cancel:hover {
+    background: #475569;
+}
+
+#btn-cancel:active {
+    background: #334155;
 }

@@ -519,6 +519,25 @@
     pointer-events: none !important;
 }
 
+/* ĐÃ FIX: Ép ẩn cứng bảng KẾT QUẢ TÌM KIẾM / MINI-CART / DROPDOWN TÀI KHOẢN
+   ngay khi Header sticky bị giấu đi (cuộn lên). Nếu không, các bảng này (đang mở do
+   gõ tìm kiếm / đang hover chuột) sẽ bị kéo trôi theo header (top: -100px) và
+   nổi lơ lửng đè lên banner khuyến mãi phía trên, vì trình duyệt không tự tắt trạng
+   thái :hover/.active chỉ vì phần tử bị dịch chuyển bằng CSS mà chuột không di chuyển. */
+.header-sticky:not(.show) .search-results {
+    display: none !important;
+}
+
+.header-sticky:not(.show) .mini-cart {
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+.header-sticky:not(.show) .account-dropdown-menu {
+    display: none !important;
+}
+
 /* Hiệu ứng xoay Icon cực mượt khi hover */
 #categoryArrow::before {
     transition: transform 0.3s ease, margin 0.3s ease;

@@ -22,6 +22,7 @@
             <h2>🌱 RAU MÁ ADMIN</h2>
             <div class="menu-item active" onclick="switchTab('products')">📦 Quản lý Sản phẩm</div>
             <div class="menu-item" onclick="switchTab('orders')">🛒 Quản lý Đơn hàng</div>
+            <div class="menu-item" onclick="switchTab('home-settings')">⚙️ Cài Đặt Trang Chủ</div>
         </div>
         
         <div class="sidebar-bottom">
@@ -150,7 +151,7 @@
                         <!-- 1. KHU VỰC KÉO THẢ ẢNH CHÍNH -->
                         <div class="form-group full-width">
                             <label>Hình Ảnh Sản Phẩm *</label>
-                            <input type="hidden" id="img" required>
+                            <input type="hidden" id="img">
                             
                             <div id="drop-zone" style="border: 2px dashed #cbd5e1; border-radius: 8px; padding: 40px 20px; text-align: center; cursor: pointer; background: #f8fafc; transition: 0.3s; position: relative; overflow: hidden;">
                                 <input type="file" id="file-input" accept="image/*" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10;">
@@ -187,9 +188,9 @@
                     </div>
                     
                     <!-- Nhóm 2 nút: Lưu và Hủy Sửa -->
-                    <div style="display: flex; gap: 10px;">
+                    <div class="form-actions-wrapper">
+                        <button type="button" id="btn-cancel" onclick="cancelEdit()" style="display: none;">HỦY SỬA</button>
                         <button type="submit" class="btn-add" id="btn-submit">LƯU SẢN PHẨM</button>
-                        <button type="button" id="btn-cancel" onclick="cancelEdit()" style="display: none; background: #8f9bba; color: white; border: none; padding: 14px 30px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 15px;">HỦY SỬA</button>
                     </div>
                 </form>
             </div>
@@ -234,6 +235,115 @@
                         <!-- JS đổ dữ liệu đơn hàng vào đây -->
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- TAB 3: QUẢN LÝ CÀI ĐẶT TRANG CHỦ -->
+        <!-- ============================================== -->
+        <div id="tab-home-settings" style="display: none;">
+            <div class="header-title">Cài Đặt Trang Chủ</div>
+
+            <div class="admin-card">
+                <div class="card-title">📝 Tùy Chỉnh Tiêu Đề Mục Sản Phẩm</div>
+                <div class="form-grid">
+                    <div class="form-group"><label>Tiêu Đề Mục 1</label><input type="text" id="home-title-1" placeholder="VGA - Card Màn Hình"></div>
+                    <div class="form-group"><label>Tiêu Đề Mục 2</label><input type="text" id="home-title-2" placeholder="Ổ Cứng"></div>
+                    <div class="form-group"><label>Tiêu Đề Mục 3</label><input type="text" id="home-title-3" placeholder="RAM - Bộ Nhớ Trong"></div>
+                    <div class="form-group"><label>Tiêu Đề Mục 4</label><input type="text" id="home-title-4" placeholder="Mainboard - Bo mạch chủ"></div>
+                    <div class="form-group"><label>Tiêu Đề Mục 5</label><input type="text" id="home-title-5" placeholder="Chuột Không Dây"></div>
+                    <div class="form-group"><label>Tiêu Đề Mục 6</label><input type="text" id="home-title-6" placeholder="Màn Hình Máy Tính"></div>
+                </div>
+                <div class="settings-action-wrapper">
+                    <button type="button" class="btn-add" onclick="saveHomeSettings()">LƯU TÙY CHỈNH TIÊU ĐỀ</button>
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <div class="card-title">🎯 Tùy Chỉnh Sản Phẩm Trưng Bày</div>
+                <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Nhập Mã Sản Phẩm (ID) tương ứng để hiển thị sản phẩm đó trên trang chủ.</p>
+
+                <!-- KHU VỰC 1 -->
+                <div style="margin-bottom: 30px; border-bottom: 2px dashed #e2e8f0; padding-bottom: 20px;">
+                    <h4 style="color: #d70018; margin-bottom: 15px;">Mục 1</h4>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Sản phẩm 1</label><input type="text" id="home-sp1-1"></div>
+                        <div class="form-group"><label>Sản phẩm 2</label><input type="text" id="home-sp1-2"></div>
+                        <div class="form-group"><label>Sản phẩm 3</label><input type="text" id="home-sp1-3"></div>
+                        <div class="form-group"><label>Sản phẩm 4</label><input type="text" id="home-sp1-4"></div>
+                        <div class="form-group"><label>Sản phẩm 5</label><input type="text" id="home-sp1-5"></div>
+                        <div class="form-group"><label>Sản phẩm 6</label><input type="text" id="home-sp1-6"></div>
+                    </div>
+                </div>
+
+                <!-- KHU VỰC 2 -->
+                <div style="margin-bottom: 30px; border-bottom: 2px dashed #e2e8f0; padding-bottom: 20px;">
+                    <h4 style="color: #1435c3; margin-bottom: 15px;">Mục 2</h4>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Sản phẩm 1</label><input type="text" id="home-sp2-1"></div>
+                        <div class="form-group"><label>Sản phẩm 2</label><input type="text" id="home-sp2-2"></div>
+                        <div class="form-group"><label>Sản phẩm 3</label><input type="text" id="home-sp2-3"></div>
+                        <div class="form-group"><label>Sản phẩm 4</label><input type="text" id="home-sp2-4"></div>
+                        <div class="form-group"><label>Sản phẩm 5</label><input type="text" id="home-sp2-5"></div>
+                        <div class="form-group"><label>Sản phẩm 6</label><input type="text" id="home-sp2-6"></div>
+                    </div>
+                </div>
+
+                 <!-- KHU VỰC 3 -->
+                 <div style="margin-bottom: 30px; border-bottom: 2px dashed #e2e8f0; padding-bottom: 20px;">
+                    <h4 style="color: #059669; margin-bottom: 15px;">Mục 3</h4>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Sản phẩm 1</label><input type="text" id="home-sp3-1"></div>
+                        <div class="form-group"><label>Sản phẩm 2</label><input type="text" id="home-sp3-2"></div>
+                        <div class="form-group"><label>Sản phẩm 3</label><input type="text" id="home-sp3-3"></div>
+                        <div class="form-group"><label>Sản phẩm 4</label><input type="text" id="home-sp3-4"></div>
+                        <div class="form-group"><label>Sản phẩm 5</label><input type="text" id="home-sp3-5"></div>
+                        <div class="form-group"><label>Sản phẩm 6</label><input type="text" id="home-sp3-6"></div>
+                    </div>
+                </div>
+
+                <!-- KHU VỰC 4 -->
+                <div style="margin-bottom: 30px; border-bottom: 2px dashed #e2e8f0; padding-bottom: 20px;">
+                    <h4 style="color: #ea580c; margin-bottom: 15px;">Mục 4</h4>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Sản phẩm 1</label><input type="text" id="home-sp4-1"></div>
+                        <div class="form-group"><label>Sản phẩm 2</label><input type="text" id="home-sp4-2"></div>
+                        <div class="form-group"><label>Sản phẩm 3</label><input type="text" id="home-sp4-3"></div>
+                        <div class="form-group"><label>Sản phẩm 4</label><input type="text" id="home-sp4-4"></div>
+                        <div class="form-group"><label>Sản phẩm 5</label><input type="text" id="home-sp4-5"></div>
+                        <div class="form-group"><label>Sản phẩm 6</label><input type="text" id="home-sp4-6"></div>
+                    </div>
+                </div>
+
+                <!-- KHU VỰC 5 -->
+                <div>
+                    <h4 style="color: #8b5cf6; margin-bottom: 15px;">Mục 5</h4>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Sản phẩm 1</label><input type="text" id="home-sp5-1"></div>
+                        <div class="form-group"><label>Sản phẩm 2</label><input type="text" id="home-sp5-2"></div>
+                        <div class="form-group"><label>Sản phẩm 3</label><input type="text" id="home-sp5-3"></div>
+                        <div class="form-group"><label>Sản phẩm 4</label><input type="text" id="home-sp5-4"></div>
+                        <div class="form-group"><label>Sản phẩm 5</label><input type="text" id="home-sp5-5"></div>
+                        <div class="form-group"><label>Sản phẩm 6</label><input type="text" id="home-sp5-6"></div>
+                    </div>
+                </div>
+
+                <!-- KHU VỰC 6 -->
+                <div style="margin-top: 30px; border-top: 2px dashed #e2e8f0; padding-top: 20px;">
+                    <h4 style="color: #0891b2; margin-bottom: 15px;">Mục 6</h4>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Sản phẩm 1</label><input type="text" id="home-sp6-1"></div>
+                        <div class="form-group"><label>Sản phẩm 2</label><input type="text" id="home-sp6-2"></div>
+                        <div class="form-group"><label>Sản phẩm 3</label><input type="text" id="home-sp6-3"></div>
+                        <div class="form-group"><label>Sản phẩm 4</label><input type="text" id="home-sp6-4"></div>
+                        <div class="form-group"><label>Sản phẩm 5</label><input type="text" id="home-sp6-5"></div>
+                        <div class="form-group"><label>Sản phẩm 6</label><input type="text" id="home-sp6-6"></div>
+                    </div>
+                </div>
+
+                <div class="settings-action-wrapper">
+                    <button type="button" class="btn-add" onclick="saveHomeProducts()">LƯU TÙY CHỈNH SẢN PHẨM</button>
+                </div>
             </div>
         </div>
 

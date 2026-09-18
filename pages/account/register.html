@@ -54,7 +54,7 @@
             </div>
 
             <div class="search-box">
-                <input type="text" class="search-input" placeholder="Tìm kiếm sản phẩm...">
+                <input type="text" id="headerSearchInput" name="site_search_q" class="search-input" placeholder="Tìm kiếm sản phẩm..." autocomplete="off">
                 
                 <div class="search-results"></div>
             </div>
@@ -337,7 +337,7 @@
             </div>
 
             <div class="search-box">
-                <input type="text" class="search-input" placeholder="Tìm kiếm sản phẩm...">
+                <input type="text" id="stickySearchInput" name="site_search_q" class="search-input" placeholder="Tìm kiếm sản phẩm..." autocomplete="off">
                 
                 <div class="search-results"></div>
             </div>
@@ -409,27 +409,27 @@
             <form class="auth-form-dedicated" onsubmit="window.handleRegisterDedicated(event)">
                 <div class="auth-form-group">
                     <label>Họ và Tên</label>
-                    <input type="text" id="regName" placeholder="Nhập họ và tên..." required>
+                    <input type="text" id="regName" name="fullname" placeholder="Nhập họ và tên..." autocomplete="name" required>
                 </div>
 
                 <div class="auth-form-group">
                     <label>Tên đăng nhập</label>
-                    <input type="text" id="regUser" placeholder="Chọn tên đăng nhập..." required>
+                    <input type="text" id="regUser" name="username" placeholder="Chọn tên đăng nhập..." autocomplete="username" required>
                 </div>
 
                 <div class="auth-form-group">
                     <label>Số điện thoại *</label>
-                    <input type="tel" id="regPhone" placeholder="Nhập số điện thoại..." required>
+                    <input type="tel" id="regPhone" name="phone" placeholder="Nhập số điện thoại..." autocomplete="tel" required>
                 </div>
 
                 <div class="auth-form-group">
                     <label>Email liên kết *</label>
-                    <input type="email" id="regEmail" placeholder="Nhập địa chỉ email..." required>
+                    <input type="email" id="regEmail" name="email" placeholder="Nhập địa chỉ email..." autocomplete="email" required>
                 </div>
 
                 <div class="auth-form-group">
                     <label>Mật khẩu</label>
-                    <input type="password" id="regPass" placeholder="Tạo mật khẩu..." required>
+                    <input type="password" id="regPass" name="password" placeholder="Tạo mật khẩu..." autocomplete="new-password" required>
                 </div>
 
                 <button type="submit" class="btn-auth-primary">ĐĂNG KÝ MỚI</button>
@@ -483,12 +483,12 @@
                 được gửi tới <br><strong id="otp-email-display" style="color: #2b3674; font-size: 15px;"></strong></p>
 
             <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 25px;" id="otp-inputs">
-                <input type="text" class="otp-box" maxlength="1">
-                <input type="text" class="otp-box" maxlength="1">
-                <input type="text" class="otp-box" maxlength="1">
-                <input type="text" class="otp-box" maxlength="1">
-                <input type="text" class="otp-box" maxlength="1">
-                <input type="text" class="otp-box" maxlength="1">
+                <input type="text" class="otp-box" maxlength="1" autocomplete="off">
+                <input type="text" class="otp-box" maxlength="1" autocomplete="off">
+                <input type="text" class="otp-box" maxlength="1" autocomplete="off">
+                <input type="text" class="otp-box" maxlength="1" autocomplete="off">
+                <input type="text" class="otp-box" maxlength="1" autocomplete="off">
+                <input type="text" class="otp-box" maxlength="1" autocomplete="off">
             </div>
 
             <button id="btn-verify-otp" onclick="window.submitRegistration()"

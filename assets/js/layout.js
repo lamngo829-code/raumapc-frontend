@@ -123,6 +123,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 stickyHeader.classList.remove('show');
                 var categoryParent = document.getElementById('stickyCategory');
                 if (categoryParent) categoryParent.classList.remove('active');
+
+                // Dọn dẹp: đóng luôn ô kết quả tìm kiếm bên trong sticky header
+                // (nếu đang mở) để tránh dính trạng thái .active cũ khi header hiện lại.
+                stickyHeader.querySelectorAll('.search-results.active').forEach(function (box) {
+                    box.classList.remove('active');
+                    box.innerHTML = '';
+                });
             }
         });
     }
@@ -146,12 +153,46 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 /* ==========================================================================
-   PHẦN 3: TÌM KIẾM SẢN PHẨM TRỰC TIẾP
+   PHẦN 3: TÌM KIẾM SẢN PHẨM TRỰC TIẾP (ĐÃ NÂNG CẤP CHẶN LỖI INPUT ĐĂNG NHẬP)
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', function () {
-    const searchInputs = document.querySelectorAll('.search-input');
+    // Chỉ chọn các ô tìm kiếm thực sự nằm trong header/search-box, loại trừ form đăng nhập/đăng ký
+    const searchInputs = document.querySelectorAll('.search-box .search-input, .header .search-input');
     if (searchInputs.length === 0) return;
+
+    // CHỐT AN TOÀN: Chặn lỗi trình duyệt autofill nhầm giá trị (vd: username "admin")
+    // từ form đăng nhập/đăng ký sang ô tìm kiếm header do trùng name/autocomplete.
+    // Ép xoá giá trị ô search ngay khi trang load + khoá autocomplete, tách biệt hoàn toàn 2 ô.
+    searchInputs.forEach(function (input) {
+        input.setAttribute('autocomplete', 'off');
+        input.setAttribute('name', 'site_search_q'); // đổi name để không trùng với name="username"/"user" của form login
+        if (input.value) input.value = '';
+    });
+
+    // Autofill của một số trình duyệt chạy SAU sự kiện DOMContentLoaded (bất đồng bộ),
+    // nên kiểm tra lại 1 lần nữa sau khi trang render xong để chắc chắn ô search luôn rỗng khi load.
+    window.addEventListener('load', function () {
+        searchInputs.forEach(function (input) {
+            if (input.value && document.activeElement !== input) input.value = '';
+        });
+    });
+
+    let cachedProducts = null;
+    let isFetching = false;
+
+    const prefetchProducts = async () => {
+        if (cachedProducts || isFetching) return;
+        isFetching = true;
+        try {
+            const response = await fetch('https://raumapc-backend.onrender.com/api/products');
+            cachedProducts = await response.json();
+        } catch (err) {
+            console.error("Lỗi tải cache sản phẩm:", err);
+        } finally {
+            isFetching = false;
+        }
+    };
 
     searchInputs.forEach(function (input) {
         let container = input.parentElement;
@@ -163,6 +204,8 @@ document.addEventListener('DOMContentLoaded', function () {
             resultBox.className = 'search-results';
             container.appendChild(resultBox);
         }
+
+        input.addEventListener('focus', prefetchProducts);
 
         let timeoutId;
 
@@ -180,22 +223,42 @@ document.addEventListener('DOMContentLoaded', function () {
             const basePath = isSubPage ? '../../' : '';
             const detailPath = `${basePath}pages/shop/product-detail.html`;
 
-            resultBox.innerHTML = '<div style="padding:15px; text-align:center; color:#1435c3; font-size:14px; font-weight:bold;">⏳ Đang tìm kiếm...</div>';
-            resultBox.classList.add('active');
-
             timeoutId = setTimeout(async () => {
                 try {
-                    const response = await fetch(`https://raumapc-backend.onrender.com/api/products`);
-                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                    const allProducts = await response.json();
+                    if (!cachedProducts) {
+                        resultBox.innerHTML = '<div style="padding:15px; text-align:center; color:#1435c3; font-size:14px; font-weight:bold;">⏳ Đang tìm kiếm...</div>';
+                        resultBox.classList.add('active');
+                        const response = await fetch(`https://raumapc-backend.onrender.com/api/products`);
+                        cachedProducts = await response.json();
+                    }
 
-                    const filteredProducts = allProducts.filter(p => p.name && p.name.toLowerCase().includes(keyword));
+                    resultBox.classList.add('active');
+
+                    const filteredProducts = cachedProducts.filter(p => {
+                        if (!p.name) return false;
+                        const nameLower = p.name.toLowerCase();
+                        const catLower = (p.category || "").toLowerCase();
+                        
+                        let isMatch = nameLower.includes(keyword) || catLower.includes(keyword);
+                        
+                        if (isMatch) {
+                            if ((keyword === 'cpu' || keyword === 'intel' || keyword === 'amd') && !keyword.includes('tản')) {
+                                if (nameLower.includes('tản nhiệt') || catLower.includes('tản nhiệt') || nameLower.includes('cooler') || nameLower.includes('fan') || nameLower.includes('keo')) return false; 
+                            }
+                            if (keyword === 'ram') {
+                                if (nameLower.includes('ngàm') || nameLower.includes('khung')) return false;
+                            }
+                            return true;
+                        }
+                        return false;
+                    });
 
                     if (!filteredProducts || filteredProducts.length === 0) {
                         resultBox.innerHTML = '<div style="padding:15px; text-align:center; color:#888; font-size:14px;">Không tìm thấy sản phẩm nào!</div>';
                     } else {
-                        const displayProducts = filteredProducts.slice(0, 10);
-                        resultBox.innerHTML = displayProducts.map(p => {
+                        const displayProducts = filteredProducts.slice(0, 6); 
+                        
+                        let htmlContent = displayProducts.map(p => {
                             let safeImg = `${basePath}assets/images/icons/logo.jpg`;
                             if (p.img && p.img.trim() !== '') {
                                 let imgPath = p.img.trim().replace(/"/g, '').replace(/\\/g, '/');
@@ -203,25 +266,47 @@ document.addEventListener('DOMContentLoaded', function () {
                             }
                             let priceStr = typeof p.price === 'number' ? new Intl.NumberFormat('vi-VN').format(p.price) + 'đ' : p.price;
                             
-                            // TẠO LINK CHUẨN SEO
                             let slug = (p.name || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
                             let isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
                             let linkHref = isLocal ? `${detailPath}?id=${p.id || p._id}` : `/${slug}`;
 
                             return `
-                                <a href="${linkHref}" style="display:flex; align-items:center; padding:10px 12px; gap:12px; text-decoration:none; border-bottom:1px solid #f1f5f9; background:#fff; transition:0.2s;">
+                                <a href="${linkHref}" style="display:flex; align-items:center; padding:10px 12px; gap:12px; text-decoration:none; border-bottom:1px solid #f1f5f9; background:#fff; transition:0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='#fff'">
                                     <img src="${safeImg}" alt="${p.name}" style="width:45px; height:45px; object-fit:contain; border-radius:4px; border:1px solid #eee;" onerror="this.onerror=null; this.src='${basePath}assets/images/icons/logo.jpg';">
                                     <div style="flex:1; overflow:hidden;">
-                                        <div style="font-size:13.5px; font-weight:600; color:#2b3674; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.name}</div>
+                                        <div style="font-size:13.5px; font-weight:600; color:#0f172a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.name}</div>
                                         <div style="color:#d70018; font-weight:bold; font-size:13px; margin-top:3px;">${priceStr}</div>
                                     </div>
                                 </a>`;
                         }).join('');
+
+                        if (filteredProducts.length > 0) {
+                            htmlContent += `
+                                <div style="position: sticky; bottom: 0; background: #fff; border-top: 1px solid #e2e8f0; box-shadow: 0 -4px 10px rgba(0,0,0,0.02);">
+                                    <a href="${basePath}pages/shop/search.html?q=${encodeURIComponent(keyword)}" style="display:block; text-align:center; padding:14px; background:#f8fafc; color:#1435c3; font-weight:bold; font-size:14px; text-decoration:none; transition: 0.2s;" onmouseover="this.style.background='#eef2ff'" onmouseout="this.style.background='#f8fafc'">
+                                        Xem tất cả ${filteredProducts.length} kết quả tìm kiếm ➔
+                                    </a>
+                                </div>`;
+                        }
+
+                        resultBox.innerHTML = htmlContent;
                     }
                 } catch (err) {
                     resultBox.innerHTML = '<div style="padding:15px; text-align:center; color:#d70018; font-size:14px;">Lỗi tải dữ liệu. Vui lòng kiểm tra lại kết nối hoặc Server!</div>';
                 }
-            }, 500);
+            }, 150); 
+        });
+
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const keyword = e.target.value.trim();
+                if (keyword) {
+                    const isSubPage = window.location.pathname.includes('/pages/');
+                    const basePath = isSubPage ? '../../' : '';
+                    window.location.href = `${basePath}pages/shop/search.html?q=${encodeURIComponent(keyword)}`;
+                }
+            }
         });
 
         document.addEventListener('click', function (e) {

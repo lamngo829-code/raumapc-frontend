@@ -54,7 +54,7 @@
             </div>
 
             <div class="search-box">
-                <input type="text" class="search-input" placeholder="Tìm kiếm sản phẩm...">
+                <input type="text" id="headerSearchInput" name="site_search_q" class="search-input" placeholder="Tìm kiếm sản phẩm..." autocomplete="off">
                 
                 <div class="search-results"></div>
             </div>
@@ -337,7 +337,7 @@
             </div>
 
             <div class="search-box">
-                <input type="text" class="search-input" placeholder="Tìm kiếm sản phẩm...">
+                <input type="text" id="stickySearchInput" name="site_search_q" class="search-input" placeholder="Tìm kiếm sản phẩm..." autocomplete="off">
                 
                 <div class="search-results"></div>
             </div>
@@ -409,12 +409,12 @@
             <form class="auth-form-dedicated">
                 <div class="auth-form-group">
                     <label>Tên đăng nhập hoặc Email</label>
-                    <input type="text" id="loginUser" placeholder="Nhập tên đăng nhập hoặc email...">
+                    <input type="text" id="loginUser" name="username" placeholder="Nhập tên đăng nhập hoặc email..." autocomplete="username">
                 </div>
 
                 <div class="auth-form-group">
                     <label>Mật khẩu</label>
-                    <input type="password" id="loginPass" placeholder="Nhập mật khẩu...">
+                    <input type="password" id="loginPass" name="password" placeholder="Nhập mật khẩu..." autocomplete="current-password">
                 </div>
 
                 <div style="text-align: right; margin-top: 5px; margin-bottom: 15px;">
@@ -452,7 +452,7 @@
                 <h3 style="color: #1435c3; margin-bottom: 10px; font-size: 22px;">QUÊN MẬT KHẨU</h3>
                 <p style="font-size: 14px; color: #555; margin-bottom: 25px;">Vui lòng nhập Email bạn đã dùng để đăng ký tài khoản.</p>
                 
-                <input type="email" id="forgot-email-input" placeholder="Nhập địa chỉ Email..." style="width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 15px; outline: none; margin-bottom: 20px;">
+                <input type="email" id="forgot-email-input" name="forgot_email" autocomplete="email" placeholder="Nhập địa chỉ Email..." style="width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 15px; outline: none; margin-bottom: 20px;">
                 
                 <button id="btn-request-forgot" onclick="window.requestForgotPassword()" style="width: 100%; background: #1435c3; color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; margin-bottom: 15px; transition: 0.3s;">GỬI MÃ XÁC NHẬN</button>
                 
@@ -473,7 +473,7 @@
                     <input type="tel" class="f-otp" maxlength="1" autocomplete="one-time-code">
                 </div>
 
-                <input type="password" id="forgot-new-pass" placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)..." style="width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 15px; outline: none; margin-bottom: 20px;">
+                <input type="password" id="forgot-new-pass" name="new_password" autocomplete="new-password" placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)..." style="width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 15px; outline: none; margin-bottom: 20px;">
 
                 <button id="btn-verify-forgot" onclick="window.submitForgotPassword()" style="width: 100%; background: #d70018; color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; margin-bottom: 15px; transition: 0.3s; box-shadow: 0 4px 10px rgba(215, 0, 24, 0.2);">XÁC NHẬN ĐỔI MẬT KHẨU</button>
 

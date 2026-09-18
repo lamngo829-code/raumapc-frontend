@@ -1,23 +1,20 @@
 <html lang="vi">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chương Trình Khuyến Mãi - Rau Má PC</title>
-
+    <title>Kết quả tìm kiếm - Rau Má PC</title>
+    
     <link rel="icon" type="image/jpg" href="../../assets/images/icons/favicon.jpg?v=2">
-
+    
     <link rel="stylesheet" href="../../assets/css/base.css">
-
     <link rel="stylesheet" href="../../assets/css/layout.css">
-
-    <link rel="stylesheet" href="../../assets/css/info.css">
-
+    <link rel="stylesheet" href="../../assets/css/search.css">
+    
     <script src="../../assets/js/layout.js" defer></script>
+    <script src="../../assets/js/search.js" defer></script>
 
 </head>
-
-<body>
+<body class="search-page-bg">
 
     <div class="header">
 
@@ -392,134 +389,24 @@
         </div>
     </div>
 
-    <div class="breadcrumb" style="margin-bottom: 0px;">
-        <a href="../../index.html" class="bc-link">Trang chủ</a> 
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-        <a href="../../pages/info/promotion.html" class="bc-current">Khuyến mãi</a>
-    </div>
-
-    <!-- BẮT ĐẦU KHU VỰC KHUYẾN MÃI - LIGHT THEME PREMIUM -->
-    <div class="promo-premium-container">
+    <div class="search-container">
+        <!-- BREADCRUMB -->
+        <div class="breadcrumb" style="margin-top: 15px;">
+            <a href="../../index.html" class="bc-link">Trang chủ</a> 
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            <span class="bc-current">Kết quả tìm kiếm</span>
+        </div>
         
-        <!-- HERO BANNER -->
-        <section class="pp-hero">
-            <div class="pp-hero-content">
-                <span class="pp-badge">🔥 Siêu Lễ Hội Công Nghệ</span>
-                <h1 class="pp-title">Siêu Bão Sale <span class="text-gradient">Hủy Diệt</span></h1>
-                <p class="pp-desc">Cơ hội vàng để nâng cấp dàn máy tính trong mơ của bạn với mức giá chưa từng có. Săn ngay hàng ngàn linh kiện chính hãng giảm giá sốc cùng vô vàn quà tặng độc quyền chỉ có tại Rau Má PC.</p>
-            </div>
+        <div class="search-header-box">
+            <h1 id="search-title" class="search-title-text">⏳ Đang tìm kiếm...</h1>
+            <span id="search-count" class="search-count-text">Vui lòng chờ trong giây lát</span>
+        </div>
 
-            <!-- TABS ĐIỀU HƯỚNG -->
-            <div class="pp-tabs-wrapper">
-                <button class="pp-tab active">Đang Diễn Ra</button>
-                <button class="pp-tab">Deal Sắp Tới</button>
-                <button class="pp-tab">Khách Hàng VIP</button>
-            </div>
-        </section>
-
-        <!-- KHUYẾN MÃI TIÊU ĐIỂM (BENTO LỚN NẰM NGANG) -->
-        <section class="pp-section">
-            <div class="pp-featured-card">
-                <div class="pp-fc-img">
-                    <span class="pp-fc-tag">⚡ FLASH SALE KỶ LỤC</span>
-                    <!-- Thay bằng link ảnh thật của bạn -->
-                    <img src="../../assets/images/banner/banner.jpg" alt="Siêu bão Sale">
-                </div>
-                <div class="pp-fc-body">
-                    <h2 class="pp-fc-title">BACK TO SCHOOL - Đập Nát Mọi Rào Cản Giá</h2>
-                    <p class="pp-fc-desc">Chào đón năm học mới! Rau Má PC trợ giá toàn bộ linh kiện lên đến 40%. Cơ hội duy nhất để sở hữu RAM Corsair, VGA RTX 40-Series và SSD Gen 4 với mức giá rẻ nhất lịch sử. Áp dụng cho cả sinh viên và khách hàng phổ thông.</p>
-                    
-                    <!-- Đồng hồ đếm ngược lớn -->
-                    <div class="pp-timer-box">
-                        <div class="pp-time-item urgent">
-                            <strong>05</strong>
-                            <span>Ngày</span>
-                        </div>
-                        <div class="pp-time-item urgent">
-                            <strong>14</strong>
-                            <span>Giờ</span>
-                        </div>
-                        <div class="pp-time-item">
-                            <strong>45</strong>
-                            <span>Phút</span>
-                        </div>
-                        <div class="pp-time-item">
-                            <strong>30</strong>
-                            <span>Giây</span>
-                        </div>
-                    </div>
-
-                    <div>
-                        <a href="../../pages/shop/components.html" class="pp-btn-large">SĂN DEAL NGAY</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- LƯỚI KHUYẾN MÃI (GRID 3 CỘT) -->
-        <section class="pp-section">
-            <h2 class="pp-section-title">Ưu Đãi Tuyệt Đỉnh Khác</h2>
-            <div class="pp-grid">
-                
-                <!-- Card 1 -->
-                <div class="pp-card">
-                    <div class="pp-card-img">
-                        <span class="pp-tag-small gift">🎁 QUÀ TẶNG KÈM</span>
-                        <img src="../../assets/images/banner/banner2.jpg" alt="Promo 1">
-                    </div>
-                    <div class="pp-card-body">
-                        <h3 class="pp-card-title">Build PC Càng To - Nhận Quà Càng Khủng</h3>
-                        <p class="pp-card-desc">Tặng ngay combo Phím Chuột Cơ và Tai nghe Gaming trị giá 2.500.000đ khi chốt đơn PC Custom trên 25 Triệu.</p>
-                        
-                        <div class="pp-mini-timer">
-                            <span>📅 THỜI GIAN ÁP DỤNG:</span>
-                            <strong>01/10 - 31/10/2026</strong>
-                        </div>
-                        <a href="../../pages/shop/build-pc.html" class="pp-btn">Lên Cấu Hình Ngay</a>
-                    </div>
-                </div>
-
-                <!-- Card 2 -->
-                <div class="pp-card">
-                    <div class="pp-card-img">
-                        <span class="pp-tag-small sale">⚡ GIẢM SỐC</span>
-                        <img src="../../assets/images/banner/banner3.jpg" alt="Promo 2">
-                    </div>
-                    <div class="pp-card-body">
-                        <h3 class="pp-card-title">Clearance Sale - Xả Kho Màn Hình Đồ Họa</h3>
-                        <p class="pp-card-desc">Cơ hội săn màn hình ASUS ProArt, Dell UltraSharp giảm thẳng 30% tiền mặt. Hỗ trợ cân màu miễn phí trọn đời.</p>
-                        
-                        <div class="pp-mini-timer urgent">
-                            <span>⏳ SẮP KẾT THÚC:</span>
-                            <strong>Chỉ còn 3 Ngày!</strong>
-                        </div>
-                        <a href="../../pages/shop/monitor.html" class="pp-btn">Xem Danh Sách Màn Hình</a>
-                    </div>
-                </div>
-
-                <!-- Card 3 -->
-                <div class="pp-card">
-                    <div class="pp-card-img">
-                        <span class="pp-tag-small gift">💳 TRẢ GÓP 0%</span>
-                        <img src="../../assets/images/banner/banner4.jpg" alt="Promo 3">
-                    </div>
-                    <div class="pp-card-body">
-                        <h3 class="pp-card-title">Quẹt Thẻ Lấy Máy Ngay - Trả Góp 0 Lãi Suất</h3>
-                        <p class="pp-card-desc">Phối hợp cùng 25 ngân hàng lớn, hỗ trợ trả góp 0% lãi suất kỳ hạn lên đến 12 tháng qua thẻ tín dụng. Mua sắm thả ga không lo về giá.</p>
-                        
-                        <div class="pp-mini-timer">
-                            <span>📅 THỜI GIAN ÁP DỤNG:</span>
-                            <strong>Chương trình dài hạn</strong>
-                        </div>
-                        <a href="../../pages/info/payment.html" class="pp-btn">Xem Thể Lệ Trả Góp</a>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
+        <!-- LƯỚI SẢN PHẨM CHUẨN PHONG VŨ (BẮT BUỘC CÓ CLASS "search-product-grid") -->
+        <div class="search-product-grid" id="search-results-grid">
+            <!-- Dữ liệu JS sẽ đổ vào đây -->
+        </div>
     </div>
-    <!-- KẾT THÚC KHU VỰC KHUYẾN MÃI -->
 
     <!-- BỌC NGOÀI FOOTER (Trải dài 100% màn hình) -->
     <div class="footer-wrapper">
@@ -682,5 +569,4 @@
     </div>
 
 </body>
-
 </html>
