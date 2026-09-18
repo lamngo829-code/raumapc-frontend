@@ -124,8 +124,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 var categoryParent = document.getElementById('stickyCategory');
                 if (categoryParent) categoryParent.classList.remove('active');
 
-                // Dọn dẹp: đóng luôn ô kết quả tìm kiếm bên trong sticky header
-                // (nếu đang mở) để tránh dính trạng thái .active cũ khi header hiện lại.
                 stickyHeader.querySelectorAll('.search-results.active').forEach(function (box) {
                     box.classList.remove('active');
                     box.innerHTML = '';
@@ -153,25 +151,19 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 /* ==========================================================================
-   PHẦN 3: TÌM KIẾM SẢN PHẨM TRỰC TIẾP (ĐÃ NÂNG CẤP CHẶN LỖI INPUT ĐĂNG NHẬP)
+   PHẦN 3: TÌM KIẾM SẢN PHẨM TRỰC TIẾP (ĐÃ TÍCH HỢP ẨN GIÁ KHI HẾT HÀNG)
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Chỉ chọn các ô tìm kiếm thực sự nằm trong header/search-box, loại trừ form đăng nhập/đăng ký
     const searchInputs = document.querySelectorAll('.search-box .search-input, .header .search-input');
     if (searchInputs.length === 0) return;
 
-    // CHỐT AN TOÀN: Chặn lỗi trình duyệt autofill nhầm giá trị (vd: username "admin")
-    // từ form đăng nhập/đăng ký sang ô tìm kiếm header do trùng name/autocomplete.
-    // Ép xoá giá trị ô search ngay khi trang load + khoá autocomplete, tách biệt hoàn toàn 2 ô.
     searchInputs.forEach(function (input) {
         input.setAttribute('autocomplete', 'off');
-        input.setAttribute('name', 'site_search_q'); // đổi name để không trùng với name="username"/"user" của form login
+        input.setAttribute('name', 'site_search_q'); 
         if (input.value) input.value = '';
     });
 
-    // Autofill của một số trình duyệt chạy SAU sự kiện DOMContentLoaded (bất đồng bộ),
-    // nên kiểm tra lại 1 lần nữa sau khi trang render xong để chắc chắn ô search luôn rỗng khi load.
     window.addEventListener('load', function () {
         searchInputs.forEach(function (input) {
             if (input.value && document.activeElement !== input) input.value = '';
@@ -264,8 +256,20 @@ document.addEventListener('DOMContentLoaded', function () {
                                 let imgPath = p.img.trim().replace(/"/g, '').replace(/\\/g, '/');
                                 safeImg = (imgPath.startsWith('http://') || imgPath.startsWith('https://') || imgPath.startsWith('data:image')) ? imgPath : encodeURI(`${basePath}${imgPath}`);
                             }
+                            
                             let priceStr = typeof p.price === 'number' ? new Intl.NumberFormat('vi-VN').format(p.price) + 'đ' : p.price;
                             
+                            // ==========================================
+                            // ẨN GIÁ TRÊN Ô TÌM KIẾM NẾU HẾT HÀNG / LIÊN HỆ
+                            // ==========================================
+                            let currentStatus = p.status || 'Còn hàng';
+                            let priceDisplay = priceStr;
+                            if (currentStatus === 'Hết hàng') {
+                                priceDisplay = '<span style="color: #dc2626;">Hết hàng</span>';
+                            } else if (currentStatus === 'Liên hệ') {
+                                priceDisplay = '<span style="color: #ea580c;">Giá: Liên hệ</span>';
+                            }
+
                             let slug = (p.name || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
                             let isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
                             let linkHref = isLocal ? `${detailPath}?id=${p.id || p._id}` : `/${slug}`;
@@ -275,7 +279,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                     <img src="${safeImg}" alt="${p.name}" style="width:45px; height:45px; object-fit:contain; border-radius:4px; border:1px solid #eee;" onerror="this.onerror=null; this.src='${basePath}assets/images/icons/logo.jpg';">
                                     <div style="flex:1; overflow:hidden;">
                                         <div style="font-size:13.5px; font-weight:600; color:#0f172a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.name}</div>
-                                        <div style="color:#d70018; font-weight:bold; font-size:13px; margin-top:3px;">${priceStr}</div>
+                                        <div style="color:#d70018; font-weight:bold; font-size:13px; margin-top:3px;">${priceDisplay}</div>
                                     </div>
                                 </a>`;
                         }).join('');
@@ -426,13 +430,11 @@ window.resendLoginOtp = function(e) {
 window.handleLogout = function (e) {
     if (e) e.preventDefault();
     
-    // Dọn dẹp SẠCH SẼ mọi dấu vết của tài khoản cũ
     localStorage.removeItem('currentUser');
     localStorage.removeItem('authToken');
     localStorage.removeItem('myCart');
 
     const finishLogout = () => {
-        // Dùng replace để đá văng khách về trang chủ và chặn nút Back của trình duyệt
         window.location.replace('../../index.html');
     };
 
@@ -456,13 +458,10 @@ window.updateAccountUI = function () {
         if (currentUser) {
             var firstName = currentUser.fullName.split(' ')[0];
             
-            // LOGIC XỬ LÝ AVATAR HOẶC CHỮ CÁI ĐẦU TIÊN
             var avatarHTML = '';
             if (currentUser.avatar && currentUser.avatar.trim() !== '') {
-                // Trường hợp 1: Người dùng có avatar
                 avatarHTML = `<img src="${currentUser.avatar}" alt="Avatar" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid #ffeb3b; background: white;">`;
             } else {
-                // Trường hợp 2: Không có avatar -> Lấy chữ cái đầu tiên của Tên
                 var firstLetter = firstName.charAt(0).toUpperCase();
                 avatarHTML = `<div style="width: 32px; height: 32px; border-radius: 50%; background-color: #ffeb3b; color: #1435c3; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px;">${firstLetter}</div>`;
             }
@@ -481,7 +480,6 @@ window.updateAccountUI = function () {
                     <a href="#" class="user-menu-link logout-text" onclick="window.handleLogout(event)">Đăng xuất</a>
                 </div>`;
         } else {
-            // Trường hợp 3: Chưa đăng nhập -> Vẫn là icon SVG mặc định
             wrapper.innerHTML = `
                 <div class="account-trigger">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
@@ -492,11 +490,9 @@ window.updateAccountUI = function () {
                     <a href="${prefix}${pagesPrefix}../../pages/account/register.html" style="display:block; text-align:center; text-decoration:none; background:white; color:#333; border:1px solid #ccc; padding:10px; border-radius:4px; font-weight:bold;">Đăng ký</a>
                 </div>`;
         }
-
         wrapper.style.opacity = '1';
-
     });
-}; // ĐÃ THÊM DẤU ĐÓNG NGOẶC NÀY
+};
 
 document.addEventListener('DOMContentLoaded', window.updateAccountUI);
 
@@ -916,17 +912,13 @@ window.showGlobalConfirm = function(message, onConfirm) {
 
 // 1. BỘ ĐỊNH TUYẾN CHUYỂN TRANG SẢN PHẨM ĐỈNH CAO (KHÔNG BAO GIỜ NHÁY LINK)
 document.addEventListener('click', function (e) {
-    // Kiểm tra xem khách có đang bấm vào khu vực thẻ sản phẩm không
     let card = e.target.closest('.product-card');
     if (!card) return; 
 
-    // Bỏ qua nếu khách đang cố bấm nút Thêm vào giỏ hàng
     if (e.target.closest('.add-to-cart')) return;
 
-    // BẮT BUỘC: Chặn đứng ngay lập tức hành động load link HTML cũ của trình duyệt
     e.preventDefault();
 
-    // Dùng chính tên sản phẩm trên màn hình để tạo đường link chuẩn SEO
     let nameEl = card.querySelector('.product-name');
     if (!nameEl) return;
     let productName = nameEl.innerText;
@@ -935,11 +927,9 @@ document.addEventListener('click', function (e) {
     let isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     
     if (isLocal) {
-        // NẾU CHẠY Ở MÁY TÍNH: Lấy ID để hiển thị
         let btnAddCart = card.querySelector('.add-to-cart');
         let productId = btnAddCart ? btnAddCart.getAttribute('data-product-id') : null;
         
-        // Cứu vãn nếu sản phẩm thiếu ID
         if (!productId || productId === 'null' || productId === 'undefined') {
             let aTag = card.querySelector('a');
             if (aTag && aTag.href) { window.location.href = aTag.href; }
@@ -951,7 +941,6 @@ document.addEventListener('click', function (e) {
         let detailPath = inPagesFolder ? '../../pages/shop/product-detail.html' : 'pages/shop/product-detail.html';
         window.location.href = detailPath + '?id=' + shortId;
     } else {
-        // NẾU CHẠY TRÊN VERCEL: Ép buộc chuyển thẳng sang link xịn không chứa ID, không bị nháy!
         window.location.href = '/' + slug;
     }
 });
@@ -1057,25 +1046,21 @@ document.addEventListener('DOMContentLoaded', function() {
    PHẦN 10: TỰ ĐỘNG RÚT GỌN LINK TRÊN VERCEL (ẨN SHOP, INFO, ACCOUNT)
    ========================================================================== */
 document.addEventListener('DOMContentLoaded', () => {
-    // Chỉ kích hoạt ngầm khi chạy trên Vercel (web thật)
     let isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     
     if (!isLocal) {
         document.querySelectorAll('a').forEach(link => {
             let href = link.getAttribute('href');
             
-            // Bỏ qua các link ngoài, link rỗng, email, sđt, thẻ neo...
             if (href && !href.startsWith('http') && !href.startsWith('mailto:') && !href.startsWith('tel:') && !href.startsWith('#')) {
                 let newHref = href;
                 
-                // 1. Chuẩn hóa đường dẫn về Root (Bắt đầu bằng dấu /)
                 if (newHref.startsWith('../')) {
                     newHref = newHref.replace(/^(?:\.\.\/)+/, '/');
                 } else if (!newHref.startsWith('/')) {
                     newHref = '/' + newHref;
                 }
                 
-                // 2. Chém sạch toàn bộ các thư mục rườm rà
                 newHref = newHref.replace(/^\/pages\/shop\//, '/');
                 newHref = newHref.replace(/^\/pages\/info\//, '/');
                 newHref = newHref.replace(/^\/pages\/account\//, '/');
@@ -1083,17 +1068,80 @@ document.addEventListener('DOMContentLoaded', () => {
                 newHref = newHref.replace(/^\/info\//, '/');
                 newHref = newHref.replace(/^\/account\//, '/');
                 
-                // 3. Gọt luôn đuôi .html
                 newHref = newHref.split('.html').join('');
                 
-                // 4. Xử lý đường dẫn về Trang chủ
                 if (newHref === '/index' || newHref === '/') {
                     newHref = '/';
                 }
 
-                // Gắn lại link siêu sạch vào nút bấm
                 link.setAttribute('href', newHref);
             }
+        });
+    }
+});
+
+/* ==========================================================================
+   PHẦN 11: TỰ ĐỘNG TẠO WIDGET LIÊN HỆ NỔI (ZALO, MESSENGER, TOP) CHO MỌI TRANG
+   ========================================================================== */
+document.addEventListener('DOMContentLoaded', function () {
+    // Ngăn không cho khối này hiển thị ở khu vực Admin
+    if (window.location.pathname.includes('/admin/')) return;
+
+    // Xử lý đường dẫn tương đối để hình ảnh Zalo không bị lỗi khi ở các trang con
+    const isSubPage = window.location.pathname.includes('/pages/');
+    const basePath = isSubPage ? '../../' : '';
+
+    // Tạo khối HTML chứa các nút
+    const widgetHTML = `
+        <div class="floating-widget-container">
+            <!-- Nhóm nút nhỏ bên trên -->
+            <div class="fw-circle-group">
+                <a href="https://www.facebook.com/ngotlam.2k6" target="_blank" class="fw-circle fw-fb" title="Facebook">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                </a>
+                <a href="https://www.youtube.com/@lamngo829" target="_blank" class="fw-circle fw-yt" title="Youtube">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                </a>
+                <div class="fw-circle fw-top" id="fw-scroll-top" title="Lên đầu trang">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                </div>
+            </div>
+
+            <!-- Nút Zalo -->
+            <a href="https://zalo.me/0965976143" target="_blank" class="fw-pill-btn">
+                <div class="fw-icon-wrap" style="border: 1px solid #eee;">
+                    <img src="${basePath}assets/images/icons/zalo.jpg" alt="Zalo">
+                </div>
+                <div class="fw-text zalo-text">Chat Zalo<br><small>(8h-22h30)</small></div>
+            </a>
+
+            <!-- Nút Messenger -->
+            <a href="https://m.me/ngotlam.2k6" target="_blank" class="fw-pill-btn">
+                <div class="fw-icon-wrap" style="background: linear-gradient(45deg, #00A3FF 0%, #A033CE 40%, #FF5280 70%, #FF7C60 100%);">
+                    <!-- Icon Messenger chuẩn nhúng thẳng bằng SVG để không bao giờ bị lỗi ảnh -->
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.477 2 2 6.145 2 11.259c0 2.915 1.488 5.467 3.784 7.106v3.42c0 .487.553.763.953.48l3.486-2.464c.563.155 1.154.238 1.777.238 5.523 0 10-4.145 10-9.259S17.523 2 12 2zm1.093 12.35l-2.825-3.023-5.503 3.023 6.046-6.425 2.825 3.024 5.503-3.024-6.046 6.425z"/></svg>
+                </div>
+                <div class="fw-text mes-text">Chat Facebook<br><small>(8h-22h30)</small></div>
+            </a>
+        </div>
+    `;
+
+    // Nhúng khối HTML này vào cuối trang
+    document.body.insertAdjacentHTML('beforeend', widgetHTML);
+
+    // Kích hoạt tính năng cho nút Cuộn lên đầu trang (Chỉ hiện khi cuộn xuống)
+    const scrollTopBtn = document.getElementById('fw-scroll-top');
+    if (scrollTopBtn) {
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 400) {
+                scrollTopBtn.classList.add('show');
+            } else {
+                scrollTopBtn.classList.remove('show');
+            }
+        });
+
+        scrollTopBtn.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     }
 });

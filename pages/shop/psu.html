@@ -871,6 +871,36 @@
                 // MẤU CHỐT CHỐNG NHÁY: Ép trực tiếp link SEO vào thẻ A ngay lúc tạo giao diện
                 let linkHref = isLocal ? `product-detail.html?id=${sp.id || sp._id}` : `/${slug}`;
 
+                // ==========================================
+                // BỘ KIỂM SOÁT TÌNH TRẠNG NÚT BẤM DÀNH CHO THẺ SẢN PHẨM
+                // ==========================================
+                let currentStatus = sp.status || 'Còn hàng';
+                let buttonHtml = '';
+                let priceDisplay = sp.price;
+
+                if (currentStatus === 'Còn hàng') {
+                    buttonHtml = `<div class="add-to-cart" data-product-id="${sp.id || sp._id}" onclick="
+                        event.preventDefault(); 
+                        if (typeof window.addToCart === 'function') {
+                            window.addToCart('${sp.id || sp._id}', this.closest('.product-card').querySelector('.product-name').innerText, parseInt(String('${sp.price}').replace(/\\D/g, '')) || 0, this.closest('.product-card').querySelector('img').src);
+                        } else {
+                            alert('Đã thêm sản phẩm vào giỏ hàng!');
+                        }
+                    ">Thêm vào giỏ hàng</div>`;
+                } 
+                else if (currentStatus === 'Hết hàng') {
+                    // Nếu hết hàng: Ẩn giá, làm mờ nút, cấm click
+                    priceDisplay = '<span style="color: #dc2626; font-size: 15px;">Hết hàng</span>';
+                    buttonHtml = `<div class="add-to-cart" style="background: #e2e8f0; color: #94a3b8; border: 1px solid #e2e8f0; cursor: not-allowed; pointer-events: none;" onclick="event.preventDefault();">ĐÃ HẾT HÀNG</div>`;
+                } 
+                else if (currentStatus === 'Liên hệ') {
+                    // Nếu liên hệ: Đổi giá thành liên hệ, đổi nút thành màu cam và chuyển sang trang liên hệ
+                    priceDisplay = '<span style="color: #ea580c; font-size: 15px;">Giá: Liên hệ</span>';
+                    let isSubPage = window.location.pathname.includes('/pages/');
+                    let contactPath = isSubPage ? '../../pages/info/contact.html' : 'pages/info/contact.html';
+                    buttonHtml = `<div class="add-to-cart" style="background: #ffffff; color: #ea580c; border: 1px solid #ea580c;" onclick="event.preventDefault(); window.location.href='${contactPath}';">LIÊN HỆ TƯ VẤN</div>`;
+                }
+
                 const productHTML = `
                 <div class="product-card">
                     <a href="${linkHref}" style="text-decoration: none; color: inherit; flex: 1; display: flex; flex-direction: column;">
@@ -878,16 +908,8 @@
                         <div class="product-name">${sp.name}</div>
                     </a>
                     <div class="product-info" style="flex: unset;">
-                        <div class="product-price">${sp.price}</div>
-                        <!-- Vẫn giữ nguyên cơ chế thêm vào giỏ hàng bằng mã ID gốc -->
-                        <div class="add-to-cart" data-product-id="${sp.id || sp._id}" onclick="
-                            event.preventDefault(); 
-                            if (typeof window.addToCart === 'function') {
-                                window.addToCart('${sp.id || sp._id}', this.closest('.product-card').querySelector('.product-name').innerText, parseInt(String('${sp.price}').replace(/\\D/g, '')) || 0, this.closest('.product-card').querySelector('img').src);
-                            } else {
-                                alert('Đã thêm sản phẩm vào giỏ hàng!');
-                            }
-                        ">Thêm vào giỏ hàng</div>
+                        <div class="product-price">${priceDisplay}</div>
+                        ${buttonHtml}
                     </div>
                 </div>`;
                 productContainer.innerHTML += productHTML;
