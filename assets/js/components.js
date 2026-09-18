@@ -57,6 +57,22 @@ function renderSliderItems(sliderEl, sectionIndex, allProducts, configData) {
                 let priceStr = typeof p.price === 'number' ? new Intl.NumberFormat('vi-VN').format(p.price) + 'đ' : p.price;
                 let safeId = p.productId || p.id;
                 
+                let currentStatus = p.status || 'Còn hàng';
+                let buttonHtml = '';
+                let priceDisplay = priceStr;
+
+                if (currentStatus === 'Còn hàng') {
+                    buttonHtml = `<div class="add-to-cart" data-product-id="${safeId}" data-name="${p.name}" data-price="${p.price}" data-img="${safeImg}">Thêm vào giỏ hàng</div>`;
+                } 
+                else if (currentStatus === 'Hết hàng') {
+                    priceDisplay = '<span style="color: #dc2626; font-size: 15px;">Hết hàng</span>';
+                    buttonHtml = `<div class="add-to-cart" style="background: #e2e8f0; color: #94a3b8; border: 1px solid #e2e8f0; cursor: not-allowed; pointer-events: none;">ĐÃ HẾT HÀNG</div>`;
+                } 
+                else if (currentStatus === 'Liên hệ') {
+                    priceDisplay = '<span style="color: #ea580c; font-size: 15px;">Giá: Liên hệ</span>';
+                    buttonHtml = `<div class="add-to-cart" style="background: #ffffff; color: #ea580c; border: 1px solid #ea580c;" onclick="window.location.href='pages/info/contact.html';">LIÊN HỆ TƯ VẤN</div>`;
+                }
+                
                 htmlContent += `
                 <div class="product-card">
                     <div class="product-img">
@@ -68,8 +84,8 @@ function renderSliderItems(sliderEl, sectionIndex, allProducts, configData) {
                         <div class="product-name">
                             <a href="pages/shop/product-detail.html?id=${safeId}" style="text-decoration: none; color: inherit;">${p.name}</a>
                         </div>
-                        <div class="product-price" style="color: #d70018; font-weight: bold;">${priceStr}</div>
-                        <div class="add-to-cart" data-product-id="${safeId}" data-name="${p.name}" data-price="${p.price}" data-img="${safeImg}">Thêm vào giỏ hàng</div>
+                        <div class="product-price" style="color: #d70018; font-weight: bold;">${priceDisplay}</div>
+                        ${buttonHtml}
                     </div>
                 </div>`;
             }
