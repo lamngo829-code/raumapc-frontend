@@ -9,61 +9,262 @@ if (!currentUser || !token || currentUser.role !== 'admin') {
     window.location.href = '../../index.html'; 
 }
 
-let idleTime = 0;
-const idleLimit = 15; 
-
-const idleInterval = setInterval(() => {
-    idleTime++;
-    if (idleTime >= idleLimit) {
-        clearInterval(idleInterval);
-        alert("⏳ Phiên làm việc đã hết hạn để bảo mật. Hệ thống tự động đăng xuất!");
-        adminLogout();
-    }
-}, 60000); 
-
+let idleTime = 0; const idleLimit = 15; 
+const idleInterval = setInterval(() => { idleTime++; if (idleTime >= idleLimit) { clearInterval(idleInterval); alert("⏳ Phiên làm việc đã hết hạn để bảo mật. Hệ thống tự động đăng xuất!"); adminLogout(); } }, 60000); 
 ['mousemove', 'keypress', 'click', 'scroll'].forEach(evt => document.addEventListener(evt, () => idleTime = 0));
 
 window.adminLogout = function() {
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('authToken');
+    localStorage.removeItem('currentUser'); localStorage.removeItem('authToken');
     if (typeof window.clearDrafts === 'function') window.clearDrafts(); 
     window.location.href = '../../index.html';
 };
 
 const API_PRODUCTS = 'https://raumapc-backend.onrender.com/api/products';
 const API_ORDERS = 'https://raumapc-backend.onrender.com/api/orders';
+const API_COUPONS = 'https://raumapc-backend.onrender.com/api/admin/coupons';
+const API_USERS = 'https://raumapc-backend.onrender.com/api/admin/users';
 
 function switchTab(tabName) {
+    // Đổi màu Menu
     document.querySelectorAll('.sidebar-top .menu-item').forEach(el => el.classList.remove('active'));
-    if (tabName === 'products') document.querySelectorAll('.sidebar-top .menu-item')[0].classList.add('active');
-    else if (tabName === 'orders') document.querySelectorAll('.sidebar-top .menu-item')[1].classList.add('active');
-    else document.querySelectorAll('.sidebar-top .menu-item')[2].classList.add('active');
+    
+    if (tabName === 'dashboard') document.querySelectorAll('.sidebar-top .menu-item')[0].classList.add('active');
+    else if (tabName === 'products') document.querySelectorAll('.sidebar-top .menu-item')[1].classList.add('active');
+    else if (tabName === 'orders') document.querySelectorAll('.sidebar-top .menu-item')[2].classList.add('active');
+    else if (tabName === 'users') document.querySelectorAll('.sidebar-top .menu-item')[3].classList.add('active');
+    else if (tabName === 'coupons') document.querySelectorAll('.sidebar-top .menu-item')[4].classList.add('active');
+    else document.querySelectorAll('.sidebar-top .menu-item')[5].classList.add('active');
 
-    document.getElementById('tab-products').style.display = (tabName === 'products') ? 'block' : 'none';
-    document.getElementById('tab-orders').style.display = (tabName === 'orders') ? 'block' : 'none';
-    document.getElementById('tab-home-settings').style.display = (tabName === 'home-settings') ? 'block' : 'none';
+    // Ẩn/Hiện Tab an toàn (Khắc phục lỗi cannot read properties of null)
+    const tDash = document.getElementById('tab-dashboard');
+    const tProd = document.getElementById('tab-products');
+    const tOrd = document.getElementById('tab-orders');
+    const tUser = document.getElementById('tab-users');
+    const tCoup = document.getElementById('tab-coupons');
+    const tSet = document.getElementById('tab-home-settings');
 
-    if (tabName === 'orders') loadOrders();
-    else if (tabName === 'products') { loadProducts(); loadRevenue(); }
+    if(tDash) tDash.style.display = (tabName === 'dashboard') ? 'block' : 'none';
+    if(tProd) tProd.style.display = (tabName === 'products') ? 'block' : 'none';
+    if(tOrd) tOrd.style.display = (tabName === 'orders') ? 'block' : 'none';
+    if(tUser) tUser.style.display = (tabName === 'users') ? 'block' : 'none';
+    if(tCoup) tCoup.style.display = (tabName === 'coupons') ? 'block' : 'none';
+    if(tSet) tSet.style.display = (tabName === 'home-settings') ? 'block' : 'none';
+
+    // Chạy lệnh tải dữ liệu tương ứng
+    if (tabName === 'dashboard') loadRevenue();
+    else if (tabName === 'orders') loadOrders();
+    else if (tabName === 'products') { loadProducts(); }
+    else if (tabName === 'coupons') loadCoupons();
+    else if (tabName === 'users') loadUsers();
     else loadHomeSettings();
 }
 
-// ================= KHU VỰC CODE SẢN PHẨM =================
-let allProducts = []; 
+// ================= KHU VỰC QUẢN LÝ USER MỚI THÊM =================
+function loadUsers() {
+    fetch(API_USERS, { headers: { 'Authorization': 'Bearer ' + token } })
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById('user-table-body');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            if(!data || data.length === 0) return tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Chưa có khách hàng nào đăng ký!</td></tr>';
+            
+            data.forEach(u => {
+                let dateStr = new Date(u.createdAt).toLocaleDateString('vi-VN');
+                
+                let lastLogin = u.loginHistory && u.loginHistory.length > 0 ? u.loginHistory[u.loginHistory.length - 1] : 'Chưa đăng nhập';
+                let loginCount = u.loginHistory ? u.loginHistory.length : 0;
 
+                let lockBtnText = u.isLocked ? "Mở Khóa" : "Khóa TK";
+                let lockBtnColor = u.isLocked ? "#059669" : "#ea580c"; 
+                let lockBgColor = u.isLocked ? "#dcfce7" : "#ffedd5";
+                let statusText = u.isLocked ? '<span style="color:#dc2626;font-weight:bold;">Đã Bị Khóa</span>' : '<span style="color:#059669;font-weight:bold;">Hoạt động</span>';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="font-weight:bold; color:#1435c3;">${u.fullName}<br><span style="font-size:12px; color:#666;">${u.email}</span></td>
+                        <td style="font-weight:bold;">${u.username}<br>${statusText}</td>
+                        <td><span style="font-size:13px; color:#444;">${dateStr}</span></td>
+                        <td>
+                            <span style="font-size:13px; color:#10b981; font-weight:bold;">${lastLogin}</span><br>
+                            <span style="font-size:11px; color:#888;">(Tổng: ${loginCount} lần)</span>
+                        </td>
+                        <td>
+                            <!-- NÚT ĐỔI MẬT KHẨU MỚI -->
+                            <button onclick="changeUserPassword('${u._id}', '${u.username}')" style="background:#e0f2fe; color:#0284c7; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; font-weight:bold; margin-right:5px; margin-bottom:5px;">Đổi MK</button>
+                            <button onclick="toggleLockUser('${u._id}')" style="background:${lockBgColor}; color:${lockBtnColor}; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; font-weight:bold; margin-right:5px; margin-bottom:5px;">${lockBtnText}</button>
+                            <button onclick="deleteUser('${u._id}')" style="background:#ffe2e5; color:#dc2626; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-weight:bold;">Xóa</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        });
+}
+
+// Bật tắt trạng thái Khóa
+window.toggleLockUser = function(id) {
+    if(confirm("Xác nhận thay đổi trạng thái Khóa / Mở Khóa của tài khoản này? (Tài khoản bị khóa sẽ bị văng khỏi web ngay lập tức)")) {
+        fetch(`${API_USERS}/${id}/lock`, { method: 'PUT', headers: { 'Authorization': 'Bearer ' + token } })
+        .then(res => res.json())
+        .then(data => {
+            window.showAdminAlert(data.message, data.success);
+            loadUsers();
+        });
+    }
+};
+
+window.deleteUser = function(id) {
+    if(confirm("⚠️ CẢNH BÁO: BẠN CÓ CHẮC MUỐN XÓA TÀI KHOẢN NÀY KHỎI CƠ SỞ DỮ LIỆU?\nHành động này không thể hoàn tác!")) {
+        fetch(`${API_USERS}/${id}`, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token } })
+        .then(res => res.json())
+        .then(data => {
+            window.showAdminAlert(data.message, data.success);
+            loadUsers();
+        });
+    }
+};
+
+// ==========================================
+// TÍNH NĂNG ĐỔI MẬT KHẨU KHÁCH HÀNG BỞI ADMIN (GIAO DIỆN MỚI)
+// ==========================================
+let currentUserIdForPasswordChange = null;
+
+// Hàm mở Modal
+window.changeUserPassword = function(id, username) {
+    currentUserIdForPasswordChange = id;
+    document.getElementById('cpm-username').innerText = 'Tài khoản: ' + username;
+    document.getElementById('cpm-input').value = '';
+    
+    // Gắn sự kiện click cho nút Xác nhận (tránh lỗi cộng dồn sự kiện)
+    const submitBtn = document.getElementById('cpm-submit-btn');
+    submitBtn.onclick = executeChangeUserPassword;
+    
+    document.getElementById('custom-password-modal').style.display = 'flex';
+    // Tự động focus vào ô nhập
+    setTimeout(() => document.getElementById('cpm-input').focus(), 100);
+};
+
+// Hàm đóng Modal
+window.closeChangePasswordModal = function() {
+    document.getElementById('custom-password-modal').style.display = 'none';
+    currentUserIdForPasswordChange = null;
+};
+
+// Hàm gửi dữ liệu lên Backend
+async function executeChangeUserPassword() {
+    if (!currentUserIdForPasswordChange) return;
+
+    const newPass = document.getElementById('cpm-input').value.trim();
+    
+    if (newPass.length < 6) {
+        return window.showAdminAlert("Mật khẩu mới phải từ 6 ký tự trở lên!", false);
+    }
+
+    const btn = document.getElementById('cpm-submit-btn');
+    btn.innerText = "ĐANG XỬ LÝ...";
+    btn.disabled = true;
+
+    try {
+        let res = await fetch(`https://raumapc-backend.onrender.com/api/admin/users/${currentUserIdForPasswordChange}/change-password`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+            body: JSON.stringify({ newPassword: newPass })
+        });
+        
+        let data = await res.json();
+        
+        if (res.ok && data.success) {
+            closeChangePasswordModal();
+            window.showAdminAlert(data.message, true);
+        } else {
+            window.showAdminAlert(data.message || "Đã xảy ra lỗi khi đổi mật khẩu!", false);
+        }
+    } catch(e) {
+        window.showAdminAlert("Lỗi kết nối đến máy chủ!", false);
+    } finally {
+        btn.innerText = "Xác nhận Đổi";
+        btn.disabled = false;
+    }
+}
+
+function loadCoupons() {
+    fetch(API_COUPONS, { headers: { 'Authorization': 'Bearer ' + token } })
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById('coupon-table-body');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            if(!data || data.length === 0) return tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Kho chưa có mã giảm giá nào!</td></tr>';
+            
+            data.forEach(c => {
+                let statusHtml = c.isActive 
+                    ? '<span class="status-badge" style="background:#e8f5e9; color:#28a745;">Đang hoạt động</span>' 
+                    : '<span class="status-badge" style="background:#ffe2e5; color:#dc2626;">Tạm khóa</span>';
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="font-weight:bold; color:#d70018; font-size:18px;">${c.code}</td>
+                        <td style="font-weight:bold; color:#1435c3; font-size:16px;">Giảm ${c.discountPercent}%</td>
+                        <td>${statusHtml}</td>
+                        <td><button onclick="deleteCoupon('${c._id}')" style="background:#ffe2e5; color:#dc2626; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; font-weight:bold;">Xóa</button></td>
+                    </tr>
+                `;
+            });
+        });
+}
+
+window.submitCoupon = async function() {
+    const code = document.getElementById('couponCode').value.toUpperCase();
+    const percent = document.getElementById('couponPercent').value;
+    const isActive = document.getElementById('couponStatus').value === 'true';
+
+    if(!code || !percent) return window.showAdminAlert("Vui lòng nhập đủ thông tin!", false);
+
+    try {
+        let res = await fetch(API_COUPONS, {
+            method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+            body: JSON.stringify({ code, discountPercent: percent, isActive })
+        });
+        let data = await res.json();
+        if(res.ok) {
+            window.showAdminAlert(data.message, true); document.getElementById('couponForm').reset(); loadCoupons();
+        } else { window.showAdminAlert(data.message, false); }
+    } catch(e) { window.showAdminAlert("Lỗi kết nối máy chủ!", false); }
+};
+
+window.deleteCoupon = function(id) {
+    if(confirm("Bạn có chắc chắn muốn xóa vĩnh viễn Mã giảm giá này không?")) {
+        fetch(`${API_COUPONS}/${id}`, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token } })
+        .then(res => res.json())
+        .then(data => { window.showAdminAlert(data.message, data.success); loadCoupons(); });
+    }
+};
+
+let allProducts = []; 
 function loadProducts() {
     fetch(API_PRODUCTS).then(res => res.json()).then(products => {
         allProducts = products; 
-        const tbody = document.getElementById('product-table-body');
-        tbody.innerHTML = '';
+        const tbody = document.getElementById('product-table-body'); tbody.innerHTML = '';
+        
+        let lowStockCount = 0; 
+        
         products.forEach(sp => {
-            // CẬP NHẬT: Hiển thị thêm "Tình trạng" bên cạnh Giá tiền
+            let currentStock = sp.stock !== undefined ? sp.stock : 10;
+            if (currentStock < 5) lowStockCount++;
+
             let statusColor = sp.status === 'Còn hàng' ? '#059669' : (sp.status === 'Hết hàng' ? '#dc2626' : '#f59e0b');
+            let stockHtml = currentStock < 5 
+                ? `<span style="color: #dc2626; font-weight: bold; background: #fee2e2; padding: 2px 6px; border-radius: 4px;">Kho: ${currentStock} (Sắp hết)</span>`
+                : `<span style="color: #059669; font-weight: bold;">Kho: ${currentStock}</span>`;
+
             tbody.innerHTML += `
                 <tr>
                     <td><img src="${sp.img}" style="width:45px; height:45px; border-radius:6px; object-fit:cover;"></td>
                     <td style="font-weight:bold; color:#2b3674;">${sp.name}<br><span style="font-size:12px; color:#888; font-weight:normal;">Mã SP: <span style="color:#d70018;">${sp.productId || sp.id.slice(-6).toUpperCase()}</span></span></td>
-                    <td style="color:#d70018; font-weight:bold;">${sp.price}<br><span style="font-size:12px; color:${statusColor}">${sp.status || 'Còn hàng'}</span></td>
+                    <td style="color:#d70018; font-weight:bold;">${sp.price}<br>
+                        <span style="font-size:12px; color:${statusColor}">${sp.status || 'Còn hàng'}</span> • 
+                        <span style="font-size:12px;">${stockHtml}</span>
+                    </td>
                     <td>
                         <button onclick="editProduct('${sp.id}')" style="background:#e3f2fd; color:#1976d2; border:none; padding:5px 12px; border-radius:5px; cursor:pointer; font-weight:bold; margin-right:5px;">Sửa</button>
                         <button onclick="deleteProduct('${sp.id}')" style="background:#ffe2e5; color:#d70018; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; font-weight:bold;">Xóa</button>
@@ -71,36 +272,39 @@ function loadProducts() {
                 </tr>
             `;
         });
+
+        const alertBox = document.getElementById('low-stock-alert');
+        const alertText = document.getElementById('low-stock-text');
+        if (alertBox && alertText) {
+            if (lowStockCount > 0) {
+                alertBox.style.display = 'block';
+                alertText.innerText = `Hệ thống phát hiện có ${lowStockCount} sản phẩm sắp hết hàng (Kho < 5). Vui lòng kiểm tra và nhập thêm!`;
+            } else { alertBox.style.display = 'none'; }
+        }
     });
 }
 
 function editProduct(id) {
-    const sp = allProducts.find(item => item.id === id);
-    if (!sp) return;
-
+    const sp = allProducts.find(item => item.id === id); if (!sp) return;
     if (document.getElementById('edit-id')) document.getElementById('edit-id').value = sp.id;
     if (document.getElementById('productId')) document.getElementById('productId').value = sp.productId || '';
     if (document.getElementById('name')) document.getElementById('name').value = sp.name || '';
     if (document.getElementById('price')) document.getElementById('price').value = sp.price || '';
     if (document.getElementById('warranty')) document.getElementById('warranty').value = sp.warranty || '36 Tháng';
-    
-    // Nạp trạng thái Tình trạng từ CSDL lên ô nhập liệu
     if (document.getElementById('status')) document.getElementById('status').value = sp.status || 'Còn hàng';
+    if (document.getElementById('stock')) document.getElementById('stock').value = sp.stock !== undefined ? sp.stock : 10;
 
     const catArray = (sp.category || '').split(',').map(c => c.trim());
     if (document.getElementById('category1')) document.getElementById('category1').value = catArray[0] || '';
     if (document.getElementById('category2')) document.getElementById('category2').value = catArray[1] || '';
     if (document.getElementById('category3')) document.getElementById('category3').value = catArray[2] || '';
-
     if (document.getElementById('img')) document.getElementById('img').value = sp.img || '';
     
     if (sp.img && sp.img.length > 5) {
         if (document.getElementById('image-preview')) { document.getElementById('image-preview').src = sp.img; document.getElementById('image-preview').style.display = 'block'; }
         if (document.getElementById('drop-zone-text')) document.getElementById('drop-zone-text').style.display = 'none';
         if (document.getElementById('btn-remove-img')) document.getElementById('btn-remove-img').style.display = 'block';
-    } else {
-        if (typeof resetImageUploader === 'function') resetImageUploader();
-    }
+    } else { if (typeof resetImageUploader === 'function') resetImageUploader(); }
     
     if (document.getElementById('specs')) document.getElementById('specs').value = sp.specs || '';
     if (document.getElementById('description')) document.getElementById('description').value = sp.description || '';
@@ -109,13 +313,10 @@ function editProduct(id) {
     if (document.getElementById('form-title')) document.getElementById('form-title').innerText = "✏️ Cập Nhật Sản Phẩm";
     const btnSubmit = document.getElementById('btn-submit');
     if (btnSubmit) { btnSubmit.innerText = "LƯU CẬP NHẬT"; btnSubmit.style.background = "#28a745"; }
-    
     const btnCancel = document.getElementById('btn-cancel');
     if (btnCancel) { btnCancel.style.display = "block"; btnCancel.innerText = "HỦY SỬA"; }
 
-    galleryBase64 = sp.gallery || [];
-    if (typeof window.renderGallery === 'function') window.renderGallery();
-
+    galleryBase64 = sp.gallery || []; if (typeof window.renderGallery === 'function') window.renderGallery();
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -124,88 +325,59 @@ function cancelEdit() {
     if (document.getElementById('edit-id')) document.getElementById('edit-id').value = '';
     if (document.getElementById('productId')) document.getElementById('productId').value = '';
     if (document.getElementById('status')) document.getElementById('status').value = 'Còn hàng';
-    
+    if (document.getElementById('stock')) document.getElementById('stock').value = '10';
     if (document.getElementById('category1')) document.getElementById('category1').value = '';
     if (document.getElementById('category2')) document.getElementById('category2').value = '';
     if (document.getElementById('category3')) document.getElementById('category3').value = '';
-
     if (document.getElementById('form-title')) document.getElementById('form-title').innerText = "➕ Thêm Sản Phẩm Mới";
     
     const btnSubmit = document.getElementById('btn-submit');
     if (btnSubmit) { btnSubmit.innerText = "LƯU SẢN PHẨM"; btnSubmit.style.background = "#1435c3"; }
-    
     const btnCancel = document.getElementById('btn-cancel');
     if (btnCancel) { btnCancel.style.display = "block"; btnCancel.innerText = "XÓA BẢN NHÁP"; }
 
-    galleryBase64 = [];
-    if (typeof window.renderGallery === 'function') window.renderGallery();
+    galleryBase64 = []; if (typeof window.renderGallery === 'function') window.renderGallery();
     if (typeof resetImageUploader === 'function') resetImageUploader();
     if (typeof window.clearDrafts === 'function') window.clearDrafts();
 }
 
-const formEl = document.getElementById('productForm');
-const formBtn = document.getElementById('btn-submit');
-
-if (formEl) {
-    formEl.setAttribute('novalidate', 'true'); 
-    formEl.addEventListener('submit', function(e) { e.preventDefault(); submitProductForm(e); });
-}
-
-if (formBtn) {
-    formBtn.setAttribute('type', 'button');
-    formBtn.onclick = function(e) { e.preventDefault(); submitProductForm(e); };
-}
+const formEl = document.getElementById('productForm'); const formBtn = document.getElementById('btn-submit');
+if (formEl) { formEl.setAttribute('novalidate', 'true'); formEl.addEventListener('submit', function(e) { e.preventDefault(); submitProductForm(e); }); }
+if (formBtn) { formBtn.setAttribute('type', 'button'); formBtn.onclick = function(e) { e.preventDefault(); submitProductForm(e); }; }
 
 async function submitProductForm(e) {
     if (e) e.preventDefault();
-    
     const cat1 = document.getElementById('category1') ? document.getElementById('category1').value : '';
     const cat2 = document.getElementById('category2') ? document.getElementById('category2').value : '';
     const cat3 = document.getElementById('category3') ? document.getElementById('category3').value : '';
     let combinedCategory = [cat1, cat2, cat3].filter(c => c && c !== '').join(', ');
-
     if (combinedCategory === '') return window.showAdminAlert("Vui lòng chọn ít nhất 1 Danh mục sản phẩm!", false);
 
-    const btn = document.getElementById('btn-submit');
-    const oldText = btn ? btn.innerText : "LƯU CẬP NHẬT";
+    const btn = document.getElementById('btn-submit'); const oldText = btn ? btn.innerText : "LƯU CẬP NHẬT";
     if (btn) btn.innerText = "ĐANG LƯU...";
 
-    const brandInput = document.getElementById('brand');
-    const brandValue = brandInput ? brandInput.value.toLowerCase().trim() : '';
+    const brandInput = document.getElementById('brand'); const brandValue = brandInput ? brandInput.value.toLowerCase().trim() : '';
 
-    let finalImageBase64 = '';
-    const hiddenImgEl = document.getElementById('img');
-    if (hiddenImgEl && hiddenImgEl.value.trim() !== '') {
-        finalImageBase64 = hiddenImgEl.value; 
-    } else {
-        const imagePreviewEl = document.getElementById('image-preview');
-        if (imagePreviewEl && imagePreviewEl.style.display === 'block') {
-            finalImageBase64 = imagePreviewEl.getAttribute('src'); 
-        }
-    }
-
-    if (!finalImageBase64 || finalImageBase64 === '') {
-        if (btn) btn.innerText = oldText;
-        return window.showAdminAlert("Vui lòng tải lên Hình Ảnh Sản Phẩm!", false);
-    }
+    let finalImageBase64 = ''; const hiddenImgEl = document.getElementById('img');
+    if (hiddenImgEl && hiddenImgEl.value.trim() !== '') { finalImageBase64 = hiddenImgEl.value; } 
+    else { const imagePreviewEl = document.getElementById('image-preview'); if (imagePreviewEl && imagePreviewEl.style.display === 'block') { finalImageBase64 = imagePreviewEl.getAttribute('src'); } }
+    if (!finalImageBase64 || finalImageBase64 === '') { if (btn) btn.innerText = oldText; return window.showAdminAlert("Vui lòng tải lên Hình Ảnh Sản Phẩm!", false); }
 
     const sp = {
         productId: document.getElementById('productId') ? document.getElementById('productId').value : '',
         name: document.getElementById('name') ? document.getElementById('name').value : '',
         price: document.getElementById('price') ? document.getElementById('price').value : '',
-        img: finalImageBase64,
-        warranty: document.getElementById('warranty') ? document.getElementById('warranty').value : '36 Tháng',
-        status: document.getElementById('status') ? document.getElementById('status').value : 'Còn hàng', // GHI NHẬN TÌNH TRẠNG LÚC LƯU
-        category: combinedCategory,
-        brand: brandValue, 
+        img: finalImageBase64, warranty: document.getElementById('warranty') ? document.getElementById('warranty').value : '36 Tháng',
+        status: document.getElementById('status') ? document.getElementById('status').value : 'Còn hàng',
+        stock: parseInt(document.getElementById('stock') ? document.getElementById('stock').value : 10) || 0,
+        category: combinedCategory, brand: brandValue, 
         specs: document.getElementById('specs') ? document.getElementById('specs').value : '',
         description: document.getElementById('description') ? document.getElementById('description').value : '',
         gallery: galleryBase64
     };
 
     const editId = document.getElementById('edit-id') ? document.getElementById('edit-id').value : '';
-    const url = editId !== '' ? `${API_PRODUCTS}/${editId}` : API_PRODUCTS;
-    const method = editId !== '' ? 'PUT' : 'POST';
+    const url = editId !== '' ? `${API_PRODUCTS}/${editId}` : API_PRODUCTS; const method = editId !== '' ? 'PUT' : 'POST';
 
     try {
         let res = await fetch(url, { method: method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(sp) });
@@ -243,41 +415,19 @@ function deleteProduct(id) {
 }
 
 function loadOrders() {
-    fetch(API_ORDERS + '?v=' + new Date().getTime())
-        .then(res => res.json())
-        .then(orders => {
-            const tbody = document.getElementById('order-table-body');
-            tbody.innerHTML = '';
-            if (orders.length === 0) return tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Kho chưa có đơn hàng nào!</td></tr>';
-
-            orders.reverse().forEach(order => {
-                let itemsHtml = order.items.map(item => `<div style="margin-bottom:4px;">- ${item.name} <strong style="color:#d70018;">(x${item.quantity})</strong></div>`).join('');
-                let badgeColor = "#1976d2"; let badgeBg = "#e3f2fd";
-                if (order.status === "Đang giao hàng") { badgeColor = "#ff9800"; badgeBg = "#fff3e0"; }
-                if (order.status === "Hoàn thành") { badgeColor = "#28a745"; badgeBg = "#e8f5e9"; }
-                if (order.status === "Đã hủy") { badgeColor = "#dc3545"; badgeBg = "#ffe2e5"; }
-
-                tbody.innerHTML += `
-                        <tr>
-                            <td style="font-weight:bold; color:#1435c3; font-size: 16px;">${order.orderId}<br><span style="font-size:12px; color:#888; font-weight:normal;">${order.date}</span></td>
-                            <td style="font-weight:bold;">${order.username}</td>
-                            <td style="font-size:13px; color:#444;">${itemsHtml}</td>
-                            <td style="color:#d70018; font-weight:bold; font-size:16px;">${new Intl.NumberFormat('vi-VN').format(order.total)}đ</td>
-                            <td><span class="status-badge" style="color:${badgeColor}; background:${badgeBg};">${order.status}</span></td>
-                            <td>
-                                <select class="status-select" onchange="changeOrderStatus('${order.orderId}', this.value)">
-                                    <option value="Chờ duyệt" ${order.status === 'Chờ duyệt' ? 'selected' : ''}>Chờ duyệt</option>
-                                    <option value="Đang giao hàng" ${order.status === 'Đang giao hàng' ? 'selected' : ''}>Giao hàng</option>
-                                    <option value="Hoàn thành" ${order.status === 'Hoàn thành' ? 'selected' : ''}>Hoàn thành</option>
-                                    <option value="Đã hủy" ${order.status === 'Đã hủy' ? 'selected' : ''}>Hủy đơn</option>
-                                </select>
-                            </td>
-                            <td><button onclick="deleteOrder('${order.orderId}')" style="background:#ffe2e5; color:#dc2626; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; font-weight:bold; transition:0.2s;" onmouseover="this.style.background='#fca5a5'" onmouseout="this.style.background='#ffe2e5'">Xóa</button></td>
-                        </tr>`;
-            });
+    fetch(API_ORDERS + '?v=' + new Date().getTime()).then(res => res.json()).then(orders => {
+        const tbody = document.getElementById('order-table-body'); tbody.innerHTML = '';
+        if (orders.length === 0) return tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Kho chưa có đơn hàng nào!</td></tr>';
+        orders.reverse().forEach(order => {
+            let itemsHtml = order.items.map(item => `<div style="margin-bottom:4px;">- ${item.name} <strong style="color:#d70018;">(x${item.quantity})</strong></div>`).join('');
+            let badgeColor = "#1976d2"; let badgeBg = "#e3f2fd";
+            if (order.status === "Đang giao hàng") { badgeColor = "#ff9800"; badgeBg = "#fff3e0"; }
+            if (order.status === "Hoàn thành") { badgeColor = "#28a745"; badgeBg = "#e8f5e9"; }
+            if (order.status === "Đã hủy") { badgeColor = "#dc3545"; badgeBg = "#ffe2e5"; }
+            tbody.innerHTML += `<tr><td style="font-weight:bold; color:#1435c3; font-size: 16px;">${order.orderId}<br><span style="font-size:12px; color:#888; font-weight:normal;">${order.date}</span></td><td style="font-weight:bold;">${order.username}</td><td style="font-size:13px; color:#444;">${itemsHtml}</td><td style="color:#d70018; font-weight:bold; font-size:16px;">${new Intl.NumberFormat('vi-VN').format(order.total)}đ</td><td><span class="status-badge" style="color:${badgeColor}; background:${badgeBg};">${order.status}</span></td><td><select class="status-select" onchange="changeOrderStatus('${order.orderId}', this.value)"><option value="Chờ duyệt" ${order.status === 'Chờ duyệt' ? 'selected' : ''}>Chờ duyệt</option><option value="Đang giao hàng" ${order.status === 'Đang giao hàng' ? 'selected' : ''}>Giao hàng</option><option value="Hoàn thành" ${order.status === 'Hoàn thành' ? 'selected' : ''}>Hoàn thành</option><option value="Đã hủy" ${order.status === 'Đã hủy' ? 'selected' : ''}>Hủy đơn</option></select></td><td><button onclick="deleteOrder('${order.orderId}')" style="background:#ffe2e5; color:#dc2626; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; font-weight:bold; transition:0.2s;" onmouseover="this.style.background='#fca5a5'" onmouseout="this.style.background='#ffe2e5'">Xóa</button></td></tr>`;
         });
+    });
 }
-
 function changeOrderStatus(orderId, newStatus) { fetch(`${API_ORDERS}/${orderId}/status`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: newStatus }) }).then(res => res.json()).then(data => { loadOrders(); loadRevenue(); }).catch(err => alert("Lỗi cập nhật!")); }
 function deleteOrder(orderId) {
     if (confirm(`⚠️ CẢNH BÁO NGUY HIỂM\n\nBạn có chắc chắn muốn xóa vĩnh viễn đơn hàng #${orderId} không?`)) {
@@ -287,17 +437,67 @@ function deleteOrder(orderId) {
 
 loadProducts();
 
+let chartInstances = {}; // Lưu trữ để hủy biểu đồ cũ, chống lỗi đè nháy
+
+function createChart(canvasId, type, label, labelsData, dataData, color) {
+    const ctxEl = document.getElementById(canvasId);
+    if (!ctxEl) return;
+    
+    // Hủy biểu đồ cũ nếu đã vẽ trước đó
+    if (chartInstances[canvasId]) chartInstances[canvasId].destroy();
+
+    chartInstances[canvasId] = new Chart(ctxEl.getContext('2d'), {
+        type: type, // 'bar' cho cột đứng, 'line' cho biểu đồ đường
+        data: {
+            labels: labelsData.length > 0 ? labelsData : ['Trống'],
+            datasets: [{
+                label: label,
+                data: dataData.length > 0 ? dataData : [0],
+                backgroundColor: color,
+                borderColor: color,
+                borderWidth: 1,
+                borderRadius: type === 'bar' ? 6 : 0,
+                tension: 0.3, // Làm cong đường line
+                fill: type === 'line' ? { target: 'origin', above: color.replace('1)', '0.1)') } : false
+            }]
+        },
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false,
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+}
+
 function loadRevenue() {
+    // 1. Tải số liệu Thống Kê Thẻ
     fetch('https://raumapc-backend.onrender.com/api/admin/revenue?v=' + new Date().getTime())
         .then(res => res.json())
         .then(data => {
-            document.getElementById('revenue-total').innerText = new Intl.NumberFormat('vi-VN').format(data.totalRevenue || 0) + ' đ';
-            document.getElementById('revenue-orders').innerText = data.totalOrders || 0;
+            if(document.getElementById('revenue-total')) document.getElementById('revenue-total').innerText = new Intl.NumberFormat('vi-VN').format(data.totalRevenue || 0) + ' đ';
+            if(document.getElementById('revenue-orders')) document.getElementById('revenue-orders').innerText = data.totalOrders || 0;
+            if(document.getElementById('rev-week')) document.getElementById('rev-week').innerText = new Intl.NumberFormat('vi-VN').format(data.weekRev || 0) + ' đ';
+            if(document.getElementById('rev-month')) document.getElementById('rev-month').innerText = new Intl.NumberFormat('vi-VN').format(data.monthRev || 0) + ' đ';
+            if(document.getElementById('rev-year')) document.getElementById('rev-year').innerText = new Intl.NumberFormat('vi-VN').format(data.yearRev || 0) + ' đ';
         }).catch(err => console.error("Lỗi tải doanh thu:", err));
+
+    // 2. Tải và vẽ 4 loại Biểu đồ
+    fetch('https://raumapc-backend.onrender.com/api/admin/revenue-chart', { headers: { 'Authorization': 'Bearer ' + token } })
+        .then(res => res.json())
+        .then(data => {
+            createChart('chartDaily', 'bar', 'Doanh thu Ngày (VNĐ)', data.daily.labels, data.daily.data, 'rgba(20, 53, 195, 0.9)'); // Màu xanh đậm
+            
+            createChart('chartWeekly', 'bar', 'Doanh thu Tuần (VNĐ)', data.weekly.labels, data.weekly.data, 'rgba(16, 185, 129, 0.9)'); 
+            
+            createChart('chartMonthly', 'bar', 'Doanh thu Tháng (VNĐ)', data.monthly.labels, data.monthly.data, 'rgba(245, 158, 11, 0.9)'); // Màu cam
+            createChart('chartYearly', 'bar', 'Doanh thu Năm (VNĐ)', data.yearly.labels, data.yearly.data, 'rgba(139, 92, 246, 0.9)'); // Màu tím
+        }).catch(err => console.error("Lỗi vẽ biểu đồ:", err));
 }
+
+// Khi vừa vào Admin, mặc định tải màn hình Dashboard
 loadRevenue();
 
-// ================= HỆ THỐNG KÉO THẢ & NÉN ẢNH (DRAG & DROP) =================
+// ================= HỆ THỐNG KÉO THẢ & NÉN ẢNH =================
 const dropZone = document.getElementById('drop-zone');
 const fileInput = document.getElementById('file-input');
 const imagePreview = document.getElementById('image-preview');
@@ -327,8 +527,7 @@ function processImageFile(file) {
     reader.onload = function(e) {
         const img = new Image();
         img.onload = function() {
-            const canvas = document.createElement('canvas');
-            const MAX_WIDTH = 800; let width = img.width; let height = img.height;
+            const canvas = document.createElement('canvas'); const MAX_WIDTH = 800; let width = img.width; let height = img.height;
             if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
             canvas.width = width; canvas.height = height; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
             const dataUrl = canvas.toDataURL('image/jpeg', 0.8); 
@@ -373,15 +572,9 @@ window.showAdminAlert = function(message, isSuccess = true, callback = null) {
     document.getElementById('aca-btn').onclick = function() { modal.style.display = 'none'; if(callback) callback(); };
 };
 
-// ==========================================
-// TÍNH NĂNG TỰ ĐỘNG LƯU NHÁP CHỐNG MẤT DỮ LIỆU
-// ==========================================
-// CẬP NHẬT: Cho phép lưu nháp Tình trạng
-const draftFields = ['productId', 'brand', 'name', 'price', 'warranty', 'status', 'category1', 'category2', 'category3', 'specs', 'description'];
+const draftFields = ['productId', 'brand', 'name', 'price', 'warranty', 'status', 'stock', 'category1', 'category2', 'category3', 'specs', 'description'];
 
-window.clearDrafts = function() {
-    draftFields.forEach(id => localStorage.removeItem('draft_product_' + id));
-};
+window.clearDrafts = function() { draftFields.forEach(id => localStorage.removeItem('draft_product_' + id)); };
 
 document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('edit-id') && document.getElementById('edit-id').value === '') {
@@ -390,7 +583,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const savedValue = localStorage.getItem('draft_product_' + id);
             if (el && savedValue !== null) el.value = savedValue;
         });
-        
         const btnCancel = document.getElementById('btn-cancel');
         if (btnCancel) { btnCancel.style.display = 'block'; btnCancel.innerText = 'XÓA BẢN NHÁP'; }
     }
@@ -466,3 +658,35 @@ async function syncSettingsToCloud(alertMessage) {
 }
 window.saveHomeSettings = function() { syncSettingsToCloud("Đã lưu Tiêu đề trang chủ lên Cloud thành công!"); }
 window.saveHomeProducts = function() { syncSettingsToCloud("Đã lưu Cấu hình Sản phẩm lên Cloud thành công!"); }
+
+// ==========================================
+// TÍNH NĂNG ĐỔI MẬT KHẨU ADMIN
+// ==========================================
+window.changeAdminPassword = async function() {
+    const newPass = document.getElementById('adminNewPass').value.trim();
+    
+    if (!newPass || newPass.length < 6) {
+        return window.showAdminAlert("Mật khẩu mới phải từ 6 ký tự trở lên!", false);
+    }
+
+    if (!confirm("⚠️ CẢNH BÁO BẢO MẬT:\n\nBạn có chắc chắn muốn đổi mật khẩu Admin sang mật khẩu mới này không?")) return;
+
+    try {
+        let res = await fetch('https://raumapc-backend.onrender.com/api/admin/change-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+            body: JSON.stringify({ newPassword: newPass })
+        });
+        
+        let data = await res.json();
+        
+        if (res.ok && data.success) {
+            window.showAdminAlert(data.message, true);
+            document.getElementById('adminNewPass').value = ''; // Xóa trắng ô nhập sau khi đổi thành công
+        } else {
+            window.showAdminAlert(data.message || "Đã xảy ra lỗi khi đổi mật khẩu!", false);
+        }
+    } catch(e) {
+        window.showAdminAlert("Lỗi kết nối đến máy chủ!", false);
+    }
+};

@@ -65,35 +65,52 @@ document.addEventListener('DOMContentLoaded', function () {
         
         if (currentStatus === 'Còn hàng') {
             if (statusEl) { statusEl.innerHTML = '✓ Còn hàng'; statusEl.style.color = '#059669'; }
-            if (priceEl) { priceEl.innerHTML = sp.price || "0đ"; priceEl.style.color = '#d70018'; } // Hiện lại giá gốc
+            if (priceEl) { priceEl.innerHTML = sp.price || "0đ"; priceEl.style.color = '#d70018'; }
             
-            if (btnBuy) { btnBuy.style.display = 'flex'; btnBuy.style.opacity = '1'; btnBuy.style.pointerEvents = 'auto'; }
+            if (btnBuy) { 
+                btnBuy.style.display = 'flex'; 
+                btnBuy.style.opacity = '1'; 
+                btnBuy.style.pointerEvents = 'auto'; 
+            }
             if (btnCart) {
-                btnCart.style.background = '#ffffff'; btnCart.style.color = '#1435c3';
-                btnCart.style.border = '2px solid #1435c3'; btnCart.style.cursor = 'pointer';
-                btnCart.style.pointerEvents = 'auto'; btnCart.innerText = 'THÊM VÀO GIỎ';
+                btnCart.style.background = '#ffffff'; 
+                btnCart.style.color = '#1435c3';
+                btnCart.style.border = '2px solid #1435c3'; 
+                btnCart.style.cursor = 'pointer';
+                btnCart.style.pointerEvents = 'auto'; 
+                btnCart.style.fontSize = '16px'; // Trả về size mặc định
+                btnCart.innerText = 'THÊM VÀO GIỎ';
             }
         } 
         else if (currentStatus === 'Hết hàng') {
             if (statusEl) { statusEl.innerHTML = '✗ Hết hàng'; statusEl.style.color = '#dc2626'; }
-            if (priceEl) { priceEl.innerHTML = 'Hết hàng'; priceEl.style.color = '#dc2626'; } // Đổi giá thành "Hết hàng"
+            if (priceEl) { priceEl.innerHTML = 'Hết hàng'; priceEl.style.color = '#dc2626'; }
             
-            if (btnBuy) btnBuy.style.display = 'none'; // Giấu nút mua ngay
+            if (btnBuy) btnBuy.style.display = 'none'; 
             if (btnCart) {
-                btnCart.style.background = '#e2e8f0'; btnCart.style.color = '#94a3b8';
-                btnCart.style.border = '2px solid #e2e8f0'; btnCart.style.cursor = 'not-allowed';
-                btnCart.style.pointerEvents = 'none'; btnCart.innerText = 'ĐÃ HẾT HÀNG';
+                btnCart.style.background = '#e2e8f0'; 
+                btnCart.style.color = '#64748b'; // Màu xám đậm dễ đọc hơn
+                btnCart.style.border = '2px solid #cbd5e1'; 
+                btnCart.style.cursor = 'not-allowed';
+                btnCart.style.pointerEvents = 'none'; 
+                btnCart.style.fontSize = '18px'; // Phóng to chữ khi đứng 1 mình
+                btnCart.innerText = 'SẢN PHẨM ĐÃ HẾT HÀNG';
             }
         } 
         else if (currentStatus === 'Liên hệ') {
             if (statusEl) { statusEl.innerHTML = '☎ Liên hệ'; statusEl.style.color = '#ea580c'; }
-            if (priceEl) { priceEl.innerHTML = 'Giá: Liên hệ'; priceEl.style.color = '#ea580c'; } // Đổi giá thành "Giá: Liên hệ"
+            if (priceEl) { priceEl.innerHTML = 'Giá: Liên hệ'; priceEl.style.color = '#ea580c'; }
             
-            if (btnBuy) btnBuy.style.display = 'none'; // Giấu nút mua ngay
+            if (btnBuy) btnBuy.style.display = 'none'; 
             if (btnCart) {
-                btnCart.style.background = '#ea580c'; btnCart.style.color = '#ffffff';
-                btnCart.style.border = '2px solid #ea580c'; btnCart.style.cursor = 'pointer';
-                btnCart.style.pointerEvents = 'auto'; btnCart.innerText = 'LIÊN HỆ TƯ VẤN';
+                btnCart.style.background = '#ea580c'; 
+                btnCart.style.color = '#ffffff';
+                btnCart.style.border = '2px solid #ea580c'; 
+                btnCart.style.cursor = 'pointer';
+                btnCart.style.pointerEvents = 'auto'; 
+                btnCart.style.fontSize = '18px'; // Phóng to chữ khi đứng 1 mình
+                btnCart.style.boxShadow = '0 4px 10px rgba(234, 88, 12, 0.2)';
+                btnCart.innerText = 'LIÊN HỆ ĐỂ NHẬN TƯ VẤN';
             }
         }
 
@@ -110,7 +127,8 @@ document.addEventListener('DOMContentLoaded', function () {
             if (allImages.length > 1) { 
                 allImages.forEach((imgSrc, index) => {
                     let activeClass = index === 0 ? 'active' : '';
-                    galleryHtml += `<div class="thumb-item ${activeClass}" onclick="changeMainImage(this, '${imgSrc}')"><img src="${imgSrc}" onerror="this.src='../../assets/images/icons/logo.jpg'"></div>`;
+                    // ĐÃ SỬA: Xóa chuỗi ảnh khỏi onclick để HTML không bị sập do Base64 quá dài
+                    galleryHtml += `<div class="thumb-item ${activeClass}" onclick="changeMainImage(this)"><img src="${imgSrc}" onerror="this.src='../../assets/images/icons/logo.jpg'"></div>`;
                 });
             }
             galleryContainer.innerHTML = galleryHtml;
@@ -176,6 +194,7 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(`https://raumapc-backend.onrender.com/api/products/${shortId}/view`, { method: 'PUT' }).catch(err => console.log("Lỗi tăng view"));
     }
 
+    // TẢI DỮ LIỆU TỪ MÁY CHỦ
     fetch('https://raumapc-backend.onrender.com/api/products?v=' + new Date().getTime())
         .then(res => res.ok ? res.json() : null)
         .then(products => {
@@ -184,7 +203,14 @@ document.addEventListener('DOMContentLoaded', function () {
             if (urlId) {
                 sp = products.find(p => p.id === urlId || p._id === urlId || (p.productId && p.productId.toUpperCase() === urlId.toUpperCase()) || ((p.id || p._id).toString().slice(-6).toUpperCase() === urlId.toUpperCase()));
             } else if (urlSlug) { sp = products.find(p => toSlug(p.name) === urlSlug); }
+            
+            // Render chi tiết sản phẩm chính
             renderDetail(sp);
+            
+            // KÍCH HOẠT HIỂN THỊ SẢN PHẨM LIÊN QUAN
+            if(sp && products) {
+                renderRelatedProducts(sp, products);
+            }
         }).catch(() => document.getElementById('loading-screen').innerHTML = "Lỗi kết nối máy chủ!");
 });
 
@@ -360,8 +386,65 @@ window.submitReview = function() {
     });
 };
 
-window.changeMainImage = function(thumbEl, src) {
+window.changeMainImage = function(thumbEl) {
+    const src = thumbEl.querySelector('img').src;
     const mainImgEl = document.querySelector('.main-image img');
     if (mainImgEl) mainImgEl.src = src; 
-    document.querySelectorAll('.thumb-item').forEach(el => el.classList.remove('active')); thumbEl.classList.add('active');
+    document.querySelectorAll('.thumb-item').forEach(el => el.classList.remove('active')); 
+    thumbEl.classList.add('active');
 };
+
+// ==========================================
+// THUẬT TOÁN TÌM & HIỂN THỊ SẢN PHẨM LIÊN QUAN (ĐÃ FIX LỖI TÀNG HÌNH)
+// ==========================================
+function renderRelatedProducts(currentSp, allSp) {
+    const grid = document.getElementById('related-products-grid');
+    if(!grid) return;
+
+    // 1. Phân tích danh mục của sản phẩm hiện tại
+    let catArray = (currentSp.category || "").split(',').map(c => c.trim().toLowerCase());
+    let mainCat = catArray.length > 0 ? catArray[0] : "";
+
+    // 2. Lọc ra các sản phẩm có chung danh mục, loại bỏ sản phẩm hiện tại một cách an toàn
+    let related = allSp.filter(p => {
+        // ĐÃ SỬA: Chỉ so sánh id chính thức, loại bỏ phép so sánh undefined
+        if (p.id === currentSp.id) return false; 
+        let pCat = (p.category || "").toLowerCase();
+        return mainCat !== "" && pCat.includes(mainCat);
+    });
+
+    // 3. Nếu tìm được quá ít (< 5 cái), lấy ngẫu nhiên thêm các sản phẩm khác đắp vào
+    if (related.length < 5) {
+        let others = allSp.filter(p => p.id !== currentSp.id && !related.includes(p));
+        others.sort(() => 0.5 - Math.random()); // Trộn ngẫu nhiên
+        related = related.concat(others);
+    }
+
+    // 4. Chỉ cắt lấy đúng 5 sản phẩm đầu tiên để hiển thị
+    related = related.slice(0, 5);
+
+    // 5. Đổ dữ liệu ra mã HTML
+    grid.innerHTML = related.map(p => {
+        let safeImg = p.img || '../../assets/images/icons/logo.jpg';
+        let safeId = p.productId || p.id;
+        
+        let statusColor = p.status === 'Còn hàng' ? '#059669' : (p.status === 'Hết hàng' ? '#dc2626' : '#ea580c');
+        let priceDisplay = '';
+        if (p.status === 'Liên hệ') priceDisplay = 'Liên hệ';
+        else if (p.status === 'Hết hàng') priceDisplay = 'Hết hàng';
+        else priceDisplay = typeof p.price === 'number' ? new Intl.NumberFormat('vi-VN').format(p.price) + 'đ' : p.price;
+
+        return `
+        <a href="product-detail.html?id=${safeId}" style="display: flex; flex-direction: column; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 100px; text-decoration: none; transition: 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.02);" onmouseover="this.style.boxShadow='0 10px 15px -3px rgba(0,0,0,0.1)'; this.style.borderColor='#cbd5e1'; this.style.transform='translateY(-3px)';" onmouseout="this.style.boxShadow='0 2px 4px rgba(0,0,0,0.02)'; this.style.borderColor='#e2e8f0'; this.style.transform='translateY(0)';">
+            <div style="width: 100%; height: 160px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center;">
+                <img src="${safeImg}" alt="${p.name}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+            </div>
+            <h4 style="font-size: 13.5px; font-weight: 600; color: #1e293b; margin-bottom: 10px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; height: 38px;">${p.name}</h4>
+            <div style="margin-top: auto; display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: #d70018; font-weight: bold; font-size: 15px;">${priceDisplay}</span>
+                <span style="font-size: 11px; padding: 3px 8px; border-radius: 4px; background: ${statusColor}15; color: ${statusColor}; font-weight: 600;">${p.status || 'Còn hàng'}</span>
+            </div>
+        </a>
+        `;
+    }).join('');
+}

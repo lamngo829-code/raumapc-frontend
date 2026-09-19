@@ -2,7 +2,13 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+}
+
+.container {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    max-width: 1300px;
+    /* Chỉnh lề dưới về 0 để không đội Footer lên */
+    margin: 20px auto 0 auto; 
 }
 
 body {
@@ -13,12 +19,6 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-}
-
-.container {
-    max-width: 1300px;
-    /* Chỉnh lề dưới về 0 để không đội Footer lên */
-    margin: 20px auto 0 auto; 
 }
 
 .breadcrumb {
@@ -97,8 +97,9 @@ body {
 .action-buttons {
     display: flex;
     gap: 15px;
-    margin-bottom: 25px;
-    margin-top: 20px;
+    margin-bottom: 30px;
+    margin-top: 25px;
+    height: 70px; /* Tăng chiều cao chuẩn cho mọi trạng thái */
 }
 
 .btn-buy-now {
@@ -106,26 +107,52 @@ body {
     background: #d70018;
     color: white;
     border: none;
-    border-radius: 6px;
-    padding: 12px;
+    border-radius: 8px;
     cursor: pointer;
     text-align: center;
+    display: flex;
+    flex-direction: column; /* Ép chữ nhỏ rớt xuống dòng */
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(215, 0, 24, 0.2);
+}
+
+.btn-buy-now:hover {
+    background: #b90014;
+    box-shadow: 0 6px 15px rgba(215, 0, 24, 0.3);
 }
 
 .btn-buy-now strong {
+    font-size: 20px; /* Phóng to chữ chính */
+    margin-bottom: 2px;
+    text-transform: uppercase;
     display: block;
-    font-size: 18px;
-    margin-bottom: 3px;
+}
+
+.btn-buy-now small {
+    font-size: 13px;
+    opacity: 0.9;
 }
 
 .btn-add-cart {
     flex: 1;
     background: white;
-    color: #d70018;
-    border: 2px solid #d70018;
-    border-radius: 6px;
+    color: #1435c3;
+    border: 2px solid #1435c3;
+    border-radius: 8px;
     font-weight: bold;
+    font-size: 16px;
     cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-add-cart:hover {
+    background: #f8fafc;
 }
 
 .product-bottom {

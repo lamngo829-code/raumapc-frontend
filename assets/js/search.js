@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         countEl.innerText = `Tìm thấy ${filtered.length} sản phẩm phù hợp với từ khóa của bạn.`;
 
         // ==========================================
-        // RENDER GIAO DIỆN KẾT QUẢ TÌM KIẾM
+        // RENDER GIAO DIỆN KẾT QUẢ TÌM KIẾM CÓ ẨN GIÁ
         // ==========================================
         gridEl.innerHTML = filtered.map(p => {
             let safeImg = `../../assets/images/icons/logo.jpg`;
