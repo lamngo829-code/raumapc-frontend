@@ -41,6 +41,39 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('detail-name').innerText = sp.name || "";
         document.getElementById('bread-name').innerText = sp.name || "";
         document.title = (sp.name || "Chi tiết sản phẩm") + " - Rau Má PC";
+
+        // ==========================================
+        // KHỞI TẠO SEO THÔNG MINH (OPEN GRAPH & META DESCRIPTION)
+        // ==========================================
+        // 1. Tạo mô tả ngắn gọn (loại bỏ HTML thừa)
+        let rawDesc = sp.description ? sp.description.replace(/<[^>]*>?/gm, '') : `Mua ngay ${sp.name} chính hãng với giá cực sốc tại Rau Má PC. Bảo hành tận nơi.`;
+        let shortDesc = rawDesc.length > 155 ? rawDesc.substring(0, 150) + "..." : rawDesc;
+        
+        // 2. Cập nhật thẻ Meta Description (Google)
+        let metaDesc = document.querySelector('meta[name="description"]');
+        if (!metaDesc) {
+            metaDesc = document.createElement('meta');
+            metaDesc.name = "description";
+            document.head.appendChild(metaDesc);
+        }
+        metaDesc.content = shortDesc;
+
+        // 3. Cập nhật thẻ Open Graph (Facebook, Zalo)
+        function setOGMeta(property, content) {
+            let meta = document.querySelector(`meta[property="${property}"]`);
+            if (!meta) {
+                meta = document.createElement('meta');
+                meta.setAttribute('property', property);
+                document.head.appendChild(meta);
+            }
+            meta.content = content;
+        }
+        
+        setOGMeta('og:title', sp.name + " - Rau Má PC");
+        setOGMeta('og:description', shortDesc);
+        setOGMeta('og:image', sp.img || "https://raumapc.com/assets/images/icons/logo.jpg");
+        setOGMeta('og:type', "product");
+        setOGMeta('og:url', window.location.href);
         
         let slug = toSlug(sp.name);
         let isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
@@ -195,9 +228,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // TẢI DỮ LIỆU TỪ MÁY CHỦ
-    fetch('https://raumapc-backend.onrender.com/api/products?v=' + new Date().getTime())
+    fetch('https://raumapc-backend.onrender.com/api/products?limit=1000&v=' + new Date().getTime())
         .then(res => res.ok ? res.json() : null)
-        .then(products => {
+        .then(result => {
+            const products = result && result.data ? result.data : result;
             if(!products) return renderDetail(null);
             let sp = null;
             if (urlId) {

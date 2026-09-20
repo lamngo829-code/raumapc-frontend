@@ -1,13 +1,17 @@
 // Biến lưu trữ toàn bộ sản phẩm từ API
 let allProducts = [];
 
-// Hàm gọi API lấy dữ liệu sản phẩm
 async function fetchProductsFromAPI() {
     try {
-        const response = await fetch('https://raumapc-backend.onrender.com/api/products');
+        // VÁ LỖI 1: Thêm ?limit=1000 để lấy toàn bộ kho hàng
+        const response = await fetch('https://raumapc-backend.onrender.com/api/products?limit=50');
         if (!response.ok) throw new Error('Network response was not ok');
         
-        allProducts = await response.json();
+        const result = await response.json();
+        
+        // VÁ LỖI 2: Mở khóa đúng mảng dữ liệu
+        allProducts = result.data ? result.data : result;
+        
     } catch (error) {
         console.error("Lỗi khi tải dữ liệu sản phẩm:", error);
     }

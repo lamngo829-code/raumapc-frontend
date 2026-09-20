@@ -647,7 +647,7 @@
 .breadcrumb {
     width: 1300px;
     margin: 0 auto;
-    padding: 40px 0 0 0;
+    padding: 20px 0 0 0;
     font-size: 14px;
     color: #666;
     display: flex;
@@ -1031,6 +1031,96 @@
 .fw-text.zalo-text { color: #0068FF; }
 .fw-text.mes-text { color: #00B2FF; }
 .fw-text small { font-size: 11px; color: #666; font-weight: normal; }
+
+/* ==============================================================
+   THANH DANH MỤC NẰM NGAY DƯỚI HEADER CHÍNH (VỊ TRÍ GẠCH XANH)
+============================================================== */
+/* Phục hồi chiều cao chuẩn cho header-bottom */
+.header-bottom {
+    height: 70px !important;
+    padding: 0 !important;
+}
+
+/* Tạo dải nền trắng full màn hình */
+.header-nav-bar {
+    background-color: #ffffff;
+    width: 100%;
+    height: 70px; /* Ép chiều cao cố định */
+    display: flex; 
+    justify-content: center; /* Căn giữa nội dung */
+}
+
+/* Căn chỉnh nội dung vừa khít 1300px thẳng hàng với Logo */
+.nav-container {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: 1300px; 
+    margin: 0 !important; 
+    padding: 0;
+}
+
+.header-nav-bar .sticky-category {
+    height: 100%;
+    margin: 0;
+    z-index: 900;
+    display: block !important;
+}
+
+/* TẠO HÌNH NÚT NỀN TRẮNG - CHỮ XANH DỊU - VIỀN MẢNH TỐI GIẢN */
+.header-nav-bar .category-title {
+    background-color: #ffffff !important; 
+    color: #1a365d !important; /* Chữ màu xanh navy dịu mắt */
+    border: 1px solid #e2e8f0 !important; /* Viền xám rất nhạt và mảnh */
+    
+    /* Kích thước giữ nguyên không thay đổi */
+    height: 40px !important; 
+    margin: 15px 0 0 60px !important; 
+    padding: 0 20px !important;
+    border-radius: 7px !important; 
+    
+    display: flex !important;
+    align-items: center !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+    cursor: pointer;
+    transition: 0.2s ease !important;
+}
+
+/* Hiệu ứng hover nhạt màu khi chỉ chuột vào */
+.header-nav-bar .category-title:hover {
+    background-color: #f8fafc !important; /* Nền xám mờ siêu nhạt */
+    border-color: #cbd5e1 !important; /* Viền đậm lên một chút để nổi bật */
+}
+
+/* Ép icon 3 gạch thành màu xanh dịu đồng bộ */
+.header-nav-bar #categoryArrow {
+    color: #1a365d !important;
+    display: flex;
+    align-items: center;
+}
+
+/* Ép bảng menu thả xuống đúng mép dưới của thanh màu trắng */
+.header-nav-bar .mega-dropdown {
+    margin: -25px 0 0 30px !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+}
+
+/* Ẩn thanh này trên điện thoại vì đã có menu mobile */
+@media (max-width: 768px) {
+    .header-nav-bar {
+        display: none !important;
+    }
+}
+
+.header-nav-bar .sticky-category {
+    position: relative !important; 
+}
+
+.header-nav-bar .mega-dropdown {
+    top: calc(100% + 5px) !important;
+    left: 30 !important;
+}
 
 /* ==============================================================
    TỐI ƯU HÓA RESPONSIVE (GIỮ NGUYÊN CODE MÀN HÌNH RỘNG)

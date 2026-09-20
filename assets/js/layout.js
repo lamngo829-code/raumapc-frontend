@@ -6,23 +6,23 @@
    PHẦN 1: GIỎ HÀNG (CLOUD CART ĐỒNG BỘ MONGODB)
    ========================================================================== */
 
-window.formatCurrency = function (number) { 
-    return new Intl.NumberFormat('vi-VN').format(number) + 'đ'; 
+window.formatCurrency = function (number) {
+    return new Intl.NumberFormat('vi-VN').format(number) + 'đ';
 };
 
-window.parsePrice = function (priceString) { 
-    return parseInt(priceString.replace(/\./g, '').replace('đ', '')) || 0; 
+window.parsePrice = function (priceString) {
+    return parseInt(priceString.replace(/\./g, '').replace('đ', '')) || 0;
 };
 
 window.syncCartToCloud = function () {
     var token = localStorage.getItem('authToken');
-    if (!token) return; 
+    if (!token) return;
     var currentCart = JSON.parse(localStorage.getItem('myCart')) || [];
     fetch('https://raumapc-backend.onrender.com/api/users/cart', {
         method: 'PUT',
-        headers: { 
-            'Content-Type': 'application/json', 
-            'Authorization': 'Bearer ' + token 
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
         },
         body: JSON.stringify({ cart: currentCart })
     }).catch(err => console.log("Lỗi đồng bộ giỏ hàng nền"));
@@ -30,7 +30,7 @@ window.syncCartToCloud = function () {
 
 window.updateCartUI = function () {
     var currentCart = JSON.parse(localStorage.getItem('myCart')) || [];
-    var totalQuantity = 0; 
+    var totalQuantity = 0;
     var totalPrice = 0;
 
     currentCart.forEach(item => {
@@ -64,7 +64,7 @@ window.updateCartUI = function () {
 window.addToCart = function (id, name, price, img) {
     var currentCart = JSON.parse(localStorage.getItem('myCart')) || [];
     var existingItem = currentCart.find(item => item.id === id);
-    
+
     if (existingItem) {
         existingItem.quantity = parseInt(existingItem.quantity) + 1;
     } else {
@@ -74,7 +74,7 @@ window.addToCart = function (id, name, price, img) {
     localStorage.setItem('myCart', JSON.stringify(currentCart));
     window.updateCartUI();
     window.syncCartToCloud();
-    
+
     if (typeof window.showGlobalAlert === 'function') {
         window.showGlobalAlert('Đã thêm sản phẩm vào giỏ hàng!', true);
     } else {
@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     searchInputs.forEach(function (input) {
         input.setAttribute('autocomplete', 'off');
-        input.setAttribute('name', 'site_search_q'); 
+        input.setAttribute('name', 'site_search_q');
         if (input.value) input.value = '';
     });
 
@@ -177,8 +177,9 @@ document.addEventListener('DOMContentLoaded', function () {
         if (cachedProducts || isFetching) return;
         isFetching = true;
         try {
-            const response = await fetch('https://raumapc-backend.onrender.com/api/products');
-            cachedProducts = await response.json();
+            const response = await fetch(`https://raumapc-backend.onrender.com/api/products?limit=1000`);
+            const result = await response.json();
+            cachedProducts = result.data ? result.data : result;
         } catch (err) {
             console.error("Lỗi tải cache sản phẩm:", err);
         } finally {
@@ -217,25 +218,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
             timeoutId = setTimeout(async () => {
                 try {
-                    if (!cachedProducts) {
-                        resultBox.innerHTML = '<div style="padding:15px; text-align:center; color:#1435c3; font-size:14px; font-weight:bold;">⏳ Đang tìm kiếm...</div>';
-                        resultBox.classList.add('active');
-                        const response = await fetch(`https://raumapc-backend.onrender.com/api/products`);
-                        cachedProducts = await response.json();
-                    }
-
+                    resultBox.innerHTML = '<div style="padding:15px; text-align:center; color:#1435c3; font-size:14px; font-weight:bold;">⏳ Đang tìm kiếm...</div>';
                     resultBox.classList.add('active');
 
-                    const filteredProducts = cachedProducts.filter(p => {
+                    // GỌI API LỌC NHÁP TRỰC TIẾP TỪ BACKEND (Siêu nhẹ, cực nhanh)
+                    const response = await fetch(`https://raumapc-backend.onrender.com/api/products?search=${encodeURIComponent(keyword)}&limit=30`);
+                    const result = await response.json();
+                    let fetchedProducts = result.data ? result.data : result;
+
+                    // ÁP DỤNG "BỘ LỌC SÁT THỦ" CỦA BẠN LÊN KẾT QUẢ ĐÃ TẢI VỀ
+                    const filteredProducts = fetchedProducts.filter(p => {
                         if (!p.name) return false;
                         const nameLower = p.name.toLowerCase();
                         const catLower = (p.category || "").toLowerCase();
-                        
+
                         let isMatch = nameLower.includes(keyword) || catLower.includes(keyword);
-                        
+
                         if (isMatch) {
                             if ((keyword === 'cpu' || keyword === 'intel' || keyword === 'amd') && !keyword.includes('tản')) {
-                                if (nameLower.includes('tản nhiệt') || catLower.includes('tản nhiệt') || nameLower.includes('cooler') || nameLower.includes('fan') || nameLower.includes('keo')) return false; 
+                                if (nameLower.includes('tản nhiệt') || catLower.includes('tản nhiệt') || nameLower.includes('cooler') || nameLower.includes('fan') || nameLower.includes('keo')) return false;
                             }
                             if (keyword === 'ram') {
                                 if (nameLower.includes('ngàm') || nameLower.includes('khung')) return false;
@@ -245,23 +246,21 @@ document.addEventListener('DOMContentLoaded', function () {
                         return false;
                     });
 
+                    // (CÁC ĐOẠN CODE RENDER BÊN DƯỚI GIỮ NGUYÊN NHƯ CŨ CỦA BẠN)
                     if (!filteredProducts || filteredProducts.length === 0) {
                         resultBox.innerHTML = '<div style="padding:15px; text-align:center; color:#888; font-size:14px;">Không tìm thấy sản phẩm nào!</div>';
                     } else {
-                        const displayProducts = filteredProducts.slice(0, 6); 
-                        
+                        const displayProducts = filteredProducts.slice(0, 6);
+
                         let htmlContent = displayProducts.map(p => {
                             let safeImg = `${basePath}assets/images/icons/logo.jpg`;
                             if (p.img && p.img.trim() !== '') {
                                 let imgPath = p.img.trim().replace(/"/g, '').replace(/\\/g, '/');
                                 safeImg = (imgPath.startsWith('http://') || imgPath.startsWith('https://') || imgPath.startsWith('data:image')) ? imgPath : encodeURI(`${basePath}${imgPath}`);
                             }
-                            
+
                             let priceStr = typeof p.price === 'number' ? new Intl.NumberFormat('vi-VN').format(p.price) + 'đ' : p.price;
-                            
-                            // ==========================================
-                            // ẨN GIÁ TRÊN Ô TÌM KIẾM NẾU HẾT HÀNG / LIÊN HỆ
-                            // ==========================================
+
                             let currentStatus = p.status || 'Còn hàng';
                             let priceDisplay = priceStr;
                             if (currentStatus === 'Hết hàng') {
@@ -288,7 +287,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             htmlContent += `
                                 <div style="position: sticky; bottom: 0; background: #fff; border-top: 1px solid #e2e8f0; box-shadow: 0 -4px 10px rgba(0,0,0,0.02);">
                                     <a href="${basePath}pages/shop/search.html?q=${encodeURIComponent(keyword)}" style="display:block; text-align:center; padding:14px; background:#f8fafc; color:#1435c3; font-weight:bold; font-size:14px; text-decoration:none; transition: 0.2s;" onmouseover="this.style.background='#eef2ff'" onmouseout="this.style.background='#f8fafc'">
-                                        Xem tất cả ${filteredProducts.length} kết quả tìm kiếm ➔
+                                        Xem tất cả kết quả tìm kiếm ➔
                                     </a>
                                 </div>`;
                         }
@@ -296,12 +295,12 @@ document.addEventListener('DOMContentLoaded', function () {
                         resultBox.innerHTML = htmlContent;
                     }
                 } catch (err) {
-                    resultBox.innerHTML = '<div style="padding:15px; text-align:center; color:#d70018; font-size:14px;">Lỗi tải dữ liệu. Vui lòng kiểm tra lại kết nối hoặc Server!</div>';
+                    resultBox.innerHTML = '<div style="padding:15px; text-align:center; color:#d70018; font-size:14px;">Lỗi tải dữ liệu. Vui lòng kiểm tra lại kết nối!</div>';
                 }
-            }, 150); 
+            }, 150);
         });
 
-        input.addEventListener('keypress', function(e) {
+        input.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 const keyword = e.target.value.trim();
@@ -341,7 +340,7 @@ window.handleLoginDedicated = function (event) {
         body: JSON.stringify({ username: usernameInput, password: passwordInput })
     }).then(res => res.json()).then(data => {
         if (btn) { btn.innerText = "ĐĂNG NHẬP"; btn.disabled = false; }
-        
+
         if (data.success) {
             if (data.requireOtp) {
                 document.getElementById('login-otp-email-display').innerText = data.email;
@@ -350,7 +349,7 @@ window.handleLoginDedicated = function (event) {
                 otpBoxes.forEach(input => input.value = '');
                 document.getElementById('login-otp-modal').style.display = 'flex';
                 if (otpBoxes.length > 0) otpBoxes[0].focus();
-                
+
                 clearInterval(loginTimerInterval);
                 let timeLeft = 60;
                 let timerEl = document.getElementById('login-otp-timer');
@@ -377,6 +376,64 @@ window.handleLoginDedicated = function (event) {
     });
 };
 
+// 1. TỰ ĐỘNG LẤY MÃ CLIENT ID NGẦM TỪ BACKEND
+window.onload = function () {
+    fetch('https://raumapc-backend.onrender.com/api/config/google')
+        .then(res => res.json())
+        .then(data => {
+            if (data.clientId) {
+                // Khởi tạo thư viện Google
+                google.accounts.id.initialize({
+                    client_id: data.clientId,
+                    callback: window.handleGoogleLogin
+                });
+
+                // Tự động vẽ nút Google với kích thước chuẩn 360px
+                google.accounts.id.renderButton(
+                    document.getElementById("google-btn-container"),
+                    { theme: "outline", size: "large", shape: "rectangular", width: "370"}
+                );
+            }
+        })
+        .catch(err => console.log("Lỗi tải cấu hình Google bảo mật."));
+};
+
+// 2. XỬ LÝ KẾT QUẢ ĐĂNG NHẬP
+window.handleGoogleLogin = function (response) {
+    var btn = document.querySelector('.btn-auth-primary');
+    if (btn) { btn.innerText = "ĐANG XÁC THỰC GOOGLE..."; btn.disabled = true; }
+
+    fetch('https://raumapc-backend.onrender.com/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ credential: response.credential })
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                localStorage.setItem('authToken', data.token);
+                localStorage.setItem('currentUser', JSON.stringify(data.user));
+
+                var localCart = JSON.parse(localStorage.getItem('myCart')) || [];
+                if (localCart.length > 0 && typeof window.syncCartToCloud === 'function') window.syncCartToCloud();
+                else if (data.user.cart && data.user.cart.length > 0) localStorage.setItem('myCart', JSON.stringify(data.user.cart));
+                else localStorage.removeItem('myCart');
+
+                window.showGlobalAlert("Đăng nhập bằng Google thành công!", true, () => {
+                    window.location.href = '../../index.html';
+                });
+            } else {
+                if (btn) { btn.innerText = "ĐĂNG NHẬP"; btn.disabled = false; }
+                window.showGlobalAlert(data.message, false);
+            }
+        })
+        .catch(err => {
+            if (btn) { btn.innerText = "ĐĂNG NHẬP"; btn.disabled = false; }
+            window.showGlobalAlert("Lỗi kết nối đến máy chủ!", false);
+        });
+}
+
+
 window.submitLoginOtp = function () {
     var email = document.getElementById('login-otp-email-hidden').value;
     var otpInputs = document.querySelectorAll('#login-otp-inputs .f-otp');
@@ -392,7 +449,7 @@ window.submitLoginOtp = function () {
         body: JSON.stringify({ email: email, otp: otp })
     }).then(res => res.json()).then(data => {
         btnVerify.innerText = "XÁC NHẬN VÀO WEB"; btnVerify.disabled = false;
-        if (data.success) { processLoginSuccess(data.token, data.user); } 
+        if (data.success) { processLoginSuccess(data.token, data.user); }
         else { window.showGlobalAlert(data.message, false); }
     }).catch(err => {
         window.showGlobalAlert("Lỗi kết nối máy chủ!", false);
@@ -416,20 +473,20 @@ function processLoginSuccess(token, user) {
     }
 }
 
-window.closeLoginOtpModal = function(e) {
-    if(e) e.preventDefault();
+window.closeLoginOtpModal = function (e) {
+    if (e) e.preventDefault();
     document.getElementById('login-otp-modal').style.display = 'none';
     clearInterval(loginTimerInterval);
 };
 
-window.resendLoginOtp = function(e) {
+window.resendLoginOtp = function (e) {
     e.preventDefault();
-    window.handleLoginDedicated(); 
+    window.handleLoginDedicated();
 }
 
 window.handleLogout = function (e) {
     if (e) e.preventDefault();
-    
+
     localStorage.removeItem('currentUser');
     localStorage.removeItem('authToken');
     localStorage.removeItem('myCart');
@@ -447,17 +504,17 @@ window.handleLogout = function (e) {
 };
 
 window.updateAccountUI = function () {
-    var currentUser = null; 
+    var currentUser = null;
     try { currentUser = JSON.parse(localStorage.getItem('currentUser')); } catch (e) { }
-    
+
     document.querySelectorAll('.account-wrapper').forEach(wrapper => {
         var inPagesFolder = window.location.pathname.includes('/pages/');
-        var prefix = inPagesFolder ? '../../' : ''; 
+        var prefix = inPagesFolder ? '../../' : '';
         var pagesPrefix = inPagesFolder ? '../' : 'pages/';
 
         if (currentUser) {
             var firstName = currentUser.fullName.split(' ')[0];
-            
+
             var avatarHTML = '';
             if (currentUser.avatar && currentUser.avatar.trim() !== '') {
                 avatarHTML = `<img src="${currentUser.avatar}" alt="Avatar" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid #ffeb3b; background: white;">`;
@@ -500,7 +557,7 @@ document.addEventListener('DOMContentLoaded', window.updateAccountUI);
    PHẦN 5: ĐĂNG KÝ TÀI KHOẢN (OTP 6 Ô TỰ NHẢY & ĐẾM NGƯỢC 60S)
    ========================================================================== */
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     function setupSmartOTP(selector) {
         const otpInputs = document.querySelectorAll(selector);
         if (otpInputs.length === 0) return;
@@ -510,23 +567,23 @@ document.addEventListener("DOMContentLoaded", function() {
             input.setAttribute('autocomplete', 'one-time-code');
 
             input.addEventListener("paste", (e) => {
-                e.preventDefault(); 
+                e.preventDefault();
                 let pasteData = (e.clipboardData || window.clipboardData).getData("text");
                 let numbers = pasteData.replace(/[^0-9]/g, '').split('');
-                
+
                 numbers.forEach((num, i) => {
                     if (index + i < otpInputs.length) {
                         otpInputs[index + i].value = num;
                     }
                 });
-                
+
                 let nextFocus = Math.min(index + numbers.length, otpInputs.length) - 1;
                 setTimeout(() => otpInputs[nextFocus].focus(), 10);
             });
 
             input.addEventListener("input", (e) => {
-                let val = input.value.replace(/[^0-9]/g, ''); 
-                
+                let val = input.value.replace(/[^0-9]/g, '');
+
                 if (val.length > 1) {
                     let chars = val.split('');
                     chars.forEach((char, i) => {
@@ -534,7 +591,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             otpInputs[index + i].value = char;
                         }
                     });
-                    input.value = chars[0]; 
+                    input.value = chars[0];
                     let nextFocus = Math.min(index + chars.length, otpInputs.length) - 1;
                     setTimeout(() => otpInputs[nextFocus].focus(), 10);
                 } else {
@@ -553,8 +610,8 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    setupSmartOTP("#otp-inputs .otp-box"); 
-    setupSmartOTP(".f-otp");               
+    setupSmartOTP("#otp-inputs .otp-box");
+    setupSmartOTP(".f-otp");
 });
 
 let otpCountdownInterval;
@@ -829,7 +886,7 @@ window.closeForgotModal = function (e) {
 /* ==========================================================================
    HỆ THỐNG BẢNG THÔNG BÁO TÙY CHỈNH TOÀN CỤC (GLOBAL ALERT)
    ========================================================================== */
-window.showGlobalAlert = function(message, isSuccess = true, callback = null) {
+window.showGlobalAlert = function (message, isSuccess = true, callback = null) {
     let modal = document.getElementById('global-custom-alert');
     if (!modal) {
         modal = document.createElement('div');
@@ -850,7 +907,7 @@ window.showGlobalAlert = function(message, isSuccess = true, callback = null) {
     document.getElementById('gca-message').innerText = message.replace(/^([❌✅🎉👑⚠️]\s*)/, '');
     const iconBox = document.getElementById('gca-icon');
     const title = document.getElementById('gca-title');
-    
+
     if (isSuccess) {
         iconBox.innerHTML = '<div style="background: #dcfce7; width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>';
         title.innerText = 'Thành Công!'; title.style.color = '#059669';
@@ -860,16 +917,16 @@ window.showGlobalAlert = function(message, isSuccess = true, callback = null) {
     }
 
     modal.style.display = 'flex';
-    document.getElementById('gca-btn').onclick = function() {
+    document.getElementById('gca-btn').onclick = function () {
         modal.style.display = 'none';
-        if(callback) callback();
+        if (callback) callback();
     };
 };
 
 /* ==========================================================================
    HỆ THỐNG BẢNG XÁC NHẬN TÙY CHỈNH (GLOBAL CONFIRM)
    ========================================================================== */
-window.showGlobalConfirm = function(message, onConfirm) {
+window.showGlobalConfirm = function (message, onConfirm) {
     let modal = document.getElementById('global-custom-confirm');
     if (!modal) {
         modal = document.createElement('div');
@@ -895,13 +952,13 @@ window.showGlobalConfirm = function(message, onConfirm) {
     document.getElementById('gcc-message').innerText = message;
     modal.style.display = 'flex';
 
-    document.getElementById('gcc-btn-cancel').onclick = function() {
+    document.getElementById('gcc-btn-cancel').onclick = function () {
         modal.style.display = 'none';
     };
-    
-    document.getElementById('gcc-btn-confirm').onclick = function() {
+
+    document.getElementById('gcc-btn-confirm').onclick = function () {
         modal.style.display = 'none';
-        if(onConfirm) onConfirm();
+        if (onConfirm) onConfirm();
     };
 };
 
@@ -913,7 +970,7 @@ window.showGlobalConfirm = function(message, onConfirm) {
 // 1. BỘ ĐỊNH TUYẾN CHUYỂN TRANG SẢN PHẨM ĐỈNH CAO (KHÔNG BAO GIỜ NHÁY LINK)
 document.addEventListener('click', function (e) {
     let card = e.target.closest('.product-card');
-    if (!card) return; 
+    if (!card) return;
 
     if (e.target.closest('.add-to-cart')) return;
 
@@ -925,11 +982,11 @@ document.addEventListener('click', function (e) {
     let slug = productName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
 
     let isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    
+
     if (isLocal) {
         let btnAddCart = card.querySelector('.add-to-cart');
         let productId = btnAddCart ? btnAddCart.getAttribute('data-product-id') : null;
-        
+
         if (!productId || productId === 'null' || productId === 'undefined') {
             let aTag = card.querySelector('a');
             if (aTag && aTag.href) { window.location.href = aTag.href; }
@@ -1016,29 +1073,29 @@ document.addEventListener('DOMContentLoaded', function () {
 /* ==========================================================================
    PHẦN 9: TỰ ĐỘNG ĐĂNG XUẤT NẾU TÀI KHOẢN BỊ XÓA (KIỂM TRA NGẦM)
    ========================================================================== */
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var token = localStorage.getItem('authToken');
     if (token) {
         fetch('https://raumapc-backend.onrender.com/api/auth/verify', {
             headers: { 'Authorization': 'Bearer ' + token }
         })
-        .then(res => res.json())
-        .then(data => {
-            if (data.accountDeleted) {
-                localStorage.removeItem('currentUser');
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('myCart');
-                
-                if (typeof window.showGlobalAlert === 'function') {
-                    window.showGlobalAlert("Tài khoản của bạn đã bị xóa khỏi hệ thống!", false, () => {
+            .then(res => res.json())
+            .then(data => {
+                if (data.accountDeleted) {
+                    localStorage.removeItem('currentUser');
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('myCart');
+
+                    if (typeof window.showGlobalAlert === 'function') {
+                        window.showGlobalAlert("Tài khoản của bạn đã bị xóa khỏi hệ thống!", false, () => {
+                            window.location.href = '../../index.html';
+                        });
+                    } else {
+                        alert("Tài khoản của bạn đã bị xóa khỏi hệ thống!");
                         window.location.href = '../../index.html';
-                    });
-                } else {
-                    alert("Tài khoản của bạn đã bị xóa khỏi hệ thống!");
-                    window.location.href = '../../index.html';
+                    }
                 }
-            }
-        }).catch(err => console.log("Bỏ qua kiểm tra kết nối"));
+            }).catch(err => console.log("Bỏ qua kiểm tra kết nối"));
     }
 });
 
@@ -1047,29 +1104,29 @@ document.addEventListener('DOMContentLoaded', function() {
    ========================================================================== */
 document.addEventListener('DOMContentLoaded', () => {
     let isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    
+
     if (!isLocal) {
         document.querySelectorAll('a').forEach(link => {
             let href = link.getAttribute('href');
-            
+
             if (href && !href.startsWith('http') && !href.startsWith('mailto:') && !href.startsWith('tel:') && !href.startsWith('#')) {
                 let newHref = href;
-                
+
                 if (newHref.startsWith('../')) {
                     newHref = newHref.replace(/^(?:\.\.\/)+/, '/');
                 } else if (!newHref.startsWith('/')) {
                     newHref = '/' + newHref;
                 }
-                
+
                 newHref = newHref.replace(/^\/pages\/shop\//, '/');
                 newHref = newHref.replace(/^\/pages\/info\//, '/');
                 newHref = newHref.replace(/^\/pages\/account\//, '/');
                 newHref = newHref.replace(/^\/shop\//, '/');
                 newHref = newHref.replace(/^\/info\//, '/');
                 newHref = newHref.replace(/^\/account\//, '/');
-                
+
                 newHref = newHref.split('.html').join('');
-                
+
                 if (newHref === '/index' || newHref === '/') {
                     newHref = '/';
                 }
@@ -1132,7 +1189,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Kích hoạt tính năng cho nút Cuộn lên đầu trang (Chỉ hiện khi cuộn xuống)
     const scrollTopBtn = document.getElementById('fw-scroll-top');
     if (scrollTopBtn) {
-        window.addEventListener('scroll', function() {
+        window.addEventListener('scroll', function () {
             if (window.scrollY > 400) {
                 scrollTopBtn.classList.add('show');
             } else {
@@ -1140,7 +1197,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        scrollTopBtn.addEventListener('click', function() {
+        scrollTopBtn.addEventListener('click', function () {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     }

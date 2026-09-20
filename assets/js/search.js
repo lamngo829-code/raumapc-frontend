@@ -1,5 +1,5 @@
 /* ==========================================================================
-   TẬP LỆNH XỬ LÝ TRANG KẾT QUẢ TÌM KIẾM SẢN PHẨM (BỘ LỌC NÂNG CAO)
+   TẬP LỆNH XỬ LÝ TRANG KẾT QUẢ TÌM KIẾM SẢN PHẨM (GIỮ NGUYÊN BỘ LỌC CŨ)
    ========================================================================== */
 document.addEventListener('DOMContentLoaded', async function() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -20,10 +20,12 @@ document.addEventListener('DOMContentLoaded', async function() {
     titleEl.innerHTML = `Kết quả tìm kiếm cho: <span style="color: #1435c3;">"${keyword}"</span>`;
 
     try {
-        const response = await fetch('https://raumapc-backend.onrender.com/api/products');
-        const products = await response.json();
+        const response = await fetch(`https://raumapc-backend.onrender.com/api/products?search=${encodeURIComponent(keywordLower)}&limit=100`);
+        const result = await response.json();
+        
+        const products = result.data ? result.data : result;
 
-        // BỘ LỌC THÔNG MINH KẾT HỢP XỬ LÝ NGOẠI LỆ
+        // BỘ LỌC THÔNG MINH KẾT HỢP XỬ LÝ NGOẠI LỆ (NGUYÊN BẢN CỦA BẠN)
         const filtered = products.filter(p => {
             if (!p.name) return false;
             const nameLower = p.name.toLowerCase();
@@ -63,9 +65,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         countEl.innerText = `Tìm thấy ${filtered.length} sản phẩm phù hợp với từ khóa của bạn.`;
 
-        // ==========================================
-        // RENDER GIAO DIỆN KẾT QUẢ TÌM KIẾM CÓ ẨN GIÁ
-        // ==========================================
+        // RENDER GIAO DIỆN KẾT QUẢ TÌM KIẾM CÓ ẨN GIÁ (NGUYÊN BẢN CỦA BẠN)
         gridEl.innerHTML = filtered.map(p => {
             let safeImg = `../../assets/images/icons/logo.jpg`;
             if (p.img && p.img.trim() !== '') {
@@ -76,7 +76,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             let priceStr = typeof p.price === 'number' ? new Intl.NumberFormat('vi-VN').format(p.price) + 'đ' : p.price;
             let safeId = p.productId || p.id || p._id;
 
-            // KIỂM SOÁT TÌNH TRẠNG ẨN HIỆN NÚT VÀ GIÁ
             let currentStatus = p.status || 'Còn hàng';
             let buttonHtml = '';
             let priceDisplay = priceStr;
@@ -108,12 +107,17 @@ document.addEventListener('DOMContentLoaded', async function() {
             </div>`;
         }).join('');
 
-        // Kích hoạt sự kiện thêm vào giỏ hàng (Chỉ những nút "Còn hàng" mới có class .add-to-cart)
+        // Kích hoạt sự kiện thêm vào giỏ hàng
         gridEl.querySelectorAll('.add-to-cart').forEach(button => {
             button.addEventListener('click', function () {
                 var id = this.getAttribute('data-product-id');
                 var name = this.getAttribute('data-name');
-                var price = window.parsePrice(this.getAttribute('data-price').toString() + 'đ');
+                
+                // Tránh lỗi khi price chưa có chữ đ
+                var priceRaw = this.getAttribute('data-price').toString();
+                var priceWithCurrency = priceRaw.includes('đ') ? priceRaw : priceRaw + 'đ';
+                var price = window.parsePrice(priceWithCurrency);
+                
                 var img = this.getAttribute('data-img');
                 if (typeof window.addToCart === 'function') {
                     window.addToCart(id, name, price, img);

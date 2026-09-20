@@ -242,7 +242,12 @@ window.deleteCoupon = function(id) {
 
 let allProducts = []; 
 function loadProducts() {
-    fetch(API_PRODUCTS).then(res => res.json()).then(products => {
+    // VÁ LỖI 1: Thêm ?limit=1000 để Admin thấy được TOÀN BỘ sản phẩm trong kho
+    fetch(API_PRODUCTS + '?limit=1000').then(res => res.json()).then(result => {
+        
+        // VÁ LỖI 2: Mở khóa đúng mảng dữ liệu (result.data)
+        const products = result.data ? result.data : result;
+        
         allProducts = products; 
         const tbody = document.getElementById('product-table-body'); tbody.innerHTML = '';
         
@@ -506,12 +511,52 @@ const imgHiddenInput = document.getElementById('img');
 const btnRemoveImg = document.getElementById('btn-remove-img');
 
 if (dropZone) {
-    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.style.borderColor = '#1435c3'; dropZone.style.background = '#eef2ff'; });
-    dropZone.addEventListener('dragleave', () => { dropZone.style.borderColor = '#cbd5e1'; dropZone.style.background = '#f8fafc'; });
-    dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.style.borderColor = '#cbd5e1'; dropZone.style.background = '#f8fafc'; if (e.dataTransfer.files && e.dataTransfer.files[0]) processImageFile(e.dataTransfer.files[0]); });
+    // Ngăn chặn hành vi mặc định của trình duyệt để cho phép thả file
+    dropZone.addEventListener('dragover', (e) => { 
+        e.preventDefault(); 
+        dropZone.style.borderColor = '#1435c3'; 
+        dropZone.style.background = '#eef2ff'; 
+    });
+    
+    dropZone.addEventListener('dragleave', (e) => { 
+        e.preventDefault();
+        dropZone.style.borderColor = '#cbd5e1'; 
+        dropZone.style.background = '#f8fafc'; 
+    });
+    
+    // Xử lý khi người dùng thả file vào
+    dropZone.addEventListener('drop', (e) => { 
+        e.preventDefault(); 
+        dropZone.style.borderColor = '#cbd5e1'; 
+        dropZone.style.background = '#f8fafc'; 
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            fileInput.files = e.dataTransfer.files; // Gắn file bị thả vào thẻ input ẩn
+            processImageFile(e.dataTransfer.files[0]); 
+        } 
+    });
+
+    // MỚI: Bổ sung sự kiện click vào dropZone để mở cửa sổ chọn file
+    dropZone.addEventListener('click', () => {
+        if(fileInput) fileInput.click();
+    });
 }
-if (fileInput) fileInput.addEventListener('change', (e) => { if (e.target.files && e.target.files[0]) processImageFile(e.target.files[0]); });
-if (btnRemoveImg) btnRemoveImg.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); resetImageUploader(); });
+
+// Xử lý khi người dùng ấn nút "Chọn tệp" hoặc click vào khung
+if (fileInput) {
+    fileInput.addEventListener('change', (e) => { 
+        if (e.target.files && e.target.files.length > 0) {
+            processImageFile(e.target.files[0]); 
+        } 
+    });
+}
+
+if (btnRemoveImg) {
+    btnRemoveImg.addEventListener('click', (e) => { 
+        e.preventDefault(); 
+        e.stopPropagation(); 
+        resetImageUploader(); 
+    });
+}
 
 function resetImageUploader() {
     if (imgHiddenInput) imgHiddenInput.value = '';
@@ -523,14 +568,22 @@ function resetImageUploader() {
 
 function processImageFile(file) {
     if (!file.type.match('image.*')) return alert("Vui lòng chỉ chọn file hình ảnh!");
+    if (file.size > 2 * 1024 * 1024) return alert("Kích thước ảnh quá lớn! Vui lòng chọn ảnh dưới 2MB.");
+
     const reader = new FileReader();
     reader.onload = function(e) {
         const img = new Image();
         img.onload = function() {
-            const canvas = document.createElement('canvas'); const MAX_WIDTH = 800; let width = img.width; let height = img.height;
+            const canvas = document.createElement('canvas'); 
+            const MAX_WIDTH = 500; 
+            let width = img.width; 
+            let height = img.height;
             if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
-            canvas.width = width; canvas.height = height; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.8); 
+            canvas.width = width; canvas.height = height; 
+            const ctx = canvas.getContext('2d'); 
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.6); 
             if (imgHiddenInput) imgHiddenInput.value = dataUrl;
             if (imagePreview) { imagePreview.src = dataUrl; imagePreview.style.display = 'block'; }
             if (dropZoneText) dropZoneText.style.display = 'none';
