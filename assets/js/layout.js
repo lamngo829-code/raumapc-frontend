@@ -200,10 +200,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         input.addEventListener('focus', prefetchProducts);
 
-        let timeoutId;
+        let timeoutId; // Biến giữ nhịp (Debounce)
 
         input.addEventListener('input', function (e) {
-            clearTimeout(timeoutId);
+            clearTimeout(timeoutId); // 1. HỦY LỆNH CŨ nêú khách hàng vẫn đang gõ tiếp
             const keyword = e.target.value.trim().toLowerCase();
 
             if (!keyword) {
@@ -216,12 +216,13 @@ document.addEventListener('DOMContentLoaded', function () {
             const basePath = isSubPage ? '../../' : '';
             const detailPath = `${basePath}pages/shop/product-detail.html`;
 
+            // 2. THIẾT LẬP LỆNH MỚI: Chỉ chạy sau 500ms ngưng gõ
             timeoutId = setTimeout(async () => {
                 try {
                     resultBox.innerHTML = '<div style="padding:15px; text-align:center; color:#1435c3; font-size:14px; font-weight:bold;">⏳ Đang tìm kiếm...</div>';
                     resultBox.classList.add('active');
 
-                    // GỌI API LỌC NHÁP TRỰC TIẾP TỪ BACKEND (Siêu nhẹ, cực nhanh)
+                    // GỌI API BẰNG DEBOUNCE
                     const response = await fetch(`https://raumapc-backend.onrender.com/api/products?search=${encodeURIComponent(keyword)}&limit=30`);
                     const result = await response.json();
                     let fetchedProducts = result.data ? result.data : result;
@@ -259,7 +260,12 @@ document.addEventListener('DOMContentLoaded', function () {
                                 safeImg = (imgPath.startsWith('http://') || imgPath.startsWith('https://') || imgPath.startsWith('data:image')) ? imgPath : encodeURI(`${basePath}${imgPath}`);
                             }
 
-                            let priceStr = typeof p.price === 'number' ? new Intl.NumberFormat('vi-VN').format(p.price) + 'đ' : p.price;
+                            let priceStr = '0đ';
+                            if (typeof p.price === 'number') {
+                                priceStr = new Intl.NumberFormat('vi-VN').format(p.price) + 'đ';
+                            } else if (p.price) {
+                                priceStr = p.price;
+                            }
 
                             let currentStatus = p.status || 'Còn hàng';
                             let priceDisplay = priceStr;
@@ -391,7 +397,7 @@ window.onload = function () {
                 // Tự động vẽ nút Google với kích thước chuẩn 360px
                 google.accounts.id.renderButton(
                     document.getElementById("google-btn-container"),
-                    { theme: "outline", size: "large", shape: "rectangular", width: "370"}
+                    { theme: "outline", size: "large", shape: "rectangular", width: "370" }
                 );
             }
         })
@@ -1071,7 +1077,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 /* ==========================================================================
-   PHẦN 9: TỰ ĐỘNG ĐĂNG XUẤT NẾU TÀI KHOẢN BỊ XÓA (KIỂM TRA NGẦM)
+   PHẦN 9: ĐỒNG BỘ GIỎ HÀNG REAL-TIME & KIỂM TRA BẢO MẬT NGẦM
    ========================================================================== */
 document.addEventListener('DOMContentLoaded', function () {
     var token = localStorage.getItem('authToken');
@@ -1094,8 +1100,29 @@ document.addEventListener('DOMContentLoaded', function () {
                         alert("Tài khoản của bạn đã bị xóa khỏi hệ thống!");
                         window.location.href = '../../index.html';
                     }
+                } else if (data.cart) {
+                    // TÍNH NĂNG MỚI: Kéo giỏ hàng mới nhất từ Cloud về máy
+                    localStorage.setItem('myCart', JSON.stringify(data.cart));
+                    
+                    // Cập nhật lại giao diện (Số lượng trên icon giỏ hàng)
+                    if (typeof window.updateCartUI === 'function') window.updateCartUI();
+                    
+                    // Nếu khách đang đứng ở trang Giỏ hàng (cart.html), tự động load lại danh sách món
+                    if (typeof window.renderCartPage === 'function') window.renderCartPage();
                 }
             }).catch(err => console.log("Bỏ qua kiểm tra kết nối"));
+    }
+});
+
+/* ==========================================================================
+   PHẦN 9.5: ĐỒNG BỘ TỨC THÌ GIỮA CÁC TAB TRÌNH DUYỆT
+   ========================================================================== */
+window.addEventListener('storage', function(e) {
+    // Nếu có một Tab nào đó làm thay đổi giỏ hàng (myCart)
+    if (e.key === 'myCart') {
+        // Lập tức bắt các Tab còn lại cập nhật lại giao diện giỏ hàng
+        if (typeof window.updateCartUI === 'function') window.updateCartUI();
+        if (typeof window.renderCartPage === 'function') window.renderCartPage();
     }
 });
 

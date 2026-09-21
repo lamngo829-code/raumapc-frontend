@@ -40,6 +40,7 @@
                 <div class="menu-item"><a href="../../pages/info/showroom.html"><img src="../../assets/images/icons/showroom.jpg" width="25px" height="25px" alt="Show Room">Hệ thống Showroom</a></div>
                 <div class="menu-item"><a href="../../pages/info/enterprise.html"><img src="../../assets/images/icons/enterprise.jpg" width="25px" height="25px" alt="Enterprise">Dành cho doanh nghiệp</a></div>
                 <div class="menu-item"><a href="../../pages/info/contact.html"><img src="../../assets/images/icons/contact.jpg" width="25px" height="25px" alt="Contact">Khách hàng liên hệ</a></div>
+                <div class="menu-item"><a href="../../pages/info/tracking.html"><img src="../../assets/images/icons/search.jpg" width="25px" height="25px">Tra cứu đơn hàng</a></div>
                 <div class="menu-item"><a href="../../pages/info/news.html"><img src="../../assets/images/icons/news.jpg" width="25px" height="25px" alt="News">Tin tức công nghệ</a></div>
                 <div class="menu-item"><a href="../../pages/info/promotion.html"><img src="../../assets/images/icons/promotion.jpg" width="25px" height="25px" alt="Promotion">Khuyến mãi</a></div>
                 
@@ -964,7 +965,19 @@
     document.addEventListener('DOMContentLoaded', function () {
         const productContainer = document.getElementById('dynamic-product-list');
         if (!productContainer) return;
-        productContainer.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #666;">Đang tải dữ liệu từ kho...</div>';
+        // HIỆU ỨNG SKELETON LOADING ĐẸP MẮT
+        let skeletonHTML = '';
+        for(let i = 0; i < 8; i++) { // Render tạm 8 ô trống
+            skeletonHTML += `
+            <div class="skeleton-card">
+                <div class="skeleton-item sk-img"></div>
+                <div class="skeleton-item sk-title"></div>
+                <div class="skeleton-item sk-desc"></div>
+                <div class="skeleton-item sk-price"></div>
+                <div class="skeleton-item sk-btn"></div>
+            </div>`;
+        }
+        productContainer.innerHTML = skeletonHTML;
         // --- BẮT ĐẦU ĐOẠN MÃ KÍCH HOẠT NÚT XEM THÊM ---
         document.querySelectorAll('.view-more-btn').forEach(btn => {
             btn.addEventListener('click', function() {
@@ -1141,56 +1154,65 @@
             return true;
         });
 
-        // Sắp xếp
-        let sortMode = sortSelect ? sortSelect.value : 'newest';
-        if (sortMode === 'price-asc') {
-            filtered.sort((a, b) => (parseInt(String(a.price).replace(/\D/g, '')) || 0) - (parseInt(String(b.price).replace(/\D/g, '')) || 0));
-        } else if (sortMode === 'price-desc') {
-            filtered.sort((a, b) => (parseInt(String(b.price).replace(/\D/g, '')) || 0) - (parseInt(String(a.price).replace(/\D/g, '')) || 0));
-        }
+        // TÍNH NĂNG SẮP XẾP GIÁ
+            let sortMode = sortSelect ? sortSelect.value : 'newest';
+            if (sortMode === 'price-asc') {
+                filtered.sort((a, b) => (parseInt(String(a.price).replace(/\D/g, '')) || 0) - (parseInt(String(b.price).replace(/\D/g, '')) || 0));
+            } else if (sortMode === 'price-desc') {
+                filtered.sort((a, b) => (parseInt(String(b.price).replace(/\D/g, '')) || 0) - (parseInt(String(a.price).replace(/\D/g, '')) || 0));
+            }
 
-        if (filtered.length === 0) {
-            productContainer.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #888;">Không tìm thấy VGA NVIDIA nào phù hợp với tùy chọn của bạn.</p>';
-            return;
-        }
+            // ==========================================
+            // THUẬT TOÁN PHÂN TRANG (PAGINATION) MƯỢT MÀ
+            // ==========================================
+            if (!window.currentPage || !window.isChangingPage) window.currentPage = 1;
+            window.isChangingPage = false;
 
-        // Thêm hàm tạo Slug ngay trước vòng lặp nếu chưa có
+            const itemsPerPage = 12; // Số sản phẩm trên mỗi trang
+            const totalPages = Math.ceil(filtered.length / itemsPerPage);
+            if (window.currentPage > totalPages && totalPages > 0) window.currentPage = totalPages;
+
+            const paginationContainer = document.querySelector('.pagination');
+
+            if (filtered.length === 0) {
+                productContainer.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #888;">Không tìm thấy sản phẩm nào phù hợp với tùy chọn của bạn.</p>';
+                if (paginationContainer) paginationContainer.innerHTML = '';
+                return;
+            }
+
+            // Trích xuất đúng 12 sản phẩm của trang hiện tại
+            const startIndex = (window.currentPage - 1) * itemsPerPage;
+            const paginatedProducts = filtered.slice(startIndex, startIndex + itemsPerPage);
+
             function toSlug(str) {
                 if (!str) return '';
                 return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
             }
 
-            filtered.forEach(sp => {
+            // In ra 12 sản phẩm
+            paginatedProducts.forEach(sp => {
                 let isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
                 let slug = toSlug(sp.name);
-                
-                // MẤU CHỐT CHỐNG NHÁY: Ép trực tiếp link SEO vào thẻ A ngay lúc tạo giao diện
                 let linkHref = isLocal ? `product-detail.html?id=${sp.id || sp._id}` : `/${slug}`;
 
-                // ==========================================
-                // BỘ KIỂM SOÁT TÌNH TRẠNG NÚT BẤM DÀNH CHO THẺ SẢN PHẨM
-                // ==========================================
                 let currentStatus = sp.status || 'Còn hàng';
                 let buttonHtml = '';
-                let priceDisplay = sp.price;
+                
+                let priceDisplay = '0đ';
+                if (typeof sp.price === 'number') {
+                    priceDisplay = new Intl.NumberFormat('vi-VN').format(sp.price) + 'đ';
+                } else if (sp.price) {
+                    priceDisplay = sp.price; 
+                }
 
                 if (currentStatus === 'Còn hàng') {
-                    buttonHtml = `<div class="add-to-cart" data-product-id="${sp.id || sp._id}" onclick="
-                        event.preventDefault(); 
-                        if (typeof window.addToCart === 'function') {
-                            window.addToCart('${sp.id || sp._id}', this.closest('.product-card').querySelector('.product-name').innerText, parseInt(String('${sp.price}').replace(/\\D/g, '')) || 0, this.closest('.product-card').querySelector('img').src);
-                        } else {
-                            alert('Đã thêm sản phẩm vào giỏ hàng!');
-                        }
-                    ">Thêm vào giỏ hàng</div>`;
-                } 
+                    buttonHtml = `<div class="add-to-cart" data-product-id="${sp.id || sp._id}" onclick="event.preventDefault(); if (typeof window.addToCart === 'function') { window.addToCart('${sp.id || sp._id}', this.closest('.product-card').querySelector('.product-name').innerText, ${sp.price || 0}, this.closest('.product-card').querySelector('img').src); } else { alert('Đã thêm sản phẩm vào giỏ hàng!'); }">Thêm vào giỏ hàng</div>`;
+                }
                 else if (currentStatus === 'Hết hàng') {
-                    // Nếu hết hàng: Ẩn giá, làm mờ nút, cấm click
                     priceDisplay = '<span style="color: #dc2626; font-size: 15px;">Hết hàng</span>';
                     buttonHtml = `<div class="add-to-cart" style="background: #e2e8f0; color: #94a3b8; border: 1px solid #e2e8f0; cursor: not-allowed; pointer-events: none;" onclick="event.preventDefault();">ĐÃ HẾT HÀNG</div>`;
-                } 
+                }
                 else if (currentStatus === 'Liên hệ') {
-                    // Nếu liên hệ: Đổi giá thành liên hệ, đổi nút thành màu cam và chuyển sang trang liên hệ
                     priceDisplay = '<span style="color: #ea580c; font-size: 15px;">Giá: Liên hệ</span>';
                     let isSubPage = window.location.pathname.includes('/pages/');
                     let contactPath = isSubPage ? '../../pages/info/contact.html' : 'pages/info/contact.html';
@@ -1210,7 +1232,44 @@
                 </div>`;
                 productContainer.innerHTML += productHTML;
             });
-    }
+
+            // Vẽ thanh Phân Trang (Nút Bấm)
+            if (paginationContainer) {
+                let paginationHtml = '';
+                if (totalPages > 1) {
+                    if (window.currentPage > 1) {
+                        paginationHtml += `<a href="javascript:void(0)" onclick="window.changePage(${window.currentPage - 1})">&laquo;</a>`;
+                    }
+
+                    for (let i = 1; i <= totalPages; i++) {
+                        if (i === 1 || i === totalPages || (i >= window.currentPage - 1 && i <= window.currentPage + 1)) {
+                            paginationHtml += `<a href="javascript:void(0)" class="${i === window.currentPage ? 'active' : ''}" onclick="window.changePage(${i})">${i}</a>`;
+                        } else if (i === window.currentPage - 2 || i === window.currentPage + 2) {
+                            paginationHtml += `<a href="javascript:void(0)" style="pointer-events: none; border: none; background: transparent; color: #94a3b8;">...</a>`;
+                        }
+                    }
+
+                    if (window.currentPage < totalPages) {
+                        paginationHtml += `<a href="javascript:void(0)" onclick="window.changePage(${window.currentPage + 1})">&raquo;</a>`;
+                    }
+                }
+                paginationContainer.innerHTML = paginationHtml;
+            }
+        }
+
+        // Hệ thống chuyển trang
+        window.changePage = function(pageNum) {
+            window.isChangingPage = true; 
+            window.currentPage = pageNum;
+            applyFilters();
+            
+            // Cuộn trang mượt mà lên trên cùng khu vực sản phẩm
+            const headerEl = document.querySelector('.category-header');
+            if (headerEl) {
+                const headerOffset = headerEl.getBoundingClientRect().top + window.scrollY - 100;
+                window.scrollTo({ top: headerOffset, behavior: 'smooth' });
+            }
+        };
     </script>
 </body>
 

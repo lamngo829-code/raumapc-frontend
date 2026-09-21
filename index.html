@@ -42,21 +42,12 @@
 
             <div class="header-menu">
 
-                <div class="menu-item"><a href="pages/info/showroom.html"><img src="assets/images/icons/showroom.jpg"
-                            width="25px" height="25px" alt="Show Room">Hệ thống Showroom</a></div>
-
-                <div class="menu-item"><a href="pages/info/enterprise.html"><img
-                            src="assets/images/icons/enterprise.jpg" width="25px" height="25px" alt="Enterprise">Dành
-                        cho doanh nghiệp</a></div>
-
-                <div class="menu-item"><a href="pages/info/contact.html"><img src="assets/images/icons/contact.jpg"
-                            width="25px" height="25px" alt="Contact">Khách hàng liên hệ</a></div>
-
-                <div class="menu-item"><a href="pages/info/news.html"><img src="assets/images/icons/news.jpg"
-                            width="25px" height="25px" alt="News">Tin tức công nghệ</a></div>
-
-                <div class="menu-item"><a href="pages/info/promotion.html"><img src="assets/images/icons/promotion.jpg"
-                            width="25px" height="25px" alt="Promotion">Khuyến mãi</a></div>
+                <div class="menu-item"><a href="pages/info/showroom.html"><img src="assets/images/icons/showroom.jpg" width="25px" height="25px" alt="Show Room">Hệ thống Showroom</a></div>
+                <div class="menu-item"><a href="pages/info/enterprise.html"><img src="assets/images/icons/enterprise.jpg" width="25px" height="25px" alt="Enterprise">Dành cho doanh nghiệp</a></div>
+                <div class="menu-item"><a href="pages/info/contact.html"><img src="assets/images/icons/contact.jpg" width="25px" height="25px" alt="Contact">Khách hàng liên hệ</a></div>
+                <div class="menu-item"><a href="pages/info/tracking.html"><img src="assets/images/icons/search.jpg" width="25px" height="25px">Tra cứu đơn hàng</a></div>
+                <div class="menu-item"><a href="pages/info/news.html"><img src="assets/images/icons/news.jpg" width="25px" height="25px" alt="News">Tin tức công nghệ</a></div>
+                <div class="menu-item"><a href="pages/info/promotion.html"><img src="assets/images/icons/promotion.jpg" width="25px" height="25px" alt="Promotion">Khuyến mãi</a></div>
 
             </div>
 
@@ -737,41 +728,43 @@
     <!-- KHU VỰC SẢN PHẨM TRANG CHỦ (ĐỒNG BỘ TỪ ADMIN) -->
     <div class="container" style="min-height: 50vh; margin-bottom: 60px;">
 
+        <!-- BẢN MẪU KHUNG XƯƠNG DÙNG CHUNG CHO 6 MỤC (TẠO SẴN 5 Ô SKELETON MỖI MỤC) -->
+        <script>
+            const skeletonRow = `
+                <div style="display: flex; gap: 20px; overflow: hidden; width: 100%;">
+                    ${Array(5).fill(`
+                    <div class="skeleton-card" style="min-width: 250px; flex: 1; border: none; box-shadow: none;">
+                        <div class="sk-anim sk-img"></div>
+                        <div class="sk-anim sk-title"></div>
+                        <div class="sk-anim sk-desc" style="width: 80%;"></div>
+                        <div class="sk-anim sk-price" style="margin-top: 10px;"></div>
+                    </div>`).join('')}
+                </div>`;
+        </script>
+
         <!-- MỤC TRƯNG BÀY SỐ 1 -->
-        <div class="section-title">Đang tải dữ liệu...</div>
-        <div class="product">
-            <div class="product-slider"></div>
-        </div>
+        <div class="section-title">...</div>
+        <div class="product"><div class="product-slider"><script>document.write(skeletonRow);</script></div></div>
 
         <!-- MỤC TRƯNG BÀY SỐ 2 -->
-        <div class="section-title">Đang tải dữ liệu...</div>
-        <div class="product">
-            <div class="product-slider"></div>
-        </div>
+        <div class="section-title">...</div>
+        <div class="product"><div class="product-slider"><script>document.write(skeletonRow);</script></div></div>
 
         <!-- MỤC TRƯNG BÀY SỐ 3 -->
-        <div class="section-title">Đang tải dữ liệu...</div>
-        <div class="product">
-            <div class="product-slider"></div>
-        </div>
+        <div class="section-title">...</div>
+        <div class="product"><div class="product-slider"><script>document.write(skeletonRow);</script></div></div>
 
         <!-- MỤC TRƯNG BÀY SỐ 4 -->
-        <div class="section-title">Đang tải dữ liệu...</div>
-        <div class="product">
-            <div class="product-slider"></div>
-        </div>
+        <div class="section-title">...</div>
+        <div class="product"><div class="product-slider"><script>document.write(skeletonRow);</script></div></div>
 
         <!-- MỤC TRƯNG BÀY SỐ 5 -->
-        <div class="section-title">Đang tải dữ liệu...</div>
-        <div class="product">
-            <div class="product-slider"></div>
-        </div>
+        <div class="section-title">...</div>
+        <div class="product"><div class="product-slider"><script>document.write(skeletonRow);</script></div></div>
 
-        <!-- MỤC TRƯNG BÀY SỐ 6 (MỚI THÊM) -->
-        <div class="section-title">Đang tải dữ liệu...</div>
-        <div class="product">
-            <div class="product-slider"></div>
-        </div>
+        <!-- MỤC TRƯNG BÀY SỐ 6 -->
+        <div class="section-title">...</div>
+        <div class="product"><div class="product-slider"><script>document.write(skeletonRow);</script></div></div>
 
     </div>
 

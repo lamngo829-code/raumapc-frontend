@@ -55,7 +55,7 @@ async function renderSliderItems(sliderEl, sectionIndex, configData) {
         sliderEl.innerHTML = '<div style="width: 100%; text-align: center; padding: 20px; color: #666;">Chưa có sản phẩm trưng bày...</div>';
         return;
     }
-
+    
     // CHỈ TẢI ĐÚNG CÁC SẢN PHẨM ĐƯỢC CHỌN (Bỏ qua 99% kho hàng rác)
     const products = await Promise.all(
         idsToFetch.map(id => 

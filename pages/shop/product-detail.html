@@ -42,6 +42,7 @@
                 <div class="menu-item"><a href="../../pages/info/showroom.html"><img src="../../assets/images/icons/showroom.jpg" width="25px" height="25px" alt="Show Room">Hệ thống Showroom</a></div>
                 <div class="menu-item"><a href="../../pages/info/enterprise.html"><img src="../../assets/images/icons/enterprise.jpg" width="25px" height="25px" alt="Enterprise">Dành cho doanh nghiệp</a></div>
                 <div class="menu-item"><a href="../../pages/info/contact.html"><img src="../../assets/images/icons/contact.jpg" width="25px" height="25px" alt="Contact">Khách hàng liên hệ</a></div>
+                <div class="menu-item"><a href="../../pages/info/tracking.html"><img src="../../assets/images/icons/search.jpg" width="25px" height="25px">Tra cứu đơn hàng</a></div>
                 <div class="menu-item"><a href="../../pages/info/news.html"><img src="../../assets/images/icons/news.jpg" width="25px" height="25px" alt="News">Tin tức công nghệ</a></div>
                 <div class="menu-item"><a href="../../pages/info/promotion.html"><img src="../../assets/images/icons/promotion.jpg" width="25px" height="25px" alt="Promotion">Khuyến mãi</a></div>
                 
@@ -656,7 +657,26 @@
             <a href="#" class="bc-current" id="bread-name">Tên sản phẩm</a>
         </div>
         
-        <div id="loading-screen">Đang tải thông tin sản phẩm...</div>
+        <div id="loading-screen">
+            <div class="skeleton-detail-wrapper">
+                <div class="skeleton-detail-left">
+                    <div class="sk-anim skeleton-detail-img"></div>
+                    <div style="display: flex; gap: 10px; margin-top: 15px; justify-content: center;">
+                        <div class="sk-anim" style="width: 60px; height: 60px; border-radius: 6px;"></div>
+                        <div class="sk-anim" style="width: 60px; height: 60px; border-radius: 6px;"></div>
+                        <div class="sk-anim" style="width: 60px; height: 60px; border-radius: 6px;"></div>
+                    </div>
+                </div>
+                <div class="skeleton-detail-right">
+                    <div class="sk-anim skeleton-detail-title"></div>
+                    <div class="sk-anim skeleton-detail-title" style="width: 70%;"></div>
+                    <div class="sk-anim skeleton-detail-text" style="margin-top: 20px;"></div>
+                    <div class="sk-anim skeleton-detail-text"></div>
+                    <div class="sk-anim skeleton-detail-price"></div>
+                    <div class="sk-anim skeleton-detail-btn"></div>
+                </div>
+            </div>
+        </div>
         
         <div id="main-content">
 
@@ -683,12 +703,17 @@
                         <span class="current-price" id="detail-price">0đ</span>
                     </div>
 
-                    <div class="action-buttons">
-                        <button class="btn-buy-now">
+                    <div class="action-buttons" style="display: flex; gap: 15px;">
+                        <button class="btn-buy-now" style="flex: 2;">
                             <strong>ĐẶT MUA NGAY</strong>
                             <small>Giao tận nơi hoặc nhận tại cửa hàng</small>
                         </button>
-                        <button class="btn-add-cart">THÊM VÀO GIỎ</button>
+                        <button class="btn-add-cart" style="flex: 1;">THÊM VÀO GIỎ</button>
+                        
+                        <!-- NÚT CHIA SẺ SẢN PHẨM -->
+                        <button class="btn-share" onclick="window.copyShareLink()" style="background: #f1f5f9; color: #1435c3; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; padding: 0 20px; font-weight: bold; transition: 0.3s; display: flex; align-items: center; justify-content: center;" title="Chia sẻ sản phẩm này" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                        </button>
                     </div>
                 </div>
             </div>

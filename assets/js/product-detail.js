@@ -95,10 +95,18 @@ document.addEventListener('DOMContentLoaded', function () {
         const priceEl = document.getElementById('detail-price');
         
         let currentStatus = sp.status || 'Còn hàng';
+
+        // MỚI: TỰ ĐỘNG FORMAT SỐ THÀNH TIỀN TỆ (VD: 36666 -> 36.666đ)
+        let displayPrice = '0đ';
+        if (typeof sp.price === 'number') {
+            displayPrice = new Intl.NumberFormat('vi-VN').format(sp.price) + 'đ';
+        } else if (sp.price) {
+            displayPrice = sp.price;
+        }
         
         if (currentStatus === 'Còn hàng') {
             if (statusEl) { statusEl.innerHTML = '✓ Còn hàng'; statusEl.style.color = '#059669'; }
-            if (priceEl) { priceEl.innerHTML = sp.price || "0đ"; priceEl.style.color = '#d70018'; }
+            if (priceEl) { priceEl.innerHTML = displayPrice; priceEl.style.color = '#d70018'; } // Dùng biến displayPrice ở đây
             
             if (btnBuy) { 
                 btnBuy.style.display = 'flex'; 
@@ -482,3 +490,35 @@ function renderRelatedProducts(currentSp, allSp) {
         `;
     }).join('');
 }
+
+// ==========================================
+// TÍNH NĂNG SAO CHÉP LINK CHIA SẺ (CHUẨN SEO)
+// ==========================================
+window.copyShareLink = function() {
+    if (!currentProduct) return;
+    
+    // Lấy ID chính xác của sản phẩm
+    let realId = currentProduct.id || currentProduct._id;
+    let shortId = currentProduct.productId || realId.slice(-6).toUpperCase();
+    
+    // Sinh đường link Trạm Trung Chuyển trên Backend
+    let seoShareUrl = `https://raumapc-backend.onrender.com/share/${shortId}`;
+    
+    // Dán vào khay nhớ tạm (Clipboard) của điện thoại / máy tính
+    navigator.clipboard.writeText(seoShareUrl).then(() => {
+        if (typeof window.showGlobalAlert === 'function') {
+            window.showGlobalAlert('🔗 Đã sao chép Link chia sẻ!\nBạn có thể dán vào Zalo hoặc Facebook. Giao diện sản phẩm sẽ tự động hiển thị cực kỳ chuyên nghiệp.', true);
+        } else {
+            alert('Đã sao chép link chia sẻ thành công!');
+        }
+    }).catch(err => {
+        // Fallback cho trình duyệt cũ không hỗ trợ Clipboard API
+        let tempInput = document.createElement('input');
+        tempInput.value = seoShareUrl;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+        if (typeof window.showGlobalAlert === 'function') window.showGlobalAlert('🔗 Đã sao chép Link chia sẻ thành công!', true);
+    });
+};
