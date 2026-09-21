@@ -40,7 +40,7 @@
                 <div class="menu-item"><a href="../../pages/info/showroom.html"><img src="../../assets/images/icons/showroom.jpg" width="25px" height="25px" alt="Show Room">Hệ thống Showroom</a></div>
                 <div class="menu-item"><a href="../../pages/info/enterprise.html"><img src="../../assets/images/icons/enterprise.jpg" width="25px" height="25px" alt="Enterprise">Dành cho doanh nghiệp</a></div>
                 <div class="menu-item"><a href="../../pages/info/contact.html"><img src="../../assets/images/icons/contact.jpg" width="25px" height="25px" alt="Contact">Khách hàng liên hệ</a></div>
-                <div class="menu-item"><a href="../../pages/info/tracking.html"><img src="../../assets/images/icons/search.jpg" width="25px" height="25px">Tra cứu đơn hàng</a></div>
+                <div class="menu-item"><a href="../../pages/info/tracking.html"><img src="../../assets/images/icons/tracking.jpg" width="25px" height="25px">Tra cứu đơn hàng</a></div>
                 <div class="menu-item"><a href="../../pages/info/news.html"><img src="../../assets/images/icons/news.jpg" width="25px" height="25px" alt="News">Tin tức công nghệ</a></div>
                 <div class="menu-item"><a href="../../pages/info/promotion.html"><img src="../../assets/images/icons/promotion.jpg" width="25px" height="25px" alt="Promotion">Khuyến mãi</a></div>
                 
@@ -1145,7 +1145,7 @@
             btnMain.innerText = "ĐANG GỬI MÃ..."; btnMain.disabled = true;
             if (btnResend) { btnResend.innerText = "ĐANG GỬI..."; btnResend.disabled = true; }
 
-            fetch('https://raumapc-backend.onrender.com/api/request-email-update-otp', {
+            fetch('https://raumapc-backend-fms3.onrender.com/api/request-email-update-otp', {
                 method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('authToken') },
                 body: JSON.stringify({ newEmail: newEmail })
             }).then(res => res.json()).then(data => {
@@ -1193,7 +1193,7 @@
             if(otp.length !== 6) return showCustomAlert("Vui lòng điền đủ 6 số OTP!", false);
 
             btn.innerText = "ĐANG LƯU...";
-            fetch('https://raumapc-backend.onrender.com/api/users/me/update', {
+            fetch('https://raumapc-backend-fms3.onrender.com/api/users/me/update', {
                 method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('authToken') },
                 body: JSON.stringify({ email: newEmail, otp: otp })
             }).then(res => res.json()).then(data => {
@@ -1219,7 +1219,7 @@
 
             btn.innerText = "ĐANG LƯU..."; btn.disabled = true;
 
-            fetch('https://raumapc-backend.onrender.com/api/users/me/update', {
+            fetch('https://raumapc-backend-fms3.onrender.com/api/users/me/update', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('authToken') },
                     body: JSON.stringify({ avatar: base64Avatar })
@@ -1253,7 +1253,7 @@
             var btn = document.getElementById('btn-send-otp');
             btn.innerText = "ĐANG GỬI..."; btn.disabled = true;
 
-            fetch('https://raumapc-backend.onrender.com/api/request-otp', {
+            fetch('https://raumapc-backend-fms3.onrender.com/api/request-otp', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: currentUser.email })
             }).then(res => res.json()).then(data => {
@@ -1315,7 +1315,7 @@
             if(btn) { btn.innerText = "ĐANG XỬ LÝ..."; btn.disabled = true; }
 
             var currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            fetch('https://raumapc-backend.onrender.com/api/change-password-verify', {
+            fetch('https://raumapc-backend-fms3.onrender.com/api/change-password-verify', {
                 method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('authToken') },
                 body: JSON.stringify({ oldPassword: oldPass, newPassword: newPass, otp: otpCode, email: currentUser.email })
             }).then(res => res.json()).then(data => {
@@ -1341,7 +1341,7 @@
                 return showCustomAlert("Email xác nhận không khớp! Đã hủy thao tác xóa.", false);
             }
 
-            fetch('https://raumapc-backend.onrender.com/api/users/me', {
+            fetch('https://raumapc-backend-fms3.onrender.com/api/users/me', {
                 method: 'DELETE', headers: { 'Authorization': 'Bearer ' + localStorage.getItem('authToken') }
             }).then(res => res.json()).then(data => {
                 if(data.success) {
@@ -1381,7 +1381,7 @@
                 avtBox.innerHTML = '<span style="font-size:14px; animation: pulse 1s infinite;">⏳</span>';
 
                 // Gửi ảnh lên Máy chủ
-                fetch('https://raumapc-backend.onrender.com/api/users/me/update', {
+                fetch('https://raumapc-backend-fms3.onrender.com/api/users/me/update', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('authToken') },
                     body: JSON.stringify({ avatar: base64Avatar })

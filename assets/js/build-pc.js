@@ -4,7 +4,7 @@ let allProducts = [];
 async function fetchProductsFromAPI() {
     try {
         // VÁ LỖI 1: Thêm ?limit=1000 để lấy toàn bộ kho hàng
-        const response = await fetch('https://raumapc-backend.onrender.com/api/products?limit=50');
+        const response = await fetch('https://raumapc-backend-fms3.onrender.com/api/products?limit=50');
         if (!response.ok) throw new Error('Network response was not ok');
         
         const result = await response.json();

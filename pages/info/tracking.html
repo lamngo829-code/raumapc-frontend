@@ -43,7 +43,7 @@
                 <div class="menu-item"><a href="../../pages/info/showroom.html"><img src="../../assets/images/icons/showroom.jpg" width="25px" height="25px" alt="Show Room">Hệ thống Showroom</a></div>
                 <div class="menu-item"><a href="../../pages/info/enterprise.html"><img src="../../assets/images/icons/enterprise.jpg" width="25px" height="25px" alt="Enterprise">Dành cho doanh nghiệp</a></div>
                 <div class="menu-item"><a href="../../pages/info/contact.html"><img src="../../assets/images/icons/contact.jpg" width="25px" height="25px" alt="Contact">Khách hàng liên hệ</a></div>
-                <div class="menu-item"><a href="../../pages/info/tracking.html"><img src="../../assets/images/icons/search.jpg" width="25px" height="25px">Tra cứu đơn hàng</a></div>
+                <div class="menu-item"><a href="../../pages/info/tracking.html"><img src="../../assets/images/icons/tracking.jpg" width="25px" height="25px">Tra cứu đơn hàng</a></div>
                 <div class="menu-item"><a href="../../pages/info/news.html"><img src="../../assets/images/icons/news.jpg" width="25px" height="25px" alt="News">Tin tức công nghệ</a></div>
                 <div class="menu-item"><a href="../../pages/info/promotion.html"><img src="../../assets/images/icons/promotion.jpg" width="25px" height="25px" alt="Promotion">Khuyến mãi</a></div>
 
@@ -704,154 +704,164 @@
             stroke-linecap="round" stroke-linejoin="round">
             <polyline points="9 18 15 12 9 6"></polyline>
         </svg>
-        <a href="../../pages/info/about.html" class="bc-current">Giới thiệu</a>
+        <a href="../../pages/info/tracking.html" class="bc-current">Tra cứu đơn hàng</a>
     </div>
 
-    <!-- GIAO DIỆN TRA CỨU ĐƠN HÀNG -->
+    <!-- GIAO DIỆN TRA CỨU ĐƠN HÀNG (NÂNG CẤP) -->
     <style>
+        body { background-color: #f8fafc; } /* Tạo nền xám nhẹ để nổi bật form trắng */
+        
+        .tracking-container {
+            max-width: 650px;
+            margin: 60px auto 100px auto;
+        }
+
         .tracking-box {
-            max-width: 700px;
-            margin: 40px auto 80px auto;
-            background: #fff;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            background: #ffffff;
+            padding: 50px 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
             border: 1px solid #f1f5f9;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Viền Gradient trang trí phía trên cùng của Box */
+        .tracking-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #1435c3, #3b82f6, #0ea5e9);
+        }
+
+        .tracking-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .tracking-header h2 {
+            color: #1e293b;
+            font-size: 26px;
+            font-weight: bold; /* SỬA Ở ĐÂY: Từ 800 chuyển thành bold (hoặc 700) */
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
+        }
+
+        .tracking-header p {
+            color: #64748b;
+            font-size: 15px;
+            line-height: 1.6;
         }
 
         .track-input-group {
             display: flex;
-            gap: 15px;
-            margin-bottom: 40px;
-            justify-content: center;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper svg {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
         }
 
         .track-input {
-            flex: 1;
-            min-width: 200px;
-            padding: 14px 20px;
+            width: 100%;
+            padding: 16px 20px 16px 45px;
             border: 2px solid #e2e8f0;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 15px;
+            color: #1e293b;
             outline: none;
-            transition: 0.3s;
+            transition: all 0.3s ease;
+            background: #f8fafc;
         }
 
         .track-input:focus {
-            border-color: #1435c3;
+            border-color: #3b82f6;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
         }
+        
+        .track-input::placeholder { color: #94a3b8; }
 
         .btn-track {
-            padding: 14px 35px;
-            background: #d70018;
+            width: 100%;
+            padding: 16px;
+            background: #1435c3;
             color: #fff;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-weight: bold;
             cursor: pointer;
-            transition: 0.3s;
-            font-size: 15px;
-            white-space: nowrap;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(20, 53, 195, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
         }
 
         .btn-track:hover {
-            background: #b90014;
+            background: #0d2587;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(20, 53, 195, 0.3);
         }
+
+        .btn-track:active { transform: translateY(0); }
 
         /* Thanh tiến trình Timeline */
-        .timeline {
-            display: flex;
-            justify-content: space-between;
-            position: relative;
-            margin-bottom: 40px;
-            padding-top: 20px;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            top: 38px;
-            left: 10%;
-            width: 80%;
-            height: 4px;
-            background: #e2e8f0;
-            z-index: 1;
-        }
-
-        .timeline-progress {
-            position: absolute;
-            top: 38px;
-            left: 10%;
-            height: 4px;
-            background: #059669;
-            z-index: 2;
-            transition: 0.5s ease-out;
-        }
-
-        .step {
-            position: relative;
-            z-index: 3;
-            text-align: center;
-            width: 33.33%;
-        }
-
-        .step .icon {
-            width: 40px;
-            height: 40px;
-            background: #e2e8f0;
-            color: #94a3b8;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 10px;
-            font-weight: bold;
-            border: 4px solid #fff;
-            font-size: 16px;
-            transition: 0.3s;
-        }
-
-        .step.active .icon {
-            background: #059669;
-            color: white;
-            box-shadow: 0 0 0 4px #d1fae5;
-        }
-
-        .step.cancel .icon {
-            background: #dc2626;
-            color: white;
-            box-shadow: 0 0 0 4px #fee2e2;
-        }
-
-        .step .text {
-            font-size: 14px;
-            font-weight: bold;
-            color: #64748b;
-        }
-
-        .step.active .text {
-            color: #059669;
-        }
-
-        .step.cancel .text {
-            color: #dc2626;
-        }
+        .timeline { display: flex; justify-content: space-between; position: relative; margin-bottom: 40px; padding-top: 20px; }
+        .timeline::before { content: ''; position: absolute; top: 38px; left: 10%; width: 80%; height: 4px; background: #e2e8f0; z-index: 1; }
+        .timeline-progress { position: absolute; top: 38px; left: 10%; height: 4px; background: #059669; z-index: 2; transition: 0.5s ease-out; }
+        .step { position: relative; z-index: 3; text-align: center; width: 33.33%; }
+        .step .icon { width: 40px; height: 40px; background: #e2e8f0; color: #94a3b8; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-weight: bold; border: 4px solid #fff; font-size: 16px; transition: 0.3s; }
+        .step.active .icon { background: #059669; color: white; box-shadow: 0 0 0 4px #d1fae5; }
+        .step.cancel .icon { background: #dc2626; color: white; box-shadow: 0 0 0 4px #fee2e2; }
+        .step .text { font-size: 14px; font-weight: bold; color: #64748b; }
+        .step.active .text { color: #059669; }
+        .step.cancel .text { color: #dc2626; }
     </style>
 
-    <div class="tracking-box">
-        <h2 style="text-align: center; color: #1435c3; font-size: 24px; margin-bottom: 10px;">TRA CỨU ĐƠN HÀNG</h2>
-        <p style="text-align: center; color: #64748b; margin-bottom: 30px; font-size: 15px;">Vui lòng nhập Mã đơn hàng
-            và Số điện thoại để kiểm tra hành trình đơn hàng của bạn.</p>
+    <div class="tracking-container">
+        <div class="tracking-box">
+            <div class="tracking-header">
+                <h2>Tra Cứu Đơn Hàng</h2>
+                <p>Kiểm tra nhanh chóng trạng thái và lộ trình đơn hàng của bạn bằng Mã đơn hàng và Số điện thoại.</p>
+            </div>
 
-        <div class="track-input-group">
-            <input type="text" id="track-id" class="track-input" placeholder="Mã đơn hàng (VD: RM123456)">
-            <input type="text" id="track-phone" class="track-input" placeholder="Số điện thoại đặt hàng">
-            <button onclick="executeTracking()" class="btn-track" id="btn-track">KIỂM TRA</button>
-        </div>
+            <div class="track-input-group">
+                <div class="input-wrapper">
+                    <!-- Icon Box -->
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <input type="text" id="track-id" class="track-input" placeholder="Nhập mã đơn hàng (Ví dụ: RM123456)">
+                </div>
 
-        <div id="tracking-result" style="display: none; border-top: 2px dashed #e2e8f0; padding-top: 30px;">
-            <!-- Kết quả HTML sẽ được nhúng vào đây -->
+                <div class="input-wrapper">
+                    <!-- Icon Phone -->
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                    <input type="text" id="track-phone" class="track-input" placeholder="Nhập số điện thoại lúc đặt hàng">
+                </div>
+
+                <button onclick="executeTracking()" class="btn-track" id="btn-track">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    KIỂM TRA NGAY
+                </button>
+            </div>
+
+            <div id="tracking-result" style="display: none; border-top: 2px dashed #e2e8f0; padding-top: 30px;">
+                <!-- Kết quả HTML sẽ được nhúng vào đây -->
+            </div>
         </div>
     </div>
 
@@ -1023,7 +1033,7 @@
 
             btn.innerText = "ĐANG TÌM..."; btn.disabled = true;
 
-            fetch('https://raumapc-backend.onrender.com/api/orders/track', {
+            fetch('https://raumapc-backend-fms3.onrender.com/api/orders/track', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ orderId, phone })

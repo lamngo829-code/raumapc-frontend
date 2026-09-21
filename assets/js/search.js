@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     gridEl.innerHTML = skeletonHTML;
 
     try {
-        const response = await fetch(`https://raumapc-backend.onrender.com/api/products?search=${encodeURIComponent(keywordLower)}&limit=100`);
+        const response = await fetch(`https://raumapc-backend-fms3.onrender.com/api/products?search=${encodeURIComponent(keywordLower)}&limit=100`);
         const result = await response.json();
 
         const products = result.data ? result.data : result;

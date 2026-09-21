@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function loadDynamicHomeContent(titles, sliders) {
     try {
         // Chỉ tải cấu hình giao diện trước
-        const configRes = await fetch('https://raumapc-backend.onrender.com/api/settings/home');
+        const configRes = await fetch('https://raumapc-backend-fms3.onrender.com/api/settings/home');
         const configData = await configRes.json(); 
 
         const defaultTitles = ['VGA - Card Màn Hình', 'Ổ Cứng', 'RAM - Bộ Nhớ Trong', 'Mainboard - Bo mạch chủ', 'Chuột Không Dây', 'Bàn Phím Cơ'];
@@ -55,11 +55,11 @@ async function renderSliderItems(sliderEl, sectionIndex, configData) {
         sliderEl.innerHTML = '<div style="width: 100%; text-align: center; padding: 20px; color: #666;">Chưa có sản phẩm trưng bày...</div>';
         return;
     }
-    
+
     // CHỈ TẢI ĐÚNG CÁC SẢN PHẨM ĐƯỢC CHỌN (Bỏ qua 99% kho hàng rác)
     const products = await Promise.all(
         idsToFetch.map(id => 
-            fetch(`https://raumapc-backend.onrender.com/api/products/detail/${id}`)
+            fetch(`https://raumapc-backend-fms3.onrender.com/api/products/detail/${id}`)
             .then(res => res.ok ? res.json() : null)
             .catch(() => null)
         )

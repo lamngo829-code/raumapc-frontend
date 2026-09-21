@@ -19,10 +19,10 @@ window.adminLogout = function () {
     window.location.href = '../../index.html';
 };
 
-const API_PRODUCTS = 'https://raumapc-backend.onrender.com/api/products';
-const API_ORDERS = 'https://raumapc-backend.onrender.com/api/orders';
-const API_COUPONS = 'https://raumapc-backend.onrender.com/api/admin/coupons';
-const API_USERS = 'https://raumapc-backend.onrender.com/api/admin/users';
+const API_PRODUCTS = 'https://raumapc-backend-fms3.onrender.com/api/products';
+const API_ORDERS = 'https://raumapc-backend-fms3.onrender.com/api/orders';
+const API_COUPONS = 'https://raumapc-backend-fms3.onrender.com/api/admin/coupons';
+const API_USERS = 'https://raumapc-backend-fms3.onrender.com/api/admin/users';
 
 function switchTab(tabName) {
     // Đổi màu Menu
@@ -41,6 +41,7 @@ function switchTab(tabName) {
     const tOrd = document.getElementById('tab-orders');
     const tUser = document.getElementById('tab-users');
     const tCoup = document.getElementById('tab-coupons');
+    const tRev = document.getElementById('tab-reviews');
     const tSet = document.getElementById('tab-home-settings');
 
     if (tDash) tDash.style.display = (tabName === 'dashboard') ? 'block' : 'none';
@@ -48,6 +49,7 @@ function switchTab(tabName) {
     if (tOrd) tOrd.style.display = (tabName === 'orders') ? 'block' : 'none';
     if (tUser) tUser.style.display = (tabName === 'users') ? 'block' : 'none';
     if (tCoup) tCoup.style.display = (tabName === 'coupons') ? 'block' : 'none';
+    if (tRev) tRev.style.display = (tabName === 'reviews') ? 'block' : 'none';
     if (tSet) tSet.style.display = (tabName === 'home-settings') ? 'block' : 'none';
 
     // Chạy lệnh tải dữ liệu tương ứng
@@ -56,6 +58,7 @@ function switchTab(tabName) {
     else if (tabName === 'products') { loadProducts(); }
     else if (tabName === 'coupons') loadCoupons();
     else if (tabName === 'users') loadUsers();
+    else if (tabName === 'reviews') loadReviews();
     else loadHomeSettings();
 }
 
@@ -165,7 +168,7 @@ async function executeChangeUserPassword() {
     btn.disabled = true;
 
     try {
-        let res = await fetch(`https://raumapc-backend.onrender.com/api/admin/users/${currentUserIdForPasswordChange}/change-password`, {
+        let res = await fetch(`https://raumapc-backend-fms3.onrender.com/api/admin/users/${currentUserIdForPasswordChange}/change-password`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
             body: JSON.stringify({ newPassword: newPass })
@@ -489,7 +492,7 @@ function createChart(canvasId, type, label, labelsData, dataData, color) {
 
 function loadRevenue() {
     // 1. Tải số liệu Thống Kê Thẻ
-    fetch('https://raumapc-backend.onrender.com/api/admin/revenue?v=' + new Date().getTime())
+    fetch('https://raumapc-backend-fms3.onrender.com/api/admin/revenue?v=' + new Date().getTime())
         .then(res => res.json())
         .then(data => {
             if (document.getElementById('revenue-total')) document.getElementById('revenue-total').innerText = new Intl.NumberFormat('vi-VN').format(data.totalRevenue || 0) + ' đ';
@@ -500,7 +503,7 @@ function loadRevenue() {
         }).catch(err => console.error("Lỗi tải doanh thu:", err));
 
     // 2. Tải và vẽ 4 loại Biểu đồ
-    fetch('https://raumapc-backend.onrender.com/api/admin/revenue-chart', { headers: { 'Authorization': 'Bearer ' + token } })
+    fetch('https://raumapc-backend-fms3.onrender.com/api/admin/revenue-chart', { headers: { 'Authorization': 'Bearer ' + token } })
         .then(res => res.json())
         .then(data => {
             createChart('chartDaily', 'bar', 'Doanh thu Ngày (VNĐ)', data.daily.labels, data.daily.data, 'rgba(20, 53, 195, 0.9)'); // Màu xanh đậm
@@ -699,7 +702,7 @@ if (galleryInput) {
 }
 
 function loadHomeSettings() {
-    fetch('https://raumapc-backend.onrender.com/api/settings/home').then(res => res.json()).then(data => {
+    fetch('https://raumapc-backend-fms3.onrender.com/api/settings/home').then(res => res.json()).then(data => {
         const defaultTitles = ['VGA - Card Màn Hình', 'Ổ Cứng', 'RAM - Bộ Nhớ Trong', 'Mainboard - Bo mạch chủ', 'Chuột Không Dây', 'Màn Hình Máy Tính'];
         for (let i = 1; i <= 6; i++) {
             let titleEl = document.getElementById(`home-title-${i}`); if (titleEl) titleEl.value = data[`homeTitle${i}`] || defaultTitles[i - 1];
@@ -717,7 +720,7 @@ async function syncSettingsToCloud(alertMessage) {
         const btnTitle = document.querySelector('button[onclick="saveHomeSettings()"]'); const btnPro = document.querySelector('button[onclick="saveHomeProducts()"]');
         if (btnTitle) btnTitle.innerText = "ĐANG ĐỒNG BỘ CLOUD..."; if (btnPro) btnPro.innerText = "ĐANG ĐỒNG BỘ CLOUD...";
         const token = localStorage.getItem('authToken');
-        let res = await fetch('https://raumapc-backend.onrender.com/api/settings/home', { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify(configData) });
+        let res = await fetch('https://raumapc-backend-fms3.onrender.com/api/settings/home', { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify(configData) });
         if (res.ok) { if (typeof window.showAdminAlert === 'function') window.showAdminAlert(alertMessage, true); } else { if (typeof window.showAdminAlert === 'function') window.showAdminAlert("Lỗi bảo mật hoặc máy chủ!", false); }
         if (btnTitle) btnTitle.innerText = "LƯU TÙY CHỈNH TIÊU ĐỀ"; if (btnPro) btnPro.innerText = "LƯU TÙY CHỈNH SẢN PHẨM";
     } catch (e) { if (typeof window.showAdminAlert === 'function') window.showAdminAlert("Lỗi mạng khi lưu Cloud!", false); }
@@ -738,7 +741,7 @@ window.changeAdminPassword = async function () {
     if (!confirm("⚠️ CẢNH BÁO BẢO MẬT:\n\nBạn có chắc chắn muốn đổi mật khẩu Admin sang mật khẩu mới này không?")) return;
 
     try {
-        let res = await fetch('https://raumapc-backend.onrender.com/api/admin/change-password', {
+        let res = await fetch('https://raumapc-backend-fms3.onrender.com/api/admin/change-password', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
             body: JSON.stringify({ newPassword: newPass })
@@ -754,5 +757,122 @@ window.changeAdminPassword = async function () {
         }
     } catch (e) {
         window.showAdminAlert("Lỗi kết nối đến máy chủ!", false);
+    }
+};
+
+// ==========================================
+// TÍNH NĂNG QUẢN LÝ BÌNH LUẬN & ĐÁNH GIÁ
+// ==========================================
+function loadReviews() {
+    fetch('https://raumapc-backend-fms3.onrender.com/api/admin/comments', { headers: { 'Authorization': 'Bearer ' + token } })
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById('review-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (!data || data.length === 0) return tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Hệ thống chưa có đánh giá nào!</td></tr>';
+
+            data.forEach(c => {
+                let stars = '<span style="color:#f59e0b; letter-spacing:1px; font-size:14px;">' + '★'.repeat(c.rating) + '<span style="color:#e2e8f0">' + '★'.repeat(5 - c.rating) + '</span></span>';
+                let imgHtml = c.img ? `<br><img src="${c.img}" style="width:70px; height:70px; object-fit:cover; border-radius:6px; margin-top:8px; border: 1px solid #cbd5e1; cursor:pointer;" onclick="window.open('${c.img}')">` : '';
+                
+                let replyHtml = c.adminReply 
+                    ? `<div style="margin-top: 10px; padding: 10px; background: #e0f2fe; border-left: 3px solid #0284c7; border-radius: 4px; font-size: 13px; color: #0369a1;"><strong>Rau Má PC đã trả lời:</strong><br>${c.adminReply}</div>` 
+                    : '';
+                
+                let btnReplyText = c.adminReply ? "Sửa trả lời" : "Trả lời";
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <img src="${c.productImg}" style="width:45px; height:45px; object-fit:cover; border-radius:6px; border: 1px solid #eee;">
+                                <span style="font-size:13px; font-weight:bold; color:#1435c3; line-height:1.4;">${c.productName}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <strong style="color:#1e293b; font-size: 14px;">${c.userName}</strong><br>
+                            ${stars}<br>
+                            <span style="font-size:12px; color:#64748b;">${c.date}</span>
+                        </td>
+                        <td style="font-size:14px; line-height:1.6; color: #334155;">
+                            ${c.content}
+                            ${imgHtml}
+                            ${replyHtml}
+                        </td>
+                        <td>
+                            <button onclick="replyReview('${c.productId}', '${c.id}')" style="background:#e0f2fe; color:#0284c7; border:none; padding:8px 12px; border-radius:6px; cursor:pointer; font-weight:bold; margin-right:5px; margin-bottom:5px; transition:0.2s;" onmouseover="this.style.background='#bae6fd'" onmouseout="this.style.background='#e0f2fe'">${btnReplyText}</button>
+                            <button onclick="deleteReview('${c.productId}', '${c.id}')" style="background:#fee2e2; color:#dc2626; border:none; padding:8px 12px; border-radius:6px; cursor:pointer; font-weight:bold; transition:0.2s;" onmouseover="this.style.background='#fecaca'" onmouseout="this.style.background='#fee2e2'">Xóa</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        });
+}
+
+// Các biến lưu tạm ID để gửi đi
+let currentReplyProductId = null;
+let currentReplyCommentId = null;
+
+// Hàm mở Modal Giao diện đẹp
+window.replyReview = function(productId, commentId) {
+    currentReplyProductId = productId;
+    currentReplyCommentId = commentId;
+    document.getElementById('crm-input').value = ''; // Xóa trắng ô nhập cũ
+    document.getElementById('custom-reply-modal').style.display = 'flex';
+    setTimeout(() => document.getElementById('crm-input').focus(), 100); // Tự động trỏ chuột vào ô nhập
+};
+
+// Hàm đóng Modal
+window.closeReplyModal = function() {
+    document.getElementById('custom-reply-modal').style.display = 'none';
+    currentReplyProductId = null;
+    currentReplyCommentId = null;
+};
+
+// Hàm gửi API lên Backend khi Admin bấm "Gửi Phản Hồi"
+window.executeReplyReview = function() {
+    if (!currentReplyProductId || !currentReplyCommentId) return;
+    
+    let replyText = document.getElementById('crm-input').value.trim();
+    if (!replyText) {
+        return window.showAdminAlert("Vui lòng nhập nội dung câu trả lời!", false);
+    }
+
+    let btn = document.getElementById('crm-submit-btn');
+    btn.innerText = "ĐANG XỬ LÝ...";
+    btn.disabled = true;
+
+    fetch(`https://raumapc-backend-fms3.onrender.com/api/admin/comments/${currentReplyProductId}/${currentReplyCommentId}/reply`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ replyText: replyText })
+    }).then(res => res.json()).then(data => {
+        btn.innerText = "Gửi Phản Hồi";
+        btn.disabled = false;
+        
+        if (data.success) {
+            closeReplyModal();
+            window.showAdminAlert(data.message, true);
+            loadReviews(); // Tải lại danh sách bình luận
+        } else {
+            window.showAdminAlert(data.message, false);
+        }
+    }).catch(err => {
+        btn.innerText = "Gửi Phản Hồi";
+        btn.disabled = false;
+        window.showAdminAlert("Lỗi kết nối máy chủ!", false);
+    });
+};
+
+window.deleteReview = function(productId, commentId) {
+    if (confirm("⚠️ CẢNH BÁO BẢO MẬT\n\nBạn có chắc chắn muốn xóa vĩnh viễn bình luận này (Bao gồm cả ảnh đính kèm nếu có)?")) {
+        fetch(`https://raumapc-backend-fms3.onrender.com/api/admin/comments/${productId}/${commentId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': 'Bearer ' + token }
+        }).then(res => res.json()).then(data => {
+            window.showAdminAlert(data.message, data.success);
+            if (data.success) loadReviews();
+        });
     }
 };

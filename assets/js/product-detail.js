@@ -232,11 +232,11 @@ document.addEventListener('DOMContentLoaded', function () {
             const viewsSpan = document.createElement('span'); viewsSpan.id = 'detail-views'; viewsSpan.style.marginLeft = '20px'; viewsSpan.style.color = '#1435c3'; viewsSpan.style.fontWeight = 'bold'; viewsSpan.style.fontSize = '14px';
             viewsSpan.innerHTML = `👁 ${(sp.views || 0) + 1} lượt xem`; idEl.parentNode.appendChild(viewsSpan);
         }
-        fetch(`https://raumapc-backend.onrender.com/api/products/${shortId}/view`, { method: 'PUT' }).catch(err => console.log("Lỗi tăng view"));
+        fetch(`https://raumapc-backend-fms3.onrender.com/api/products/${shortId}/view`, { method: 'PUT' }).catch(err => console.log("Lỗi tăng view"));
     }
 
     // TẢI DỮ LIỆU TỪ MÁY CHỦ
-    fetch('https://raumapc-backend.onrender.com/api/products?limit=1000&v=' + new Date().getTime())
+    fetch('https://raumapc-backend-fms3.onrender.com/api/products?limit=1000&v=' + new Date().getTime())
         .then(res => res.ok ? res.json() : null)
         .then(result => {
             const products = result && result.data ? result.data : result;
@@ -341,7 +341,20 @@ function renderComments(commentsArray) {
         let starHtml = '<span style="color: #f59e0b; letter-spacing: 2px; font-size: 14px;">' + '★'.repeat(stars) + '<span style="color:#e2e8f0">' + '★'.repeat(5 - stars) + '</span></span>';
         let imgHtml = cmt.img ? `<img src="${cmt.img}" class="cmt-attached-img" alt="Ảnh đánh giá">` : '';
         let avatarDisplay = (cmt.userAvatar && cmt.userAvatar.trim() !== '') ? `<img src="${cmt.userAvatar}" style="width:100%; height:100%; object-fit:cover;">` : initial;
-        html += `<div class="cmt-box"><div class="cmt-header"><div class="cmt-avt" style="overflow: hidden; padding: 0; display: flex; align-items: center; justify-content: center;">${avatarDisplay}</div><div class="cmt-name">${cmt.userName}</div><div class="cmt-time">🕒 ${cmt.date}</div></div><div class="cmt-row"><div class="cmt-row-label">Đánh giá:</div><div class="cmt-row-content">${starHtml}</div></div><div class="cmt-row"><div class="cmt-row-label">Nhận xét:</div><div class="cmt-row-content">${cmt.content}${imgHtml}</div></div></div>`;
+        // Sinh mã HTML cho phần phản hồi của Admin
+        let adminReplyHtml = '';
+        if (cmt.adminReply && cmt.adminReply.trim() !== '') {
+            adminReplyHtml = `
+            <div style="margin-top: 15px; padding: 15px 20px; background: #f8fafc; border-left: 4px solid #1435c3; border-radius: 6px; position: relative;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1435c3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    <strong style="color: #1435c3; font-size: 14px;">Quản trị viên Rau Má PC</strong>
+                    <span style="background: #1435c3; color: white; font-size: 10px; padding: 2px 6px; border-radius: 12px; font-weight: bold; margin-left: 5px;">QTV</span>
+                </div>
+                <div style="color: #334155; font-size: 14px; line-height: 1.6;">${cmt.adminReply}</div>
+            </div>`;
+        }
+        html += `<div class="cmt-box"><div class="cmt-header"><div class="cmt-avt" style="overflow: hidden; padding: 0; display: flex; align-items: center; justify-content: center;">${avatarDisplay}</div><div class="cmt-name">${cmt.userName}</div><div class="cmt-time">🕒 ${cmt.date}</div></div><div class="cmt-row"><div class="cmt-row-label">Đánh giá:</div><div class="cmt-row-content">${starHtml}</div></div><div class="cmt-row"><div class="cmt-row-label">Nhận xét:</div><div class="cmt-row-content">${cmt.content}${imgHtml}${adminReplyHtml}</div></div></div>`;
     });
     listEl.innerHTML = html;
 }
@@ -407,11 +420,12 @@ window.submitReview = function() {
         const userStr = localStorage.getItem('currentUser');
         if(userStr) {
             const user = JSON.parse(userStr); userName = user.fullName || "Khách ghé thăm"; 
-            if (user.avatar && typeof user.avatar === 'string' && user.avatar.includes('data:image')) { userAvatar = user.avatar; }
+
+            if (user.avatar && typeof user.avatar === 'string' && user.avatar.trim() !== '') { userAvatar = user.avatar; }
         }
     } catch(e) { console.error("Lỗi lấy thông tin User:", e); }
 
-    fetch(`https://raumapc-backend.onrender.com/api/products/${dbId}/comments`, {
+    fetch(`https://raumapc-backend-fms3.onrender.com/api/products/${dbId}/comments`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userName: userName, userAvatar: userAvatar, content: content, rating: rating, img: uploadedReviewImage })
     }).then(res => res.json()).then(data => {
@@ -502,7 +516,7 @@ window.copyShareLink = function() {
     let shortId = currentProduct.productId || realId.slice(-6).toUpperCase();
     
     // Sinh đường link Trạm Trung Chuyển trên Backend
-    let seoShareUrl = `https://raumapc-backend.onrender.com/share/${shortId}`;
+    let seoShareUrl = `https://raumapc-backend-fms3.onrender.com/share/${shortId}`;
     
     // Dán vào khay nhớ tạm (Clipboard) của điện thoại / máy tính
     navigator.clipboard.writeText(seoShareUrl).then(() => {

@@ -43,10 +43,10 @@
                 <div class="menu-item"><a href="../../pages/info/showroom.html"><img src="../../assets/images/icons/showroom.jpg" width="25px" height="25px" alt="Show Room">Hệ thống Showroom</a></div>
                 <div class="menu-item"><a href="../../pages/info/enterprise.html"><img src="../../assets/images/icons/enterprise.jpg" width="25px" height="25px" alt="Enterprise">Dành cho doanh nghiệp</a></div>
                 <div class="menu-item"><a href="../../pages/info/contact.html"><img src="../../assets/images/icons/contact.jpg" width="25px" height="25px" alt="Contact">Khách hàng liên hệ</a></div>
-                <div class="menu-item"><a href="../../pages/info/tracking.html"><img src="../../assets/images/icons/search.jpg" width="25px" height="25px">Tra cứu đơn hàng</a></div>
+                <div class="menu-item"><a href="../../pages/info/tracking.html"><img src="../../assets/images/icons/tracking.jpg" width="25px" height="25px">Tra cứu đơn hàng</a></div>
                 <div class="menu-item"><a href="../../pages/info/news.html"><img src="../../assets/images/icons/news.jpg" width="25px" height="25px" alt="News">Tin tức công nghệ</a></div>
                 <div class="menu-item"><a href="../../pages/info/promotion.html"><img src="../../assets/images/icons/promotion.jpg" width="25px" height="25px" alt="Promotion">Khuyến mãi</a></div>
-
+                
             </div>
 
         </div>
@@ -1205,7 +1205,7 @@
             if (sortSelect) sortSelect.addEventListener('change', applyFilters);
 
             // GỌI API TỐI ƯU HÓA TỪ BACKEND (CHỈ LẤY CPU, GIỚI HẠN 1000 SP ĐỂ LOAD SIÊU NHANH)
-            fetch('https://raumapc-backend.onrender.com/api/products?category=cpu,intel,amd&limit=50')
+            fetch('https://raumapc-backend-fms3.onrender.com/api/products?category=cpu,intel,amd&limit=50')
                 .then(response => response.json())
                 .then(result => {
                     const products = result.data ? result.data : result;

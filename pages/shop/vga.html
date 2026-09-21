@@ -40,7 +40,7 @@
                 <div class="menu-item"><a href="../../pages/info/showroom.html"><img src="../../assets/images/icons/showroom.jpg" width="25px" height="25px" alt="Show Room">Hệ thống Showroom</a></div>
                 <div class="menu-item"><a href="../../pages/info/enterprise.html"><img src="../../assets/images/icons/enterprise.jpg" width="25px" height="25px" alt="Enterprise">Dành cho doanh nghiệp</a></div>
                 <div class="menu-item"><a href="../../pages/info/contact.html"><img src="../../assets/images/icons/contact.jpg" width="25px" height="25px" alt="Contact">Khách hàng liên hệ</a></div>
-                <div class="menu-item"><a href="../../pages/info/tracking.html"><img src="../../assets/images/icons/search.jpg" width="25px" height="25px">Tra cứu đơn hàng</a></div>
+                <div class="menu-item"><a href="../../pages/info/tracking.html"><img src="../../assets/images/icons/tracking.jpg" width="25px" height="25px">Tra cứu đơn hàng</a></div>
                 <div class="menu-item"><a href="../../pages/info/news.html"><img src="../../assets/images/icons/news.jpg" width="25px" height="25px" alt="News">Tin tức công nghệ</a></div>
                 <div class="menu-item"><a href="../../pages/info/promotion.html"><img src="../../assets/images/icons/promotion.jpg" width="25px" height="25px" alt="Promotion">Khuyến mãi</a></div>
                 
@@ -719,7 +719,7 @@
                             <label class="custom-checkbox"><input type="checkbox" class="filter-cb" data-type="series" value="rtx 30"><span class="checkmark"></span> GeForce RTX 30 series</label>
                             <label class="custom-checkbox"><input type="checkbox" class="filter-cb" data-type="series" value="9070 xt"><span class="checkmark"></span> Radeon RX 9070 XT</label>
                             <label class="custom-checkbox"><input type="checkbox" class="filter-cb" data-type="series" value="9070"><span class="checkmark"></span> Radeon RX 9070</label>
-                            <label class="custom-checkbox"><input type="checkbox" class="filter-cb" data-type="series" value="9000 xt"><span class="checkmark"></span> Radeon RX 9000 XT</label>
+                            <label class="custom-checkbox"><input type="checkbox" class="filter-cb" data-type="series" value="9060 xt"><span class="checkmark"></span> Radeon RX 9060 XT</label>
                             <label class="custom-checkbox"><input type="checkbox" class="filter-cb" data-type="series" value="7900"><span class="checkmark"></span> Radeon RX 7900</label>
                             <label class="custom-checkbox"><input type="checkbox" class="filter-cb" data-type="series" value="7600"><span class="checkmark"></span> Radeon RX 7600</label>
                         </div>
@@ -1157,7 +1157,7 @@
 
         if(sortSelect) sortSelect.addEventListener('change', applyFilters);
 
-        fetch('https://raumapc-backend.onrender.com/api/products?limit=50')
+        fetch('https://raumapc-backend-fms3.onrender.com/api/products?limit=50')
                 .then(response => response.json())
                 .then(result => {
                     const products = result.data ? result.data : result;

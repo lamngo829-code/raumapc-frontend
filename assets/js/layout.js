@@ -18,7 +18,7 @@ window.syncCartToCloud = function () {
     var token = localStorage.getItem('authToken');
     if (!token) return;
     var currentCart = JSON.parse(localStorage.getItem('myCart')) || [];
-    fetch('https://raumapc-backend.onrender.com/api/users/cart', {
+    fetch('https://raumapc-backend-fms3.onrender.com/api/users/cart', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (cachedProducts || isFetching) return;
         isFetching = true;
         try {
-            const response = await fetch(`https://raumapc-backend.onrender.com/api/products?limit=1000`);
+            const response = await fetch(`https://raumapc-backend-fms3.onrender.com/api/products?limit=1000`);
             const result = await response.json();
             cachedProducts = result.data ? result.data : result;
         } catch (err) {
@@ -223,7 +223,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     resultBox.classList.add('active');
 
                     // GỌI API BẰNG DEBOUNCE
-                    const response = await fetch(`https://raumapc-backend.onrender.com/api/products?search=${encodeURIComponent(keyword)}&limit=30`);
+                    const response = await fetch(`https://raumapc-backend-fms3.onrender.com/api/products?search=${encodeURIComponent(keyword)}&limit=30`);
                     const result = await response.json();
                     let fetchedProducts = result.data ? result.data : result;
 
@@ -340,7 +340,7 @@ window.handleLoginDedicated = function (event) {
     var btn = document.querySelector('.btn-auth-primary');
     if (btn) { btn.innerText = "ĐANG KIỂM TRA..."; btn.disabled = true; }
 
-    fetch('https://raumapc-backend.onrender.com/api/login', {
+    fetch('https://raumapc-backend-fms3.onrender.com/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: usernameInput, password: passwordInput })
@@ -384,7 +384,7 @@ window.handleLoginDedicated = function (event) {
 
 // 1. TỰ ĐỘNG LẤY MÃ CLIENT ID NGẦM TỪ BACKEND
 window.onload = function () {
-    fetch('https://raumapc-backend.onrender.com/api/config/google')
+    fetch('https://raumapc-backend-fms3.onrender.com/api/config/google')
         .then(res => res.json())
         .then(data => {
             if (data.clientId) {
@@ -409,7 +409,7 @@ window.handleGoogleLogin = function (response) {
     var btn = document.querySelector('.btn-auth-primary');
     if (btn) { btn.innerText = "ĐANG XÁC THỰC GOOGLE..."; btn.disabled = true; }
 
-    fetch('https://raumapc-backend.onrender.com/api/auth/google', {
+    fetch('https://raumapc-backend-fms3.onrender.com/api/auth/google', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ credential: response.credential })
@@ -450,7 +450,7 @@ window.submitLoginOtp = function () {
     var btnVerify = document.getElementById('btn-verify-login-otp');
     btnVerify.innerText = "ĐANG XÁC NHẬN..."; btnVerify.disabled = true;
 
-    fetch('https://raumapc-backend.onrender.com/api/login-verify', {
+    fetch('https://raumapc-backend-fms3.onrender.com/api/login-verify', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email, otp: otp })
     }).then(res => res.json()).then(data => {
@@ -660,7 +660,7 @@ window.handleRegisterDedicated = function (e) {
     btn.innerText = "ĐANG GỬI MÃ OTP...";
     btn.disabled = true;
 
-    fetch('https://raumapc-backend.onrender.com/api/request-register-otp', {
+    fetch('https://raumapc-backend-fms3.onrender.com/api/request-register-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email, username: user })
@@ -692,7 +692,7 @@ window.resendRegisterOtp = function (e) {
     btnResend.innerText = "Đang gửi...";
     btnResend.style.pointerEvents = "none";
 
-    fetch('https://raumapc-backend.onrender.com/api/request-register-otp', {
+    fetch('https://raumapc-backend-fms3.onrender.com/api/request-register-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email, username: user })
@@ -729,7 +729,7 @@ window.submitRegistration = function () {
     btnVerify.innerText = "ĐANG TẠO TÀI KHOẢN...";
     btnVerify.disabled = true;
 
-    fetch('https://raumapc-backend.onrender.com/api/register', {
+    fetch('https://raumapc-backend-fms3.onrender.com/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ fullName: name, username: user, password: pass, phone: phone, email: email, otp: otp })
@@ -802,7 +802,7 @@ window.requestForgotPassword = function () {
     btn.innerText = "ĐANG GỬI MÃ...";
     btn.disabled = true;
 
-    fetch('https://raumapc-backend.onrender.com/api/request-otp', {
+    fetch('https://raumapc-backend-fms3.onrender.com/api/request-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email })
@@ -832,7 +832,7 @@ window.resendForgotOtp = function (e) {
     btnResend.innerText = "Đang gửi...";
     btnResend.style.pointerEvents = "none";
 
-    fetch('https://raumapc-backend.onrender.com/api/request-otp', {
+    fetch('https://raumapc-backend-fms3.onrender.com/api/request-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email })
@@ -863,7 +863,7 @@ window.submitForgotPassword = function () {
     btnVerify.innerText = "ĐANG XỬ LÝ...";
     btnVerify.disabled = true;
 
-    fetch('https://raumapc-backend.onrender.com/api/forgot-password-verify', {
+    fetch('https://raumapc-backend-fms3.onrender.com/api/forgot-password-verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email, otp: otp, newPassword: newPass })
@@ -1082,7 +1082,7 @@ document.addEventListener('DOMContentLoaded', function () {
 document.addEventListener('DOMContentLoaded', function () {
     var token = localStorage.getItem('authToken');
     if (token) {
-        fetch('https://raumapc-backend.onrender.com/api/auth/verify', {
+        fetch('https://raumapc-backend-fms3.onrender.com/api/auth/verify', {
             headers: { 'Authorization': 'Bearer ' + token }
         })
             .then(res => res.json())

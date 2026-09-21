@@ -42,7 +42,7 @@
                 <div class="menu-item"><a href="../../pages/info/showroom.html"><img src="../../assets/images/icons/showroom.jpg" width="25px" height="25px" alt="Show Room">Hệ thống Showroom</a></div>
                 <div class="menu-item"><a href="../../pages/info/enterprise.html"><img src="../../assets/images/icons/enterprise.jpg" width="25px" height="25px" alt="Enterprise">Dành cho doanh nghiệp</a></div>
                 <div class="menu-item"><a href="../../pages/info/contact.html"><img src="../../assets/images/icons/contact.jpg" width="25px" height="25px" alt="Contact">Khách hàng liên hệ</a></div>
-                <div class="menu-item"><a href="../../pages/info/tracking.html"><img src="../../assets/images/icons/search.jpg" width="25px" height="25px">Tra cứu đơn hàng</a></div>
+                <div class="menu-item"><a href="../../pages/info/tracking.html"><img src="../../assets/images/icons/tracking.jpg" width="25px" height="25px">Tra cứu đơn hàng</a></div>
                 <div class="menu-item"><a href="../../pages/info/news.html"><img src="../../assets/images/icons/news.jpg" width="25px" height="25px" alt="News">Tin tức công nghệ</a></div>
                 <div class="menu-item"><a href="../../pages/info/promotion.html"><img src="../../assets/images/icons/promotion.jpg" width="25px" height="25px" alt="Promotion">Khuyến mãi</a></div>
                 
@@ -731,30 +731,18 @@
                         </label>
 
                         <label class="checkout-radio payment-option">
-                            <input type="radio" name="payment" value="banking" onchange="window.togglePaymentMethod()">
+                            <input type="radio" name="payment" value="vnpay" onchange="window.togglePaymentMethod()">
                             <span class="payment-option-icon">💳</span>
-                            <span class="payment-option-text">Chuyển khoản ngân hàng (Quét mã QR)</span>
+                            <span class="payment-option-text">Thanh toán Online (VNPay / Thẻ ATM / QR Pay)</span>
                         </label>
                     </div>
 
-                    <!-- KHU VỰC MÃ QR SẼ HIỆN RA KHI CHỌN CHUYỂN KHOẢN -->
-                    <div id="qr-payment-section" class="qr-payment-section">
-                        <h4 class="qr-payment-title">Quét mã để thanh toán</h4>
-
-                        <img id="dynamic-qr-code" src="" alt="Mã QR Thanh Toán" class="qr-payment-img">
-
-                        <div class="qr-payment-info">
-                            <p class="qr-label">Số tiền cần thanh toán</p>
-                            <p class="qr-amount" id="qr-amount">0đ</p>
-
-                            <p class="qr-label">Nội dung chuyển khoản</p>
-                            <p class="qr-content" id="qr-content">RM...</p>
-                        </div>
-
-                        <div class="qr-confirm-box">
-                            <input type="checkbox" id="confirmPaid">
-                            <label for="confirmPaid">Tôi đã hoàn tất chuyển khoản</label>
-                        </div>
+                    <!-- KHUNG THÔNG BÁO VNPAY -->
+                    <div id="vnpay-info-section" style="display: none; margin-top: 15px; padding: 20px; text-align: center; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc;">
+                        
+                        <img src="https://cdn.haitrieu.com/wp-content/uploads/2022/10/Logo-VNPAY-QR-1.png" alt="VNPay" style="height: 35px; margin-bottom: 15px; object-fit: contain;">
+                        
+                        <p style="font-size: 14px; color: #475569; margin: 0; line-height: 1.5;">Hệ thống sẽ chuyển hướng bạn sang cổng thanh toán an toàn của <strong>VNPay</strong>.<br>Bạn có thể sử dụng ứng dụng Ngân hàng để quét mã QR hoặc nhập thẻ ATM/Visa.</p>
                     </div>
                 </div>
 
