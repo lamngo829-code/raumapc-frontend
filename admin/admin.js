@@ -307,6 +307,10 @@ function editProduct(id) {
         let displayP = typeof sp.price === 'number' ? new Intl.NumberFormat('vi-VN').format(sp.price) + 'đ' : (sp.price || '');
         document.getElementById('price').value = displayP;
     }
+    if (document.getElementById('importPrice')) {
+        let displayIP = typeof sp.importPrice === 'number' && sp.importPrice > 0 ? new Intl.NumberFormat('vi-VN').format(sp.importPrice) + 'đ' : '';
+        document.getElementById('importPrice').value = displayIP;
+    }
     if (document.getElementById('warranty')) document.getElementById('warranty').value = sp.warranty || '36 Tháng';
     if (document.getElementById('status')) document.getElementById('status').value = sp.status || 'Còn hàng';
     if (document.getElementById('stock')) document.getElementById('stock').value = sp.stock !== undefined ? sp.stock : 10;
@@ -384,10 +388,15 @@ async function submitProductForm(e) {
     let rawPriceInput = document.getElementById('price') ? document.getElementById('price').value : '0';
     let numericPrice = parseInt(rawPriceInput.replace(/\D/g, '')) || 0;
 
+    // Dọn dẹp ô nhập Giá Nhập Vốn: "3.000.000đ" -> 3000000
+    let rawImportPriceInput = document.getElementById('importPrice') ? document.getElementById('importPrice').value : '0';
+    let numericImportPrice = parseInt(rawImportPriceInput.replace(/\D/g, '')) || 0;
+
     const sp = {
         productId: document.getElementById('productId') ? document.getElementById('productId').value : '',
         name: document.getElementById('name') ? document.getElementById('name').value : '',
         price: numericPrice,
+        importPrice: numericImportPrice,
         img: finalImageBase64, warranty: document.getElementById('warranty') ? document.getElementById('warranty').value : '36 Tháng',
         status: document.getElementById('status') ? document.getElementById('status').value : 'Còn hàng',
         stock: parseInt(document.getElementById('stock') ? document.getElementById('stock').value : 10) || 0,
@@ -439,17 +448,43 @@ function loadOrders() {
     fetch(API_ORDERS + '?v=' + new Date().getTime()).then(res => res.json()).then(orders => {
         const tbody = document.getElementById('order-table-body'); tbody.innerHTML = '';
         if (orders.length === 0) return tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Kho chưa có đơn hàng nào!</td></tr>';
+        
         orders.reverse().forEach(order => {
             let itemsHtml = order.items.map(item => `<div style="margin-bottom:4px;">- ${item.name} <strong style="color:#d70018;">(x${item.quantity})</strong></div>`).join('');
+            
+            // Xử lý màu sắc hiển thị nhãn trạng thái
             let badgeColor = "#1976d2"; let badgeBg = "#e3f2fd";
             if (order.status === "Đang giao hàng") { badgeColor = "#ff9800"; badgeBg = "#fff3e0"; }
-            if (order.status === "Hoàn thành") { badgeColor = "#28a745"; badgeBg = "#e8f5e9"; }
-            if (order.status === "Đã hủy") { badgeColor = "#dc3545"; badgeBg = "#ffe2e5"; }
-            tbody.innerHTML += `<tr><td style="font-weight:bold; color:#1435c3; font-size: 16px;">${order.orderId}<br><span style="font-size:12px; color:#888; font-weight:normal;">${order.date}</span></td><td style="font-weight:bold;">${order.username}</td><td style="font-size:13px; color:#444;">${itemsHtml}</td><td style="color:#d70018; font-weight:bold; font-size:16px;">${new Intl.NumberFormat('vi-VN').format(order.total)}đ</td><td><span class="status-badge" style="color:${badgeColor}; background:${badgeBg};">${order.status}</span></td><td><select class="status-select" onchange="changeOrderStatus('${order.orderId}', this.value)"><option value="Chờ duyệt" ${order.status === 'Chờ duyệt' ? 'selected' : ''}>Chờ duyệt</option><option value="Đang giao hàng" ${order.status === 'Đang giao hàng' ? 'selected' : ''}>Giao hàng</option><option value="Hoàn thành" ${order.status === 'Hoàn thành' ? 'selected' : ''}>Hoàn thành</option><option value="Đã hủy" ${order.status === 'Đã hủy' ? 'selected' : ''}>Hủy đơn</option></select></td><td><button onclick="deleteOrder('${order.orderId}')" style="background:#ffe2e5; color:#dc2626; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; font-weight:bold; transition:0.2s;" onmouseover="this.style.background='#fca5a5'" onmouseout="this.style.background='#ffe2e5'">Xóa</button></td></tr>`;
+            else if (order.status === "Hoàn thành") { badgeColor = "#28a745"; badgeBg = "#e8f5e9"; }
+            else if (order.status === "Đã hủy") { badgeColor = "#dc3545"; badgeBg = "#ffe2e5"; }
+            else if (order.status === "Đã thanh toán (Chờ giao)") { badgeColor = "#0d9488"; badgeBg = "#ccfbf1"; }
+
+            tbody.innerHTML += `
+                <tr>
+                    <td style="font-weight:bold; color:#1435c3; font-size: 16px;">${order.orderId}<br><span style="font-size:12px; color:#888; font-weight:normal;">${order.date}</span></td>
+                    <td style="font-weight:bold;">${order.username}</td>
+                    <td style="font-size:13px; color:#444;">${itemsHtml}</td>
+                    <td style="color:#d70018; font-weight:bold; font-size:16px;">${new Intl.NumberFormat('vi-VN').format(order.total)}đ</td>
+                    <td><span class="status-badge" style="color:${badgeColor}; background:${badgeBg};">${order.status}</span></td>
+                    <td>
+                        <select class="status-select" onchange="changeOrderStatus('${order.orderId}', this.value)">
+                            <option value="Chờ duyệt" ${order.status === 'Chờ duyệt' ? 'selected' : ''}>Chờ duyệt</option>
+                            <option value="Đã thanh toán (Chờ giao)" ${order.status === 'Đã thanh toán (Chờ giao)' ? 'selected' : ''}>Đã thanh toán (Chờ giao)</option>
+                            <option value="Đang giao hàng" ${order.status === 'Đang giao hàng' ? 'selected' : ''}>Đang giao hàng</option>
+                            <option value="Hoàn thành" ${order.status === 'Hoàn thành' ? 'selected' : ''}>Hoàn thành</option>
+                            <option value="Đã hủy" ${order.status === 'Đã hủy' ? 'selected' : ''}>Đã hủy</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button onclick="deleteOrder('${order.orderId}')" style="background:#ffe2e5; color:#dc2626; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; font-weight:bold; transition:0.2s;" onmouseover="this.style.background='#fca5a5'" onmouseout="this.style.background='#ffe2e5'">Xóa</button>
+                    </td>
+                </tr>`;
         });
     });
 }
+
 function changeOrderStatus(orderId, newStatus) { fetch(`${API_ORDERS}/${orderId}/status`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: newStatus }) }).then(res => res.json()).then(data => { loadOrders(); loadRevenue(); }).catch(err => alert("Lỗi cập nhật!")); }
+
 function deleteOrder(orderId) {
     if (confirm(`⚠️ CẢNH BÁO NGUY HIỂM\n\nBạn có chắc chắn muốn xóa vĩnh viễn đơn hàng #${orderId} không?`)) {
         fetch(`${API_ORDERS}/${orderId}`, { method: 'DELETE' }).then(res => res.json()).then(data => { if (data.success) { if (typeof window.showAdminAlert === 'function') window.showAdminAlert(data.message, true); loadOrders(); loadRevenue(); } else { if (typeof window.showAdminAlert === 'function') window.showAdminAlert(data.message, false); } }).catch(err => { if (typeof window.showAdminAlert === 'function') window.showAdminAlert("Lỗi kết nối máy chủ!", false); });
@@ -458,60 +493,91 @@ function deleteOrder(orderId) {
 
 loadProducts();
 
-let chartInstances = {}; // Lưu trữ để hủy biểu đồ cũ, chống lỗi đè nháy
+let chartInstances = {};
 
+// Nâng cấp cấu hình biểu đồ Chart.js
 function createChart(canvasId, type, label, labelsData, dataData, color) {
     const ctxEl = document.getElementById(canvasId);
     if (!ctxEl) return;
 
-    // Hủy biểu đồ cũ nếu đã vẽ trước đó
     if (chartInstances[canvasId]) chartInstances[canvasId].destroy();
 
     chartInstances[canvasId] = new Chart(ctxEl.getContext('2d'), {
-        type: type, // 'bar' cho cột đứng, 'line' cho biểu đồ đường
+        type: type,
         data: {
-            labels: labelsData.length > 0 ? labelsData : ['Trống'],
+            labels: labelsData.length > 0 ? labelsData : ['Chưa có dữ liệu'],
             datasets: [{
                 label: label,
                 data: dataData.length > 0 ? dataData : [0],
                 backgroundColor: color,
-                borderColor: color,
-                borderWidth: 1,
+                borderColor: color.replace('0.9)', '1)'),
+                borderWidth: 2,
                 borderRadius: type === 'bar' ? 6 : 0,
-                tension: 0.3, // Làm cong đường line
-                fill: type === 'line' ? { target: 'origin', above: color.replace('1)', '0.1)') } : false
+                tension: 0.3,
+                maxBarThickness: 50, // KHỐNG CHẾ ĐỘ RỘNG CỦA CỘT TẠI ĐÂY
+                fill: type === 'line' ? { target: 'origin', above: color.replace('0.9)', '0.1)') } : false
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            scales: { y: { beginAtZero: true } }
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let value = context.raw;
+                            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+                        }
+                    }
+                }
+            },
+            scales: { 
+                y: { 
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            if (value >= 1000000) return (value / 1000000) + ' Tr';
+                            if (value >= 1000) return (value / 1000) + ' K';
+                            return value;
+                        }
+                    }
+                } 
+            }
         }
     });
 }
 
 function loadRevenue() {
-    // 1. Tải số liệu Thống Kê Thẻ
-    fetch('https://raumapc-backend-fms3.onrender.com/api/admin/revenue?v=' + new Date().getTime())
+    // 1. Tải số liệu Thống Kê Tổng Quan Thẻ
+    fetch('https://raumapc-backend-fms3.onrender.com/api/admin/revenue?v=' + new Date().getTime(), {
+        headers: { 'Authorization': 'Bearer ' + token } 
+    })
         .then(res => res.json())
         .then(data => {
+            // Cập nhật Doanh thu
             if (document.getElementById('revenue-total')) document.getElementById('revenue-total').innerText = new Intl.NumberFormat('vi-VN').format(data.totalRevenue || 0) + ' đ';
             if (document.getElementById('revenue-orders')) document.getElementById('revenue-orders').innerText = data.totalOrders || 0;
             if (document.getElementById('rev-week')) document.getElementById('rev-week').innerText = new Intl.NumberFormat('vi-VN').format(data.weekRev || 0) + ' đ';
             if (document.getElementById('rev-month')) document.getElementById('rev-month').innerText = new Intl.NumberFormat('vi-VN').format(data.monthRev || 0) + ' đ';
             if (document.getElementById('rev-year')) document.getElementById('rev-year').innerText = new Intl.NumberFormat('vi-VN').format(data.yearRev || 0) + ' đ';
+
+            // CẬP NHẬT LỢI NHUẬN (Lãi)
+            if (document.getElementById('profit-week')) document.getElementById('profit-week').innerText = new Intl.NumberFormat('vi-VN').format(data.weekProfit || 0) + ' đ';
+            if (document.getElementById('profit-month')) document.getElementById('profit-month').innerText = new Intl.NumberFormat('vi-VN').format(data.monthProfit || 0) + ' đ';
+            if (document.getElementById('profit-year')) document.getElementById('profit-year').innerText = new Intl.NumberFormat('vi-VN').format(data.yearProfit || 0) + ' đ';
+            if (document.getElementById('profit-total')) document.getElementById('profit-total').innerText = new Intl.NumberFormat('vi-VN').format(data.totalProfit || 0) + ' đ';
+
         }).catch(err => console.error("Lỗi tải doanh thu:", err));
 
     // 2. Tải và vẽ 4 loại Biểu đồ
     fetch('https://raumapc-backend-fms3.onrender.com/api/admin/revenue-chart', { headers: { 'Authorization': 'Bearer ' + token } })
         .then(res => res.json())
         .then(data => {
-            createChart('chartDaily', 'bar', 'Doanh thu Ngày (VNĐ)', data.daily.labels, data.daily.data, 'rgba(20, 53, 195, 0.9)'); // Màu xanh đậm
-
+            // Thay đổi một chút loại biểu đồ để Dashboard sinh động hơn (Đường Line cho Daily/Monthly)
+            createChart('chartDaily', 'line', 'Doanh thu Ngày (VNĐ)', data.daily.labels, data.daily.data, 'rgba(20, 53, 195, 0.9)'); 
             createChart('chartWeekly', 'bar', 'Doanh thu Tuần (VNĐ)', data.weekly.labels, data.weekly.data, 'rgba(16, 185, 129, 0.9)');
-
-            createChart('chartMonthly', 'bar', 'Doanh thu Tháng (VNĐ)', data.monthly.labels, data.monthly.data, 'rgba(245, 158, 11, 0.9)'); // Màu cam
-            createChart('chartYearly', 'bar', 'Doanh thu Năm (VNĐ)', data.yearly.labels, data.yearly.data, 'rgba(139, 92, 246, 0.9)'); // Màu tím
+            createChart('chartMonthly', 'bar', 'Doanh thu Tháng (VNĐ)', data.monthly.labels, data.monthly.data, 'rgba(245, 158, 11, 0.9)');
+            createChart('chartYearly', 'bar', 'Doanh thu Năm (VNĐ)', data.yearly.labels, data.yearly.data, 'rgba(139, 92, 246, 0.9)'); 
         }).catch(err => console.error("Lỗi vẽ biểu đồ:", err));
 }
 
@@ -641,7 +707,7 @@ window.showAdminAlert = function (message, isSuccess = true, callback = null) {
     document.getElementById('aca-btn').onclick = function () { modal.style.display = 'none'; if (callback) callback(); };
 };
 
-const draftFields = ['productId', 'brand', 'name', 'price', 'warranty', 'status', 'stock', 'category1', 'category2', 'category3', 'specs', 'description'];
+const draftFields = ['productId', 'brand', 'name', 'price', 'importPrice', 'warranty', 'status', 'stock', 'category1', 'category2', 'category3', 'specs', 'description'];
 
 window.clearDrafts = function () { draftFields.forEach(id => localStorage.removeItem('draft_product_' + id)); };
 
