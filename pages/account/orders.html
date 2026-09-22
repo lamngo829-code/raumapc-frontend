@@ -49,7 +49,9 @@
                 <div class="menu-item"><a href="../../pages/info/contact.html"><img
                             src="../../assets/images/icons/contact.jpg" width="25px" height="25px" alt="Contact">Khách
                         hàng liên hệ</a></div>
-                <div class="menu-item"><a href="../../pages/info/tracking.html"><img src="../../assets/images/icons/tracking.jpg" width="25px" height="25px">Tra cứu đơn hàng</a></div>
+                <div class="menu-item"><a href="../../pages/info/tracking.html"><img
+                            src="../../assets/images/icons/tracking.jpg" width="25px" height="25px">Tra cứu đơn hàng</a>
+                </div>
                 <div class="menu-item"><a href="../../pages/info/news.html"><img
                             src="../../assets/images/icons/news.jpg" width="25px" height="25px" alt="News">Tin tức công
                         nghệ</a></div>
@@ -348,18 +350,24 @@
                                         <a href="../../pages/shop/win-copyright.html">
                                             <h4>HỆ ĐIỀU HÀNH</h4>
                                         </a>
-                                        <a href="../../pages/shop/win-copyright.html?os_version=windows">Hệ điều hành Windows bản quyền</a>
-                                        <a href="../../pages/shop/win-copyright.html?os_version=windows server">Hệ điều hành Windows Server</a>
-                                        <a href="../../pages/shop/win-copyright.html?edition=enterprise">Hệ điều hành cho doanh nghiệp</a>
+                                        <a href="../../pages/shop/win-copyright.html?os_version=windows">Hệ điều hành
+                                            Windows bản quyền</a>
+                                        <a href="../../pages/shop/win-copyright.html?os_version=windows server">Hệ điều
+                                            hành Windows Server</a>
+                                        <a href="../../pages/shop/win-copyright.html?edition=enterprise">Hệ điều hành
+                                            cho doanh nghiệp</a>
                                     </div>
                                     <!-- Cột 2: Office -->
                                     <div class="mega-col">
                                         <a href="../../pages/shop/office-software.html">
                                             <h4>PHẦN MỀM OFFICE</h4>
                                         </a>
-                                        <a href="../../pages/shop/office-software.html?office_version=365">Microsoft Office 365</a>
-                                        <a href="../../pages/shop/office-software.html?office_version=2019">Microsoft Office 2019</a>
-                                        <a href="../../pages/shop/office-software.html?edition=business">Microsoft Office Doanh nghiệp</a>
+                                        <a href="../../pages/shop/office-software.html?office_version=365">Microsoft
+                                            Office 365</a>
+                                        <a href="../../pages/shop/office-software.html?office_version=2019">Microsoft
+                                            Office 2019</a>
+                                        <a href="../../pages/shop/office-software.html?edition=business">Microsoft
+                                            Office Doanh nghiệp</a>
                                     </div>
                                     <!-- Cột 3: Khác -->
                                     <div class="mega-col">
@@ -453,9 +461,9 @@
                                         <h4 style="margin-top: 25px;">CASE - VỎ MÁY TÍNH</h4>
                                     </a>
                                     <a href="../../pages/shop/case.html?brand=xigmatek">Case Xigmatek</a>
-                                        <a href="../../pages/shop/case.html?brand=nzxt">Case NZXT</a>
-                                        <a href="../../pages/shop/case.html?brand=asus">Case ASUS</a>
-                                        <a href="../../pages/shop/case.html?brand=msi">Case MSI</a>
+                                    <a href="../../pages/shop/case.html?brand=nzxt">Case NZXT</a>
+                                    <a href="../../pages/shop/case.html?brand=asus">Case ASUS</a>
+                                    <a href="../../pages/shop/case.html?brand=msi">Case MSI</a>
 
                                 </div>
 
@@ -620,9 +628,12 @@
                                     <a href="../../pages/shop/office-software.html">
                                         <h4>PHẦN MỀM OFFICE</h4>
                                     </a>
-                                    <a href="../../pages/shop/office-software.html?office_version=365">Microsoft Office 365</a>
-                                        <a href="../../pages/shop/office-software.html?office_version=2019">Microsoft Office 2019</a>
-                                        <a href="../../pages/shop/office-software.html?edition=business">Microsoft Office Doanh nghiệp</a>
+                                    <a href="../../pages/shop/office-software.html?office_version=365">Microsoft Office
+                                        365</a>
+                                    <a href="../../pages/shop/office-software.html?office_version=2019">Microsoft Office
+                                        2019</a>
+                                    <a href="../../pages/shop/office-software.html?edition=business">Microsoft Office
+                                        Doanh nghiệp</a>
                                 </div>
                                 <!-- Cột 3: Khác -->
                                 <div class="mega-col">
@@ -929,10 +940,18 @@
             const displayArea = document.getElementById('order-display-area');
             if (!displayArea) return;
 
-            fetch('https://raumapc-backend-fms3.onrender.com/api/orders')
+            // Thêm timestamp '?v=' + new Date().getTime() để phá cache trình duyệt, ép tải dữ liệu mới 100%
+            // Dùng /api/orders/my để chỉ tải đúng đơn hàng của chính khách này (server đã lọc sẵn theo tài khoản đăng nhập)
+            fetch('https://raumapc-backend-fms3.onrender.com/api/orders/my?v=' + new Date().getTime(), {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
+                    'Cache-Control': 'no-cache', // Ép trình duyệt không dùng cache
+                    'Pragma': 'no-cache'
+                }
+            })
                 .then(response => response.json())
-                .then(allOrders => {
-                    const myOrders = allOrders.filter(order => order.account === user.username || order.username === user.username);
+                .then(myOrders => {
 
                     // Trạng thái: TRỐNG (Chưa mua hàng)
                     if (myOrders.length === 0) {

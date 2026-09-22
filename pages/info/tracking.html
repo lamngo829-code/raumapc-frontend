@@ -40,12 +40,24 @@
 
             <div class="header-menu">
 
-                <div class="menu-item"><a href="../../pages/info/showroom.html"><img src="../../assets/images/icons/showroom.jpg" width="25px" height="25px" alt="Show Room">Hệ thống Showroom</a></div>
-                <div class="menu-item"><a href="../../pages/info/enterprise.html"><img src="../../assets/images/icons/enterprise.jpg" width="25px" height="25px" alt="Enterprise">Dành cho doanh nghiệp</a></div>
-                <div class="menu-item"><a href="../../pages/info/contact.html"><img src="../../assets/images/icons/contact.jpg" width="25px" height="25px" alt="Contact">Khách hàng liên hệ</a></div>
-                <div class="menu-item"><a href="../../pages/info/tracking.html"><img src="../../assets/images/icons/tracking.jpg" width="25px" height="25px">Tra cứu đơn hàng</a></div>
-                <div class="menu-item"><a href="../../pages/info/news.html"><img src="../../assets/images/icons/news.jpg" width="25px" height="25px" alt="News">Tin tức công nghệ</a></div>
-                <div class="menu-item"><a href="../../pages/info/promotion.html"><img src="../../assets/images/icons/promotion.jpg" width="25px" height="25px" alt="Promotion">Khuyến mãi</a></div>
+                <div class="menu-item"><a href="../../pages/info/showroom.html"><img
+                            src="../../assets/images/icons/showroom.jpg" width="25px" height="25px" alt="Show Room">Hệ
+                        thống Showroom</a></div>
+                <div class="menu-item"><a href="../../pages/info/enterprise.html"><img
+                            src="../../assets/images/icons/enterprise.jpg" width="25px" height="25px"
+                            alt="Enterprise">Dành cho doanh nghiệp</a></div>
+                <div class="menu-item"><a href="../../pages/info/contact.html"><img
+                            src="../../assets/images/icons/contact.jpg" width="25px" height="25px" alt="Contact">Khách
+                        hàng liên hệ</a></div>
+                <div class="menu-item"><a href="../../pages/info/tracking.html"><img
+                            src="../../assets/images/icons/tracking.jpg" width="25px" height="25px">Tra cứu đơn hàng</a>
+                </div>
+                <div class="menu-item"><a href="../../pages/info/news.html"><img
+                            src="../../assets/images/icons/news.jpg" width="25px" height="25px" alt="News">Tin tức công
+                        nghệ</a></div>
+                <div class="menu-item"><a href="../../pages/info/promotion.html"><img
+                            src="../../assets/images/icons/promotion.jpg" width="25px" height="25px"
+                            alt="Promotion">Khuyến mãi</a></div>
 
             </div>
 
@@ -709,8 +721,12 @@
 
     <!-- GIAO DIỆN TRA CỨU ĐƠN HÀNG (NÂNG CẤP) -->
     <style>
-        body { background-color: #f8fafc; } /* Tạo nền xám nhẹ để nổi bật form trắng */
-        
+        body {
+            background-color: #f8fafc;
+        }
+
+        /* Tạo nền xám nhẹ để nổi bật form trắng */
+
         .tracking-container {
             max-width: 650px;
             margin: 60px auto 100px auto;
@@ -720,7 +736,7 @@
             background: #ffffff;
             padding: 50px 40px;
             border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
             border: 1px solid #f1f5f9;
             position: relative;
             overflow: hidden;
@@ -730,7 +746,9 @@
         .tracking-box::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; right: 0;
+            top: 0;
+            left: 0;
+            right: 0;
             height: 6px;
             background: linear-gradient(90deg, #1435c3, #3b82f6, #0ea5e9);
         }
@@ -743,7 +761,8 @@
         .tracking-header h2 {
             color: #1e293b;
             font-size: 26px;
-            font-weight: bold; /* SỬA Ở ĐÂY: Từ 800 chuyển thành bold (hoặc 700) */
+            font-weight: bold;
+            /* SỬA Ở ĐÂY: Từ 800 chuyển thành bold (hoặc 700) */
             margin-bottom: 15px;
             letter-spacing: -0.5px;
         }
@@ -790,8 +809,10 @@
             background: #ffffff;
             box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
         }
-        
-        .track-input::placeholder { color: #94a3b8; }
+
+        .track-input::placeholder {
+            color: #94a3b8;
+        }
 
         .btn-track {
             width: 100%;
@@ -818,19 +839,88 @@
             box-shadow: 0 6px 20px rgba(20, 53, 195, 0.3);
         }
 
-        .btn-track:active { transform: translateY(0); }
+        .btn-track:active {
+            transform: translateY(0);
+        }
 
         /* Thanh tiến trình Timeline */
-        .timeline { display: flex; justify-content: space-between; position: relative; margin-bottom: 40px; padding-top: 20px; }
-        .timeline::before { content: ''; position: absolute; top: 38px; left: 10%; width: 80%; height: 4px; background: #e2e8f0; z-index: 1; }
-        .timeline-progress { position: absolute; top: 38px; left: 10%; height: 4px; background: #059669; z-index: 2; transition: 0.5s ease-out; }
-        .step { position: relative; z-index: 3; text-align: center; width: 33.33%; }
-        .step .icon { width: 40px; height: 40px; background: #e2e8f0; color: #94a3b8; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-weight: bold; border: 4px solid #fff; font-size: 16px; transition: 0.3s; }
-        .step.active .icon { background: #059669; color: white; box-shadow: 0 0 0 4px #d1fae5; }
-        .step.cancel .icon { background: #dc2626; color: white; box-shadow: 0 0 0 4px #fee2e2; }
-        .step .text { font-size: 14px; font-weight: bold; color: #64748b; }
-        .step.active .text { color: #059669; }
-        .step.cancel .text { color: #dc2626; }
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-bottom: 40px;
+            padding-top: 20px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 38px;
+            left: 10%;
+            width: 80%;
+            height: 4px;
+            background: #e2e8f0;
+            z-index: 1;
+        }
+
+        .timeline-progress {
+            position: absolute;
+            top: 38px;
+            left: 10%;
+            height: 4px;
+            background: #059669;
+            z-index: 2;
+            transition: 0.5s ease-out;
+        }
+
+        .step {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            width: 33.33%;
+        }
+
+        .step .icon {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            color: #94a3b8;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: bold;
+            border: 4px solid #fff;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .step.active .icon {
+            background: #059669;
+            color: white;
+            box-shadow: 0 0 0 4px #d1fae5;
+        }
+
+        .step.cancel .icon {
+            background: #dc2626;
+            color: white;
+            box-shadow: 0 0 0 4px #fee2e2;
+        }
+
+        .step .text {
+            font-size: 14px;
+            font-weight: bold;
+            color: #64748b;
+        }
+
+        .step.active .text {
+            color: #059669;
+        }
+
+        .step.cancel .text {
+            color: #dc2626;
+        }
     </style>
 
     <div class="tracking-container">
@@ -843,18 +933,36 @@
             <div class="track-input-group">
                 <div class="input-wrapper">
                     <!-- Icon Box -->
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
-                    <input type="text" id="track-id" class="track-input" placeholder="Nhập mã đơn hàng (Ví dụ: RM123456)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                        </path>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
+                    <input type="text" id="track-id" class="track-input"
+                        placeholder="Nhập mã đơn hàng (Ví dụ: RM123456)">
                 </div>
 
                 <div class="input-wrapper">
                     <!-- Icon Phone -->
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                    <input type="text" id="track-phone" class="track-input" placeholder="Nhập số điện thoại lúc đặt hàng">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                        </path>
+                    </svg>
+                    <input type="text" id="track-phone" class="track-input"
+                        placeholder="Nhập số điện thoại lúc đặt hàng">
                 </div>
 
                 <button onclick="executeTracking()" class="btn-track" id="btn-track">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
                     KIỂM TRA NGAY
                 </button>
             </div>
@@ -863,6 +971,28 @@
                 <!-- Kết quả HTML sẽ được nhúng vào đây -->
             </div>
         </div>
+    </div>
+
+    <!-- CUSTOM ALERT MODAL (HỘP THOẠI THÔNG BÁO ĐẸP) -->
+    <div id="custom-alert-modal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); z-index: 999999; justify-content: center; align-items: center; backdrop-filter: blur(4px);">
+        <div
+            style="background: #fff; padding: 30px 25px; border-radius: 16px; width: 350px; text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); transform: scale(0.95); animation: popIn 0.2s forwards;">
+            <div id="custom-alert-icon" style="margin-bottom: 15px;"></div>
+            <h3 id="custom-alert-title" style="margin-bottom: 10px; font-size: 20px; font-weight: bold;">Thông báo</h3>
+            <p id="custom-alert-message"
+                style="font-size: 15px; color: #475569; margin-bottom: 25px; line-height: 1.5;"></p>
+            <button id="custom-alert-btn"
+                style="color: white; border: none; padding: 12px 35px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px; transition: 0.2s; width: 100%;">Đồng
+                ý</button>
+        </div>
+        <style>
+            @keyframes popIn {
+                to {
+                    transform: scale(1);
+                }
+            }
+        </style>
     </div>
 
     <div class="footer-wrapper">
@@ -1095,6 +1225,62 @@
                 window.showGlobalAlert('Lỗi kết nối đến máy chủ!', false);
             });
         }
+
+        // Hàm gọi hộp thoại đẹp
+        window.showCustomAlert = function (message, isSuccess = false) {
+            let modal = document.getElementById('custom-alert-modal');
+            if (!modal) return alert(message); // Nếu quên dán HTML thì dùng tạm alert cũ
+
+            document.getElementById('custom-alert-message').innerText = message;
+
+            const iconBox = document.getElementById('custom-alert-icon');
+            const title = document.getElementById('custom-alert-title');
+            const btn = document.getElementById('custom-alert-btn');
+
+            if (isSuccess) {
+                iconBox.innerHTML = '<div style="background: #dcfce7; width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>';
+                title.innerText = 'Thành Công!';
+                title.style.color = '#059669';
+                btn.style.background = '#059669';
+            } else {
+                iconBox.innerHTML = '<div style="background: #fee2e2; width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></div>';
+                title.innerText = 'Cảnh Báo!';
+                title.style.color = '#dc2626';
+                btn.style.background = '#dc2626';
+            }
+
+            modal.style.display = 'flex';
+            btn.onclick = function () { modal.style.display = 'none'; };
+        };
+
+        // Xử lý đọc URL từ VNPay trả về
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const vnp_ResponseCode = urlParams.get('vnp_ResponseCode');
+            const vnp_TxnRef = urlParams.get('vnp_TxnRef'); // Đây chính là Mã đơn hàng (VD: RM200379)
+
+            if (vnp_ResponseCode) {
+                // Gửi NGUYÊN VẸN toàn bộ query string (kèm vnp_SecureHash) lên backend để xác thực
+                // chữ ký thật sự trước khi cập nhật đơn hàng - không tự ý tin vnp_ResponseCode đọc
+                // trên URL (dễ bị giả mạo nếu chỉ đổi trạng thái theo giá trị client tự đọc được)
+                fetch('https://raumapc-backend-fms3.onrender.com/api/vnpay/verify-return' + window.location.search)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success && data.status === 'Đã thanh toán (Chờ giao)') {
+                            showCustomAlert(`🎉 Thanh toán thành công cho đơn hàng #${vnp_TxnRef}! Đơn hàng đã được chuyển sang trạng thái chờ giao.`, true);
+                        } else if (data.success && data.status === 'Đã hủy') {
+                            showCustomAlert(`Đơn hàng #${vnp_TxnRef} đã bị hủy (giao dịch không thành công hoặc bạn đã hủy thanh toán).`, false);
+                        } else {
+                            showCustomAlert(`Không thể xác thực kết quả thanh toán cho đơn hàng #${vnp_TxnRef}. Nếu đã bị trừ tiền, vui lòng liên hệ hỗ trợ!`, false);
+                        }
+                        setTimeout(() => window.location.reload(), 2000);
+                    })
+                    .catch(err => console.log("Lỗi xác thực kết quả VNPay:", err));
+
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        });
+
     </script>
 </body>
 

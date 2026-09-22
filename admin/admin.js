@@ -445,7 +445,7 @@ function deleteProduct(id) {
 }
 
 function loadOrders() {
-    fetch(API_ORDERS + '?v=' + new Date().getTime()).then(res => res.json()).then(orders => {
+    fetch(API_ORDERS + '?v=' + new Date().getTime(), { headers: { 'Authorization': 'Bearer ' + token } }).then(res => res.json()).then(orders => {
         const tbody = document.getElementById('order-table-body'); tbody.innerHTML = '';
         if (orders.length === 0) return tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Kho chưa có đơn hàng nào!</td></tr>';
         
@@ -483,11 +483,11 @@ function loadOrders() {
     });
 }
 
-function changeOrderStatus(orderId, newStatus) { fetch(`${API_ORDERS}/${orderId}/status`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: newStatus }) }).then(res => res.json()).then(data => { loadOrders(); loadRevenue(); }).catch(err => alert("Lỗi cập nhật!")); }
+function changeOrderStatus(orderId, newStatus) { fetch(`${API_ORDERS}/${orderId}/status`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify({ status: newStatus }) }).then(res => res.json()).then(data => { loadOrders(); loadRevenue(); }).catch(err => alert("Lỗi cập nhật!")); }
 
 function deleteOrder(orderId) {
     if (confirm(`⚠️ CẢNH BÁO NGUY HIỂM\n\nBạn có chắc chắn muốn xóa vĩnh viễn đơn hàng #${orderId} không?`)) {
-        fetch(`${API_ORDERS}/${orderId}`, { method: 'DELETE' }).then(res => res.json()).then(data => { if (data.success) { if (typeof window.showAdminAlert === 'function') window.showAdminAlert(data.message, true); loadOrders(); loadRevenue(); } else { if (typeof window.showAdminAlert === 'function') window.showAdminAlert(data.message, false); } }).catch(err => { if (typeof window.showAdminAlert === 'function') window.showAdminAlert("Lỗi kết nối máy chủ!", false); });
+        fetch(`${API_ORDERS}/${orderId}`, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token } }).then(res => res.json()).then(data => { if (data.success) { if (typeof window.showAdminAlert === 'function') window.showAdminAlert(data.message, true); loadOrders(); loadRevenue(); } else { if (typeof window.showAdminAlert === 'function') window.showAdminAlert(data.message, false); } }).catch(err => { if (typeof window.showAdminAlert === 'function') window.showAdminAlert("Lỗi kết nối máy chủ!", false); });
     }
 }
 
