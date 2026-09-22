@@ -252,3 +252,10 @@ td {
 #btn-cancel:active {
     background: #334155;
 }
+
+.profit-text {
+    font-size: 14px;
+    color: #a8f3b9;
+    margin-top: 5px;
+    font-weight: 500;
+}
