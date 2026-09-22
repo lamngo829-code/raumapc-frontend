@@ -1,3 +1,40 @@
+window.showCustomAlert = function (message, isSuccess = false, redirectUrl = null) {
+    let modal = document.getElementById('custom-alert-modal');
+    if (!modal) return alert(message); // Dự phòng nếu quên gắn HTML
+
+    document.getElementById('custom-alert-message').innerText = message;
+    
+    const iconBox = document.getElementById('custom-alert-icon');
+    const title = document.getElementById('custom-alert-title');
+    const btn = document.getElementById('custom-alert-btn');
+    
+    // Giao diện khi Thành công (Màu xanh lá)
+    if (isSuccess) {
+        iconBox.innerHTML = '<div style="background: #dcfce7; width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>';
+        title.innerText = 'Thành Công!'; 
+        title.style.color = '#059669';
+        btn.style.background = '#059669';
+    } 
+    // Giao diện khi Cảnh báo/Lỗi (Màu đỏ)
+    else {
+        iconBox.innerHTML = '<div style="background: #fee2e2; width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></div>';
+        title.innerText = 'Cảnh Báo!'; 
+        title.style.color = '#dc2626';
+        btn.style.background = '#dc2626';
+    }
+    
+    modal.style.display = 'flex';
+    
+    // Xử lý khi bấm nút "Đồng ý"
+    btn.onclick = function () { 
+        modal.style.display = 'none'; 
+        // Nếu có truyền link thì tự động chuyển trang (VD: chuyển đến trang đăng nhập)
+        if (redirectUrl) {
+            window.location.href = redirectUrl; 
+        }
+    };
+};
+
 window.formatMoney = function (number) {
     return new Intl.NumberFormat('vi-VN').format(number) + ' đ';
 };
@@ -164,8 +201,7 @@ window.togglePaymentMethod = function () {
 window.processCheckout = function () {
     var currentUser = JSON.parse(localStorage.getItem('currentUser'));
     if (!currentUser) {
-        alert("Bạn cần Đăng nhập để thực hiện thanh toán!");
-        window.location.href = '../../pages/account/login.html';
+        window.showCustomAlert("Bạn cần Đăng nhập để thực hiện thanh toán!", false, '../../pages/account/login.html');
         return;
     }
 
@@ -233,39 +269,62 @@ window.processCheckout = function () {
 
     fetch('https://raumapc-backend-fms3.onrender.com/api/orders', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('authToken') },
         body: JSON.stringify(newOrder)
     })
         .then(response => response.json())
         .then(data => {
             // KIỂM TRA NẾU KHÁCH CHỌN CHUYỂN KHOẢN (VNPAY)
+            // KIỂM TRA NẾU KHÁCH CHỌN CHUYỂN KHOẢN (VNPAY)
             if (selectedMethod === 'vnpay') {
                 if (typeof window.showGlobalAlert === 'function') {
-                    window.showGlobalAlert('Đang chuyển hướng sang cổng thanh toán VNPay...', true);
-                } else { alert('Đang chuyển hướng sang VNPay...'); }
+                    window.showGlobalAlert('Đang tạo mã bảo mật VNPay...', true);
+                } else { alert('Đang tạo mã bảo mật VNPay...'); }
 
-                // Gọi API để lấy link cổng thanh toán
-                fetch('https://raumapc-backend-fms3.onrender.com/api/vnpay/create_url', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        orderId: orderIdCode,
-                        // ĐÃ SỬA: Ép kiểu ép số tiền thành số nguyên tuyệt đối
-                        amount: Math.round(totalValue),
-                        returnUrl: window.location.origin + '/pages/info/tracking.html'
+                // Xây dựng đường dẫn Return URL động an toàn nhất
+                let currentHost = window.location.protocol + "//" + window.location.host;
+                let safeReturnUrl = currentHost + "/pages/info/tracking.html";
+
+                // Lấy nhanh IP thật của thiết bị khách hàng để gửi cho VNPay (Tùy chọn gia cố)
+                fetch('https://api.ipify.org?format=json')
+                    .then(ipRes => ipRes.json())
+                    .then(ipData => {
+                        const clientIp = ipData.ip || '113.190.233.15';
+
+                        // Gọi API tạo link VNPay có đính kèm IP thật
+                        return fetch('https://raumapc-backend-fms3.onrender.com/api/vnpay/create_url', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                orderId: orderIdCode,
+                                amount: Math.round(totalValue),
+                                returnUrl: safeReturnUrl,
+                                ipAddr: clientIp // Truyền IP thẳng từ Client
+                            })
+                        });
                     })
-                })
-                    .then(res2 => res2.json()).then(vnpayData => {
+                    .then(res2 => res2.json())
+                    .then(vnpayData => {
                         if (vnpayData.success) {
-                            // Xóa giỏ hàng
+                            // Xóa giỏ hàng an toàn trước khi chuyển hướng
                             localStorage.removeItem('myCart');
                             if (currentUser) {
                                 currentUser.cart = [];
                                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
                             }
-                            // Bắn khách sang giao diện Ngân hàng
+                            // Chuyển hướng
                             window.location.href = vnpayData.url;
+                        } else {
+                            alert("VNPay phản hồi lỗi: " + (vnpayData.message || "Không xác định"));
+                            btn.innerText = "ĐẶT HÀNG";
+                            btn.disabled = false;
                         }
+                    })
+                    .catch(err => {
+                        console.error("Lỗi VNPay Flow:", err);
+                        alert("Lỗi khi kết nối cổng thanh toán VNPay!");
+                        btn.innerText = "ĐẶT HÀNG";
+                        btn.disabled = false;
                     });
 
             } else {
