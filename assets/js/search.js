@@ -94,14 +94,17 @@ document.addEventListener('DOMContentLoaded', async function () {
             } else if (p.price) {
                 priceStr = p.price;
             }
-            let safeId = p.productId || p.id || p._id;
+            
+            let safeId = p.productId || p.id || p._id; // Dùng để gắn vào Link URL
+            let realId = p.id || p._id; // ĐÃ FIX: Bắt buộc dùng ID gốc của MongoDB cho Giỏ hàng
 
             let currentStatus = p.status || 'Còn hàng';
             let buttonHtml = '';
             let priceDisplay = priceStr;
 
             if (currentStatus === 'Còn hàng') {
-                buttonHtml = `<button class="add-to-cart search-add-btn" data-product-id="${safeId}" data-name="${p.name}" data-price="${p.price || 0}" data-img="${safeImg}">Thêm vào giỏ hàng</button>`;
+                // ĐÃ FIX: Đổi data-product-id="${safeId}" thành "${realId}"
+                buttonHtml = `<button class="add-to-cart search-add-btn" data-product-id="${realId}" data-name="${p.name}" data-price="${p.price || 0}" data-img="${safeImg}">Thêm vào giỏ hàng</button>`;
             }
             else if (currentStatus === 'Hết hàng') {
                 priceDisplay = '<span style="color: #dc2626; font-size: 15px;">Hết hàng</span>';
