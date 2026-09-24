@@ -771,7 +771,8 @@ if (galleryInput) {
 }
 
 function loadHomeSettings() {
-    fetch('https://raumapc-backend-fms3.onrender.com/api/settings/home').then(res => res.json()).then(data => {
+    // Ép Admin luôn thấy được cấu hình mới nhất vừa lưu
+    fetch('https://raumapc-backend-fms3.onrender.com/api/settings/home?v=' + new Date().getTime()).then(res => res.json()).then(data => {
         const defaultTitles = ['VGA - Card Màn Hình', 'Ổ Cứng', 'RAM - Bộ Nhớ Trong', 'Mainboard - Bo mạch chủ', 'Chuột Không Dây', 'Màn Hình Máy Tính'];
         for (let i = 1; i <= 6; i++) {
             let titleEl = document.getElementById(`home-title-${i}`); if (titleEl) titleEl.value = data[`homeTitle${i}`] || defaultTitles[i - 1];
@@ -779,11 +780,17 @@ function loadHomeSettings() {
         }
     }).catch(err => console.error("Lỗi tải cấu hình:", err));
 }
+
 async function syncSettingsToCloud(alertMessage) {
     let configData = {};
     for (let i = 1; i <= 6; i++) {
         let titleEl = document.getElementById(`home-title-${i}`); if (titleEl) configData[`homeTitle${i}`] = titleEl.value;
-        for (let j = 1; j <= 6; j++) { let elId = `home-sp${i}-${j}`; let el = document.getElementById(elId); if (el) configData[elId] = el.value; }
+        for (let j = 1; j <= 6; j++) { 
+            let elId = `home-sp${i}-${j}`; 
+            let el = document.getElementById(elId); 
+            // ĐÃ FIX: Tự động xóa khoảng trắng và in hoa toàn bộ ID để tránh lỗi 404 từ MongoDB
+            if (el) configData[elId] = el.value.trim().toUpperCase(); 
+        }
     }
     try {
         const btnTitle = document.querySelector('button[onclick="saveHomeSettings()"]'); const btnPro = document.querySelector('button[onclick="saveHomeProducts()"]');

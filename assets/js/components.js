@@ -14,9 +14,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function loadDynamicHomeContent(titles, sliders) {
     try {
-        // Chỉ tải cấu hình giao diện trước
-        const configRes = await fetch('https://raumapc-backend-fms3.onrender.com/api/settings/home');
-        const configData = await configRes.json(); 
+        // ĐÃ FIX: Thêm biến ?v=... để phá cache RAM, ép tải dữ liệu mới nhất
+        const configRes = await fetch('https://raumapc-backend-fms3.onrender.com/api/settings/home?v=' + new Date().getTime());
+        const configData = await configRes.json();
 
         const defaultTitles = ['VGA - Card Màn Hình', 'Ổ Cứng', 'RAM - Bộ Nhớ Trong', 'Mainboard - Bo mạch chủ', 'Chuột Không Dây', 'Bàn Phím Cơ'];
 
@@ -56,10 +56,10 @@ async function renderSliderItems(sliderEl, sectionIndex, configData) {
         return;
     }
 
-    // CHỈ TẢI ĐÚNG CÁC SẢN PHẨM ĐƯỢC CHỌN (Bỏ qua 99% kho hàng rác)
+    // CHỈ TẢI ĐÚNG CÁC SẢN PHẨM ĐƯỢC CHỌN VÀ ÉP PHÁ CACHE TỪNG MÓN
     const products = await Promise.all(
         idsToFetch.map(id => 
-            fetch(`https://raumapc-backend-fms3.onrender.com/api/products/detail/${id}`)
+            fetch(`https://raumapc-backend-fms3.onrender.com/api/products/detail/${id}?v=${new Date().getTime()}`)
             .then(res => res.ok ? res.json() : null)
             .catch(() => null)
         )
@@ -70,14 +70,17 @@ async function renderSliderItems(sliderEl, sectionIndex, configData) {
             hasCustomProducts = true; 
             let safeImg = p.img || 'assets/images/icons/logo.jpg';
             let priceStr = typeof p.price === 'number' ? new Intl.NumberFormat('vi-VN').format(p.price) + 'đ' : p.price;
-            let safeId = p.productId || p.id;
+            
+            let safeId = p.productId || p.id; // Dùng cho đường link URL
+            let realId = p.id || p._id; // ĐÃ FIX: Dùng ID gốc của MongoDB để giỏ hàng gộp chung
             
             let currentStatus = p.status || 'Còn hàng';
             let buttonHtml = '';
             let priceDisplay = priceStr;
 
             if (currentStatus === 'Còn hàng') {
-                buttonHtml = `<div class="add-to-cart" data-product-id="${safeId}" data-name="${p.name}" data-price="${p.price}" data-img="${safeImg}">Thêm vào giỏ hàng</div>`;
+                // Thay thế data-product-id="${safeId}" bằng "${realId}"
+                buttonHtml = `<div class="add-to-cart" data-product-id="${realId}" data-name="${p.name}" data-price="${p.price}" data-img="${safeImg}">Thêm vào giỏ hàng</div>`;
             } 
             else if (currentStatus === 'Hết hàng') {
                 priceDisplay = '<span style="color: #dc2626; font-size: 15px;">Hết hàng</span>';
