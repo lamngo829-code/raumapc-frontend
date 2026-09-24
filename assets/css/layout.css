@@ -1103,7 +1103,6 @@
 /* Ép bảng menu thả xuống đúng mép dưới của thanh màu trắng */
 .header-nav-bar .mega-dropdown {
     margin: -25px 0 0 30px !important;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
 }
 
 /* Ẩn thanh này trên điện thoại vì đã có menu mobile */

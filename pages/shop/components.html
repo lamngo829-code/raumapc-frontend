@@ -40,12 +40,24 @@
 
             <div class="header-menu">
 
-                <div class="menu-item"><a href="../../pages/info/showroom.html"><img src="../../assets/images/icons/showroom.jpg" width="25px" height="25px" alt="Show Room">Hệ thống Showroom</a></div>
-                <div class="menu-item"><a href="../../pages/info/enterprise.html"><img src="../../assets/images/icons/enterprise.jpg" width="25px" height="25px" alt="Enterprise">Dành cho doanh nghiệp</a></div>
-                <div class="menu-item"><a href="../../pages/info/contact.html"><img src="../../assets/images/icons/contact.jpg" width="25px" height="25px" alt="Contact">Khách hàng liên hệ</a></div>
-                <div class="menu-item"><a href="../../pages/info/tracking.html"><img src="../../assets/images/icons/tracking.jpg" width="25px" height="25px">Tra cứu đơn hàng</a></div>
-                <div class="menu-item"><a href="../../pages/info/news.html"><img src="../../assets/images/icons/news.jpg" width="25px" height="25px" alt="News">Tin tức công nghệ</a></div>
-                <div class="menu-item"><a href="../../pages/info/promotion.html"><img src="../../assets/images/icons/promotion.jpg" width="25px" height="25px" alt="Promotion">Khuyến mãi</a></div>
+                <div class="menu-item"><a href="../../pages/info/showroom.html"><img
+                            src="../../assets/images/icons/showroom.jpg" width="25px" height="25px" alt="Show Room">Hệ
+                        thống Showroom</a></div>
+                <div class="menu-item"><a href="../../pages/info/enterprise.html"><img
+                            src="../../assets/images/icons/enterprise.jpg" width="25px" height="25px"
+                            alt="Enterprise">Dành cho doanh nghiệp</a></div>
+                <div class="menu-item"><a href="../../pages/info/contact.html"><img
+                            src="../../assets/images/icons/contact.jpg" width="25px" height="25px" alt="Contact">Khách
+                        hàng liên hệ</a></div>
+                <div class="menu-item"><a href="../../pages/info/tracking.html"><img
+                            src="../../assets/images/icons/tracking.jpg" width="25px" height="25px">Tra cứu đơn hàng</a>
+                </div>
+                <div class="menu-item"><a href="../../pages/info/news.html"><img
+                            src="../../assets/images/icons/news.jpg" width="25px" height="25px" alt="News">Tin tức công
+                        nghệ</a></div>
+                <div class="menu-item"><a href="../../pages/info/promotion.html"><img
+                            src="../../assets/images/icons/promotion.jpg" width="25px" height="25px"
+                            alt="Promotion">Khuyến mãi</a></div>
 
             </div>
 
@@ -1051,7 +1063,8 @@
 
             if (sortSelect) sortSelect.addEventListener('change', applyFilters);
 
-            fetch('https://raumapc-backend-fms3.onrender.com/api/products?limit=50')
+            // Ép Backend loại bỏ Màn hình, Chuột, Bàn phím... ngay từ trong Database bằng cách chỉ định rõ các category
+            fetch('https://raumapc-backend-fms3.onrender.com/api/products?category=cpu,vga,main,ram,storage,psu,cooling,case&limit=300')
                 .then(response => response.json())
                 .then(result => {
                     const products = result.data ? result.data : result;
@@ -1197,12 +1210,12 @@
 
                 let currentStatus = sp.status || 'Còn hàng';
                 let buttonHtml = '';
-                
+
                 let priceDisplay = '0đ';
                 if (typeof sp.price === 'number') {
                     priceDisplay = new Intl.NumberFormat('vi-VN').format(sp.price) + 'đ';
                 } else if (sp.price) {
-                    priceDisplay = sp.price; 
+                    priceDisplay = sp.price;
                 }
 
                 if (currentStatus === 'Còn hàng') {
@@ -1258,11 +1271,11 @@
         }
 
         // Hệ thống chuyển trang
-        window.changePage = function(pageNum) {
-            window.isChangingPage = true; 
+        window.changePage = function (pageNum) {
+            window.isChangingPage = true;
             window.currentPage = pageNum;
             applyFilters();
-            
+
             // Cuộn trang mượt mà lên trên cùng khu vực sản phẩm
             const headerEl = document.querySelector('.category-header');
             if (headerEl) {
