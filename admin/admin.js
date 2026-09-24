@@ -25,15 +25,18 @@ const API_COUPONS = 'https://raumapc-backend-fms3.onrender.com/api/admin/coupons
 const API_USERS = 'https://raumapc-backend-fms3.onrender.com/api/admin/users';
 
 function switchTab(tabName) {
-    // Đổi màu Menu
+    // 1. Gỡ class 'active' khỏi TẤT CẢ các thẻ menu
     document.querySelectorAll('.sidebar-top .menu-item').forEach(el => el.classList.remove('active'));
 
-    if (tabName === 'dashboard') document.querySelectorAll('.sidebar-top .menu-item')[0].classList.add('active');
-    else if (tabName === 'products') document.querySelectorAll('.sidebar-top .menu-item')[1].classList.add('active');
-    else if (tabName === 'orders') document.querySelectorAll('.sidebar-top .menu-item')[2].classList.add('active');
-    else if (tabName === 'users') document.querySelectorAll('.sidebar-top .menu-item')[3].classList.add('active');
-    else if (tabName === 'coupons') document.querySelectorAll('.sidebar-top .menu-item')[4].classList.add('active');
-    else document.querySelectorAll('.sidebar-top .menu-item')[5].classList.add('active');
+    // 2. Gắn class 'active' lại cho ĐÚNG thẻ vừa được click
+    const menuItems = document.querySelectorAll('.sidebar-top .menu-item');
+    if (tabName === 'dashboard') menuItems[0].classList.add('active');
+    else if (tabName === 'products') menuItems[1].classList.add('active');
+    else if (tabName === 'orders') menuItems[2].classList.add('active');
+    else if (tabName === 'users') menuItems[3].classList.add('active');
+    else if (tabName === 'coupons') menuItems[4].classList.add('active');
+    else if (tabName === 'reviews') menuItems[5].classList.add('active'); // MỚI: Đã bổ sung rõ ràng cho 'reviews'
+    else if (tabName === 'home-settings') menuItems[6].classList.add('active');
 
     // Ẩn/Hiện Tab an toàn (Khắc phục lỗi cannot read properties of null)
     const tDash = document.getElementById('tab-dashboard');
@@ -55,11 +58,11 @@ function switchTab(tabName) {
     // Chạy lệnh tải dữ liệu tương ứng
     if (tabName === 'dashboard') loadRevenue();
     else if (tabName === 'orders') loadOrders();
-    else if (tabName === 'products') { loadProducts(); }
+    else if (tabName === 'products') loadProducts();
     else if (tabName === 'coupons') loadCoupons();
     else if (tabName === 'users') loadUsers();
     else if (tabName === 'reviews') loadReviews();
-    else loadHomeSettings();
+    else if (tabName === 'home-settings') loadHomeSettings();
 }
 
 // ================= KHU VỰC QUẢN LÝ USER MỚI THÊM =================
